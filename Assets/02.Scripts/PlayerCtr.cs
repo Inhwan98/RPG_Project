@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem; //Input System 사용하기 위함
 
-public class PlayerController : MonoBehaviour
+public class PlayerCtr : MonoBehaviour
 {
-    public static PlayerController instance = null;
+    public static PlayerCtr instance = null;
 
     private Rigidbody rigid;
     private Animator anim;
@@ -21,6 +21,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 5.0f;
 
     Camera cam;
+    float xInput;
+    float zInput;
+    float runInput;
+    bool attackInput;
 
     private void Awake()
     {
@@ -41,13 +45,13 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-
-    private void Update()
+    private void FixedUpdate()
     {
-        float xInput = Input.GetAxis("Horizontal");
-        float zInput = Input.GetAxis("Vertical");
-        float runInput = Input.GetAxis("Run");
-        bool attackInput = Input.GetButton("Fire1");
+        xInput = Input.GetAxis("Horizontal");
+        zInput = Input.GetAxis("Vertical");
+        runInput = Input.GetAxis("Run");
+        attackInput = Input.GetButtonDown("Fire1");
+
 
         Vector3 direction = new Vector3(xInput, 0, zInput);
 
@@ -59,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
         float movementSpeed = moveSpeed;
         if (runInput < 1.0f) movementSpeed *= 0.5f;
-        Vector3 movement = direction.normalized * movementSpeed * Time.deltaTime;
+        Vector3 movement = direction.normalized * movementSpeed * Time.fixedDeltaTime;
 
         anim.SetFloat(hashMoveSpeed, movementSpeed);
 
@@ -78,8 +82,15 @@ public class PlayerController : MonoBehaviour
         //}
 
         rigid.transform.Translate(movement);
+    }
+
+    private void Update()
+    {
+        
 
     }
+
+    
 
   
 
