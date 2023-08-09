@@ -1,13 +1,5 @@
 ﻿using UnityEngine;
 
-public enum ObjectState
-{
-    MOVE,
-    ATK,
-    DEAD,
-    IDLE
-}
-
 [System.Serializable]
 public class ObjectInfo
 {

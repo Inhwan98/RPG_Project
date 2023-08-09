@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using InHwan.CircularQueue;
 
@@ -10,33 +11,47 @@ public class PlayerController : Character
     public delegate void PlayerDiehandler();             //델리게이트 선언
     public static event PlayerDiehandler OnPlayerDie;    //이벤트 선언
 
-    private Rigidbody rigid;
+    #region Anim Hashing Init
+    private readonly int hashStrafe      = Animator.StringToHash("Strafe");
+    private readonly int hashForward     = Animator.StringToHash("Forward");
+    private readonly int hashRun         = Animator.StringToHash("Run");
+    private readonly int hashMoveSpeed   = Animator.StringToHash("MoveSpeed");
+    private readonly int hashAttackSpeed = Animator.StringToHash("AttackSpeed");
+    private readonly int[] hashAttack = new int[] { Animator.StringToHash("DoAttack1"), Animator.StringToHash("DoAttack2"), Animator.StringToHash("DoAttack3")};
+    #endregion
 
-    private readonly int hashStrafe = Animator.StringToHash("Strafe");
-    private readonly int hashForward = Animator.StringToHash("Forward");
-    private readonly int hashRun = Animator.StringToHash("Run");
-    private readonly int hashAttack = Animator.StringToHash("DoAttack");
-    private readonly int hashMoveSpeed = Animator.StringToHash("MoveSpeed");
+    [SerializeField] private float m_fAttackDelay = 0.5f;
+    private float m_fAttackRunTime = 0.0f;
+    private float m_fAttackInitTime = 1.5f;
+    private int m_nAttackCount = 0;
+
 
     [SerializeField] private float moveSpeed = 5.0f;
 
-    Camera cam;
-    float xInput;
-    float zInput;
-    float runInput;
-    bool attackInput;
+    #region GetComponent 초기화 항목
+    private Rigidbody rigid;
+    private Weapon weaponCtr;
+    #endregion
+
+    private Camera cam;
+    private float xInput;
+    private float zInput;
+    private float runInput;
+    private bool attackInput;
+    private bool m_bIsSwing = false;
 
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
     //플레이어 UI (HPbar) Manager
     private PlayerUIManager playerUICtr;
-    
-
 
     protected override void Awake()
     {
         base.Awake();
-        rigid = GetComponent<Rigidbody>();
+
+        rigid     = GetComponent<Rigidbody>();
+        weaponCtr = GetComponentInChildren<Weapon>();
+
         #region SingTone
         if (instance != null)
         {
@@ -49,6 +64,8 @@ public class PlayerController : Character
 
     protected override void Start()
     {
+        anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
+
         cam = Camera.main;
         playerUICtr   = PlayerUIManager.instance;
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
@@ -57,15 +74,15 @@ public class PlayerController : Character
 
     private void FixedUpdate()
     {
-        xInput = Input.GetAxis("Horizontal");
-        zInput = Input.GetAxis("Vertical");
-        runInput = Input.GetAxis("Run");
-        attackInput = Input.GetButtonDown("Fire1");
-
+        Input_init();
 
         Vector3 direction = new Vector3(xInput, 0, zInput);
 
-        if (attackInput) anim.SetTrigger(hashAttack);
+        if (attackInput && !m_bIsSwing)
+        {    
+            StartCoroutine(BasicAttack());
+        }
+
 
         anim.SetFloat(hashStrafe, direction.x);
         anim.SetFloat(hashForward, direction.z);
@@ -73,6 +90,7 @@ public class PlayerController : Character
 
         float movementSpeed = moveSpeed;
         if (runInput < 1.0f) movementSpeed *= 0.5f;
+        if (m_bIsSwing) movementSpeed = 0.0f;
         Vector3 movement = direction.normalized * movementSpeed * Time.fixedDeltaTime;
 
         anim.SetFloat(hashMoveSpeed, movementSpeed);
@@ -81,7 +99,10 @@ public class PlayerController : Character
         destRot.x = 0;
         destRot.z = 0;
 
+
         rigid.transform.rotation = destRot;
+
+
         //if (zInput >= 0.1)
         //{
         //    Quaternion destRot = cam.transform.localRotation;
@@ -93,18 +114,48 @@ public class PlayerController : Character
 
         rigid.transform.Translate(movement);
     }
+
+    private void Update()
+    {
+        m_fAttackRunTime += Time.deltaTime;
+    }
+
+    // Use => FixedUpdate()
     private void Input_init()
     {
-
+        xInput = Input.GetAxis("Horizontal");
+        zInput = Input.GetAxis("Vertical");
+        runInput = Input.GetAxis("Run");
+        attackInput = Input.GetButton("Fire1");
     }
 
     public override void LevelUP()
     {
         base.LevelUP();
-        //원거리 직업은 공격 사거리도 늘어나게?
+        
         m_fAttackRange = statusSetting.GetAttackRange();
 
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
+    }
+
+    private IEnumerator BasicAttack()
+    {
+        if(m_fAttackRunTime > m_fAttackDelay && !m_bIsSwing)
+        {
+            weaponCtr.Use();
+            //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
+            if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
+            anim.SetTrigger(hashAttack[m_nAttackCount]);
+
+            m_nAttackCount++;
+            if (m_nAttackCount >= 3) m_nAttackCount = 0;
+
+            m_bIsSwing = true;
+            m_fAttackRunTime = 0;
+            yield return new WaitForSeconds(m_fAttackDelay);
+
+            m_bIsSwing = false;
+        }
     }
 
     protected override IEnumerator Attack()
@@ -159,26 +210,6 @@ public class PlayerController : Character
         OnPlayerDie(); //delegate event Play
         GameManager.instance.PlayerDie();
     }
-
-    #region 몬스터 추적 관리
-    //몬스터 생성시, 플레이어가 추적할 몬스터 리스트에 추가
-    public void AddMonsterObjs(int _curMonidx, Transform _mon)
-    {
-        KeyValuePair<int, Transform> pair = new KeyValuePair<int, Transform>(_curMonidx, _mon);
-
-        monsterObjs_list.Add(pair);
-
-    }
-
-    //몬스터 사망시, 플레이가 추적할 몬스터 리스트에서 삭제
-    public void SubMonsterObjs(int _monidx, Transform _mon)
-    {
-        KeyValuePair<int, Transform> pair = new KeyValuePair<int, Transform>(_monidx, _mon);
-
-        int idx = monsterObjs_list.IndexOf(pair);
-        monsterObjs_list.RemoveAt(idx);
-    }
-    #endregion
 
     public float GetSTR() { return m_fCurSTR;}
     public float GetHP()  { return m_fCurHP; }

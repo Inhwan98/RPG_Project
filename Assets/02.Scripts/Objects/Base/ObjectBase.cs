@@ -23,15 +23,6 @@ abstract public class ObjectBase : MonoBehaviour
     [SerializeField] protected bool  m_bisDead;
     [SerializeField] protected ObjectState objState; // 상태에 따른 액션
     
-
-    #region Hit Material Setting
-    protected SkinnedMeshRenderer skinMesh;
-    [Header("Hit Material")]
-    [SerializeField] protected Material hitMat;
-    [SerializeField] protected Material dieMat;
-    protected Material originMat;
-    #endregion
-
     #region Animation Setting
     protected Animator anim;
     protected readonly int hashDead = Animator.StringToHash("DoDead");
@@ -42,8 +33,6 @@ abstract public class ObjectBase : MonoBehaviour
     protected virtual void Awake()
     {
         InitObj();
-        skinMesh = GetComponentInChildren<SkinnedMeshRenderer>();
-        originMat = skinMesh.material;
     }
 
     protected virtual void Start()
@@ -52,23 +41,12 @@ abstract public class ObjectBase : MonoBehaviour
     }
 
 
-    
-
-
     protected virtual void Getinfo()
     {
         Debug.Log($"HP : {m_fCurHP}");
         Debug.Log($"STR : {m_fCurSTR}");
         Debug.Log($"AttackRange : {m_fAttackRange}");
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Debug.DrawLine(transform.position, transform.position + transform.forward * m_fAttackRange);
-        Gizmos.DrawWireSphere(transform.position, m_fAttackRange);
-    }
-
 
     //protected abstract void OnAttack1Trigger();
 

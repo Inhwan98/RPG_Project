@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private GameObject monObj;
+    //[SerializeField] private GameObject monObj;
 
     [Header("Monster Respawn Info")]
     [SerializeField] private float respawnDistance;
@@ -42,28 +42,28 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        StartCoroutine(UpdateMonster());
+        //StartCoroutine(UpdateMonster());
     }
 
 
-    //몬스터 생성주기
-    IEnumerator UpdateMonster()
-    {
-        while(!m_bisPlayerDie)
-        {
-            float randRotNum = Random.Range(0, 360.0f);
-            Quaternion randRot = Quaternion.Euler(playerTr.up * randRotNum);
-            //Vector3 randPos = randRot * (playerTr.forward * respawnDistance);
+    ////몬스터 생성주기
+    //IEnumerator UpdateMonster()
+    //{
+    //    while(!m_bisPlayerDie)
+    //    {
+    //        float randRotNum = Random.Range(0, 360.0f);
+    //        Quaternion randRot = Quaternion.Euler(playerTr.up * randRotNum);
+    //        //Vector3 randPos = randRot * (playerTr.forward * respawnDistance);
 
-            //플레이어 주변으로 respawnDistance 만큼 떨어짐. 각도는 랜덤
-            Vector3 randPos = playerTr.rotation * randRot * (playerTr.forward * respawnDistance);
-            GameObject mon = Instantiate(monObj, playerTr.position + randPos, Quaternion.identity);
-            playerCtr.AddMonsterObjs(AllMonstersNum-1, mon.transform); // 07 26
+    //        //플레이어 주변으로 respawnDistance 만큼 떨어짐. 각도는 랜덤
+    //        Vector3 randPos = playerTr.rotation * randRot * (playerTr.forward * respawnDistance);
+    //        GameObject mon = Instantiate(monObj, playerTr.position + randPos, Quaternion.identity);
+    //        playerCtr.AddMonsterObjs(AllMonstersNum-1, mon.transform); // 07 26
 
-            yield return new WaitForSeconds(respawnTime);
-            yield return new WaitUntil(() => currentMonsters < maxMonsters); // 최대 생성 몬스터 개수에 도달하면 대기
-        }
-    }
+    //        yield return new WaitForSeconds(respawnTime);
+    //        yield return new WaitUntil(() => currentMonsters < maxMonsters); // 최대 생성 몬스터 개수에 도달하면 대기
+    //    }
+    //}
 
     public void AddCurrentMonsters(out int _monidx)
     {

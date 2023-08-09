@@ -96,8 +96,4 @@ public class PlayerUIManager : MonoBehaviour
         AttackRangeText.text = $"공격사거리 : {_attackRange}";
         levelText.text = $"Lv.{m_curLevel}";
     }
-
-  
-
-    
 }
