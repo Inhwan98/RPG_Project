@@ -46,57 +46,22 @@ public class SkillManager : MonoBehaviour
         return Skills;
     }
 
-    public void UseSkill(SkillStatus _sk, Transform _targetTr, ObjectBase _selfCtr, ref float _objectMP)
+    public void UseSkill(SkillStatus _sk, ObjectBase _selfCtr, ref float _objectMP)
     {
         _objectMP -= _sk.GetSkillManaAmount(); //사용 Object에서 스킬 마나만큼 차감
-
-        UI_Damage damageUICtr;
-        GameObject _damageText;
-        ObjectBase _objCtr  = _targetTr?.GetComponent<ObjectBase>();
         float _fAttackRange = _sk.GetAttackRange();
 
         
         switch (_sk.GetSkillType())
         {
             case SkillType.SINGLE:
-                //공격력 만큼 피해
-                _objCtr.OnDamage(power_STR);
-                GameObject _hitEffect = Instantiate(_sk.GetEffectObj(), _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
 
-                _damageText = Instantiate(damageTextObj, _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
-                damageUICtr = _damageText.GetComponent<UI_Damage>();
-                damageUICtr.SetDamageText(power_STR);
-
-                Destroy(_hitEffect, 1f);
-               
+                //GameObject _hitEffect = Instantiate(_sk.GetEffectObj(), _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
+                //Destroy(_hitEffect, 1f);
                 break;
 
             case SkillType.ARROUND_TARGET:
-                GameObject _arroundEffect = Instantiate(_sk.GetEffectObj(), _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
-
-                _arroundEffect.transform.localScale = Vector3.one * _sk.GetAttackRange();
-                Destroy(_arroundEffect, 1f);
-                Collider[] targets = Physics.OverlapSphere(_targetTr.position, _fAttackRange, targetLayer); // 공격 범위 적용
-                bool isTargetDetected = targets.Length > 0;
-
-                if (isTargetDetected)
-                {
-                    foreach (Collider target in targets)
-                    {
-                        //모든 생명체는 ObjectBase를 가지고 있을 것
-                        _objCtr = target.GetComponent<ObjectBase>();
-
-                        _objCtr.OnDamage(power_STR);
-
-                        _damageText = Instantiate(damageTextObj, _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
-                        damageUICtr = _damageText.GetComponent<UI_Damage>();
-                        damageUICtr.SetDamageText(power_STR);
-                    }
-                }
-                else
-                {
-                    Debug.Log("감지된거 없음");
-                }
+               
 
                 break;
 

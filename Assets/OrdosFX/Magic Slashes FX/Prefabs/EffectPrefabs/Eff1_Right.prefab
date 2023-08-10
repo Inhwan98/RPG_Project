@@ -9744,7 +9744,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 4925b5d5793812b4ba5dfb11823f9fa8, type: 2}
-  - {fileID: 2100000, guid: 4925b5d5793812b4ba5dfb11823f9fa8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -19555,7 +19554,8 @@ GameObject:
   - component: {fileID: 4284202550876370}
   - component: {fileID: 198538831707365924}
   - component: {fileID: 199254525381657064}
-  m_Layer: 0
+  - component: {fileID: 364049119808978510}
+  m_Layer: 7
   m_Name: BlackRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24375,7 +24375,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d4a63dbf8c16ac94d881d7ce150cf21e, type: 2}
-  - {fileID: 2100000, guid: d4a63dbf8c16ac94d881d7ce150cf21e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24421,6 +24420,19 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!65 &364049119808978510
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842568851571020}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.02, y: 6.02, z: 0.34}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1911901140312268
 GameObject:
   m_ObjectHideFlags: 0

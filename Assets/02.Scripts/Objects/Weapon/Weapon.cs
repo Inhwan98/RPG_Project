@@ -8,10 +8,12 @@ public class Weapon : MonoBehaviour
     [SerializeField] private IWeaponType weaponType;
 
     [SerializeField] private Collider meleeArea;
+    private TrailRenderer weaponTrail;
 
     private void Awake()
     {
-        meleeArea = GetComponent<Collider>();
+        meleeArea   = GetComponent<Collider>();
+        weaponTrail = GetComponentInChildren<TrailRenderer>();
     }
 
     public void Use()
@@ -29,11 +31,13 @@ public class Weapon : MonoBehaviour
         //공격의 단계를 코루틴으로 구분
         //1
         yield return new WaitForSeconds(0.1f);
-        meleeArea.enabled = true; //컴포넌트 활성화
-                                  //2
+        meleeArea.enabled   = true; //컴포넌트 활성화
+        weaponTrail.enabled = true; //트레일렌더러 활성화
+        //2
         yield return new WaitForSeconds(0.3f);
-        meleeArea.enabled = false;
+        meleeArea.enabled   = false;
         //3
         yield return new WaitForSeconds(0.3f);
+        weaponTrail.enabled = false; //트레일렌더러 비활성화
     }
 }
