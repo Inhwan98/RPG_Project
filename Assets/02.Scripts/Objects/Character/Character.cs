@@ -10,7 +10,7 @@ abstract public class Character : ObjectBase
     [SerializeField] protected List<SkillStatus> skill_List;
 
     //스킬을 자동 실행할 원형 큐
-    protected CircularQueue<SkillStatus> circualrQueue;
+    // protected CircularQueue<SkillStatus> circualrQueue;
     protected SkillManager skillMgr;
     private GameObject[] levelUPEffect; //레벨업 이펙트
 
@@ -27,12 +27,15 @@ abstract public class Character : ObjectBase
 
         #region 기본스킬 세팅
         skill_List = skillMgr.BasicSkillSet();
-        circualrQueue = new CircularQueue<SkillStatus>(skillMaxAmount);
+        #endregion
+
+        #region 자동스킬 사용 세팅
+        //circualrQueue = new CircularQueue<SkillStatus>(skillMaxAmount);
         //기초 세팅 될 스킬을 미리 원형 큐에 넣어 둔다.
-        foreach (var a in skill_List)
-        {
-            circualrQueue.EnQueue(a);
-        }
+        //foreach (var a in skill_List)
+        //{
+        //    circualrQueue.EnQueue(a);
+        //}
         #endregion
 
         base.Start();
@@ -83,4 +86,5 @@ abstract public class Character : ObjectBase
     }
 
     protected override void Die() { }
+    protected abstract IEnumerator SkillAttack(int skillNum);
 }

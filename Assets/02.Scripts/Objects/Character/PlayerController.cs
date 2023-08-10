@@ -49,9 +49,8 @@ public class PlayerController : Character
     {
         base.Awake();
 
-        rigid     = GetComponent<Rigidbody>();
-        weaponCtr = GetComponentInChildren<Weapon>();
-
+        rigid       = GetComponent<Rigidbody>();
+        weaponCtr   = GetComponentInChildren<Weapon>();
         #region SingTone
         if (instance != null)
         {
@@ -74,15 +73,7 @@ public class PlayerController : Character
 
     private void FixedUpdate()
     {
-        Input_init();
-
         Vector3 direction = new Vector3(xInput, 0, zInput);
-
-        if (attackInput && !m_bIsSwing)
-        {    
-            StartCoroutine(BasicAttack());
-        }
-
 
         anim.SetFloat(hashStrafe, direction.x);
         anim.SetFloat(hashForward, direction.z);
@@ -90,8 +81,10 @@ public class PlayerController : Character
 
         float movementSpeed = moveSpeed;
         if (runInput < 1.0f) movementSpeed *= 0.5f;
-        if (m_bIsSwing) movementSpeed = 0.0f;
+        if (m_bisAttack) movementSpeed = 0.0f;
+
         Vector3 movement = direction.normalized * movementSpeed * Time.fixedDeltaTime;
+
 
         anim.SetFloat(hashMoveSpeed, movementSpeed);
 
@@ -117,7 +110,17 @@ public class PlayerController : Character
 
     private void Update()
     {
+        Input_init();
+
         m_fAttackRunTime += Time.deltaTime;
+
+        if (attackInput && !m_bIsSwing) StartCoroutine(Attack());
+
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("1");
+            StartCoroutine(SkillAttack(1));
+        }
     }
 
     // Use => FixedUpdate()
@@ -138,9 +141,9 @@ public class PlayerController : Character
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
     }
 
-    private IEnumerator BasicAttack()
+    protected override IEnumerator Attack()
     {
-        if(m_fAttackRunTime > m_fAttackDelay && !m_bIsSwing)
+        if(m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
         {
             weaponCtr.Use();
             //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
@@ -150,37 +153,34 @@ public class PlayerController : Character
             m_nAttackCount++;
             if (m_nAttackCount >= 3) m_nAttackCount = 0;
 
-            m_bIsSwing = true;
+            m_bisAttack = true;
             m_fAttackRunTime = 0;
             yield return new WaitForSeconds(m_fAttackDelay);
 
-            m_bIsSwing = false;
+            m_bisAttack = false;
         }
     }
 
-    protected override IEnumerator Attack()
+    protected override IEnumerator SkillAttack(int skillNum)
     {
         //현재 사용할 스킬
-        SkillStatus curSkill = circualrQueue.Front();
+        SkillStatus curSkill = skill_List[skillNum - 1];
 
         //보유 마나보다 스킬 마나가 크다면 공격 중단.
         //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
 
-        //wandTrail.enabled = true; // 무기 잔상 활성화
         //Debug.Assert(destTr, "destTr is NULL !!!");
-
-
 
         m_bisAttack = true;
         //transform.LookAt(destTr);
 
         anim.SetTrigger(curSkill.GetAnimHash());
-        //skillMgr.UseSkill(curSkill, destTr, this, ref m_fCurMP);
+        skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
         playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
-
-        yield return new WaitForSeconds(1);
+    
+        yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
         m_bisAttack = false;
-        circualrQueue.DeQueue(); //스킬 순서 당겨 주기
+        //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
     }
 
     public override void Buff(float _str)
