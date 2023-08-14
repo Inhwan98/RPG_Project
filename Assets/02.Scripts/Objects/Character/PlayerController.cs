@@ -121,6 +121,11 @@ public class PlayerController : Character
             Debug.Log("1");
             StartCoroutine(SkillAttack(1));
         }
+        else if(Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("2");
+            StartCoroutine(SkillAttack(2));
+        }
     }
 
     // Use => FixedUpdate()
@@ -163,7 +168,7 @@ public class PlayerController : Character
 
     protected override IEnumerator SkillAttack(int skillNum)
     {
-        //현재 사용할 스킬
+        //현재 사용할. 스킬 0번째 부터 시작함.
         SkillStatus curSkill = skill_List[skillNum - 1];
 
         //보유 마나보다 스킬 마나가 크다면 공격 중단.
