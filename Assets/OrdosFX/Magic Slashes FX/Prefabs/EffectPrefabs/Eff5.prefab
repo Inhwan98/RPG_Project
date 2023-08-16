@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4370783734653012}
   - component: {fileID: 198083140008792670}
   - component: {fileID: 199190145967445214}
-  m_Layer: 0
+  - component: {fileID: 163516691}
+  m_Layer: 7
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3670,9 +3671,9 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
@@ -3844,7 +3845,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minKillSpeed: 0
+    minKillSpeed: 1
     maxKillSpeed: 10000
     radiusScale: 1
     collidesWith:
@@ -3853,17 +3854,17 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 2
-    inside: 1
+    inside: 2
     outside: 0
     enter: 0
     exit: 0
-    colliderQueryMode: 0
+    colliderQueryMode: 2
     radiusScale: 1
     primitives:
     - {fileID: 0}
@@ -4882,6 +4883,18 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &163516691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069831069769068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb84825277ada347a417c59cd0ede8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1076746166997956
 GameObject:
   m_ObjectHideFlags: 0
@@ -4893,7 +4906,7 @@ GameObject:
   - component: {fileID: 4874062616106230}
   - component: {fileID: 198494753038925798}
   - component: {fileID: 199233223756378842}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Rocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9775,7 +9788,7 @@ GameObject:
   - component: {fileID: 4130958613384388}
   - component: {fileID: 198578148037025884}
   - component: {fileID: 199111082581133302}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Rocks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14629,8 +14642,8 @@ GameObject:
   - component: {fileID: 4250174117465416}
   - component: {fileID: 198872405255274508}
   - component: {fileID: 199735204897255906}
-  m_Layer: 0
-  m_Name: Fire
+  m_Layer: 7
+  m_Name: Fire2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19483,7 +19496,7 @@ GameObject:
   - component: {fileID: 4744715170970238}
   - component: {fileID: 198662898953764616}
   - component: {fileID: 199637158908182020}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24337,7 +24350,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4744891521936506}
   - component: {fileID: 108354428697195270}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24429,7 +24442,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4546391515908928}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Eff5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24462,13 +24475,13 @@ GameObject:
   - component: {fileID: 4941173625567828}
   - component: {fileID: 198982893303636206}
   - component: {fileID: 199826921263647050}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Lights
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4941173625567828
 Transform:
   m_ObjectHideFlags: 0
@@ -29344,7 +29357,7 @@ GameObject:
   - component: {fileID: 4181258241681530}
   - component: {fileID: 198115701710732878}
   - component: {fileID: 199570537048605394}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wave1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

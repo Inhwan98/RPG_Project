@@ -16,6 +16,7 @@ abstract public class ObjectBase : MonoBehaviour
     [SerializeField] protected float m_fMaxHP;
     [SerializeField] protected float m_fCurHP;
     [SerializeField] protected float m_fCurSTR;
+    [SerializeField] protected float m_fSkillDamage;
     [SerializeField] protected float m_fMaxMP;
     [SerializeField] protected float m_fCurMP;
     [SerializeField] protected float m_fAttackRange;
@@ -70,6 +71,13 @@ abstract public class ObjectBase : MonoBehaviour
  
         anim = GetComponent<Animator>();
     }
+
+    public float GetSkillDamage() { return m_fSkillDamage; }
+    public void  SetSkillDamage(float _skillDamage)
+    {
+        m_fSkillDamage = _skillDamage;
+    }
+
 
     //State값 반환
     public ObjectState GetObjState()
