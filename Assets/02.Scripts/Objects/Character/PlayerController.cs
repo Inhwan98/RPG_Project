@@ -180,6 +180,7 @@ public class PlayerController : Character
         //transform.LookAt(destTr);
 
         anim.SetTrigger(curSkill.GetAnimHash());
+        
         skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
         playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
     

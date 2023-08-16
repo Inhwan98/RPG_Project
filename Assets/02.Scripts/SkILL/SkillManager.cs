@@ -27,6 +27,7 @@ public class SkillManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         #endregion
 
+        //스킬의 animtion Parameter 해쉬화
         foreach (SkillStatus skill in Skills) skill.ChangeAnimHash();
     }
 
@@ -37,7 +38,7 @@ public class SkillManager : MonoBehaviour
         //적들의 OnDamge 함수를 호출해서 인자로 넘길 것
         playerCtr = PlayerController.instance;
         power_STR = playerCtr.GetSTR();
-
+        foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);
     }
 
     //기초 스킬 세팅을 넘겨주기 위한 준비
@@ -50,8 +51,9 @@ public class SkillManager : MonoBehaviour
     {
         _objectMP -= _sk.GetSkillManaAmount(); //사용 Object에서 스킬 마나만큼 차감
         float _fAttackRange = _sk.GetAttackRange();
-
         
+
+
         switch (_sk.GetSkillType())
         {
             case SkillType.SINGLE:
@@ -76,7 +78,7 @@ public class SkillManager : MonoBehaviour
     public void CharacterLevelUP(float _STR)
     {
         power_STR = _STR;
+        foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);
     }
-
 
 }

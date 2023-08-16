@@ -241,10 +241,17 @@ public class Monster : ObjectBase
 
     private void OnTriggerEnter(Collider coll)
     {
-        if(coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
+        if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
         {
             Debug.Log("PlayerWeapon");
-            
+
+            float playerStr = playerCtr.GetSTR();
+            OnDamage(playerStr);
+        }
+        else if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerSkill"))
+        {
+            Debug.Log("PlayerSkill");
+
             float playerStr = playerCtr.GetSTR();
             OnDamage(playerStr);
         }
