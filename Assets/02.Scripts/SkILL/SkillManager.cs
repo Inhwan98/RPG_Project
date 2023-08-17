@@ -51,8 +51,7 @@ public class SkillManager : MonoBehaviour
     {
         _objectMP -= _sk.GetSkillManaAmount(); //사용 Object에서 스킬 마나만큼 차감
         float _fAttackRange = _sk.GetAttackRange();
-        
-
+        playerCtr.SetSkillDamage(_sk.GetSkillDamage()); //현재 스킬의 데미지를 플레이어에게 전달.
 
         switch (_sk.GetSkillType())
         {

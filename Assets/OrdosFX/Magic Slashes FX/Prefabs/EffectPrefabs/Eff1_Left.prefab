@@ -9945,7 +9945,7 @@ GameObject:
   - component: {fileID: 198358127100567982}
   - component: {fileID: 199754922110781738}
   - component: {fileID: 4456998044952800581}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: BlackRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}

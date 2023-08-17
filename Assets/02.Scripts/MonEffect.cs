@@ -23,9 +23,5 @@ public class MonEffect : MonoBehaviour
         }
     }
 
-    private void OnParticleCollision(GameObject other)
-    {
-        Debug.Log($"Cube Collision : {other.name}");
-        ps = other.GetComponent<ParticleSystem>();
-    }
+
 }
