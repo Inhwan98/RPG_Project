@@ -27,6 +27,9 @@ public class Monster : ObjectBase
     [SerializeField] private Transform damageTr;
     private GameObject damageTextObj;
 
+    //Drop Item
+    private GameObject chestPrefab;
+
 
     #region Animation Setting
     protected readonly int hashTrace = Animator.StringToHash("IsWalk");
@@ -46,6 +49,7 @@ public class Monster : ObjectBase
         agent = GetComponent<NavMeshAgent>();
 
         damageTextObj = Resources.Load<GameObject>("Prefab/DamageUI");
+        chestPrefab   = Resources.Load<GameObject>("Prefab/Treasure_Chest");
     }
 
     protected override void Start()
@@ -93,17 +97,18 @@ public class Monster : ObjectBase
         //Physics.SphereCastAll:
         //위치, (구체)반지름, 방향, 구체범위, 구체의 들어온 레이어판별
 
+        if(rayHits.Length == 0) objState = ObjectState.IDLE;
+
         if (rayHits.Length > 0 && !m_bisAttack)
         {
-            if(attackHits.Length <= 0)
+            if(attackHits.Length == 0 && !m_bisAttack)
             {
                 objState = ObjectState.MOVE;
-                yield break;
             }
-
-            if (attackHits.Length > 0 && !m_bisAttack)
+            else if (attackHits.Length > 0 && !m_bisAttack)
             {
                 objState = ObjectState.ATK;
+
             }
         }
 
@@ -119,6 +124,7 @@ public class Monster : ObjectBase
         }
     }
 
+    #region NavMesh On/Off Func
     void ChaseStart()
     {
         m_bisChase = true;
@@ -132,6 +138,7 @@ public class Monster : ObjectBase
         anim.SetBool(hashTrace, false);
         agent.enabled = false;
     }
+    #endregion
 
     protected override IEnumerator Attack()
     {
@@ -208,6 +215,8 @@ public class Monster : ObjectBase
 
     public override void OnDamage(float _str)
     {
+        if (m_bisDead) return;
+
         this.m_fCurHP -= _str;
 
         UI_Damage damageUICtr;
@@ -252,15 +261,16 @@ public class Monster : ObjectBase
         {
             Debug.Log("PlayerSkill");
 
-            float playerStr = playerCtr.GetSTR();
-            OnDamage(playerStr);
+            float playerSkillPower = playerCtr.GetSkillDamage();
+            OnDamage(playerSkillPower);
         }
     }
-
 
     protected override void Die()
     {
         PlayerController.OnPlayerDie -= this.OnPlayerDie;
+
+        GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
 
         this.gameObject.layer = 2; // Ignore Raycast
         StopAllCoroutines();

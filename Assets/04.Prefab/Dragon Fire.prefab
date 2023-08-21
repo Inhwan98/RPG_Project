@@ -1366,6 +1366,7 @@ MonoBehaviour:
   m_fMaxHP: 0
   m_fCurHP: 0
   m_fCurSTR: 0
+  m_fSkillDamage: 0
   m_fMaxMP: 0
   m_fCurMP: 0
   m_fAttackRange: 0

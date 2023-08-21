@@ -46,7 +46,7 @@ public class SkillStatus
     public float GetSkillDamage() { return m_fSkillDamage; }
     public void SetSkillDamage(float _power)
     {
-        m_fSkillDamage = (m_nSkillDamagePer * _power) + _power;
+        m_fSkillDamage = (m_nSkillDamagePer/100 * _power) + _power;
     }
 
     public string GetAnimName() { return animParameterName; }
