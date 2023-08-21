@@ -27,6 +27,9 @@ public class Monster : ObjectBase
     [SerializeField] private Transform damageTr;
     private GameObject damageTextObj;
 
+    //Drop Item
+    private GameObject chestPrefab;
+
 
     #region Animation Setting
     protected readonly int hashTrace = Animator.StringToHash("IsWalk");
@@ -46,6 +49,7 @@ public class Monster : ObjectBase
         agent = GetComponent<NavMeshAgent>();
 
         damageTextObj = Resources.Load<GameObject>("Prefab/DamageUI");
+        chestPrefab   = Resources.Load<GameObject>("Prefab/Treasure_Chest");
     }
 
     protected override void Start()
@@ -97,7 +101,7 @@ public class Monster : ObjectBase
 
         if (rayHits.Length > 0 && !m_bisAttack)
         {
-            if(attackHits.Length == 0)
+            if(attackHits.Length == 0 && !m_bisAttack)
             {
                 objState = ObjectState.MOVE;
             }
@@ -120,6 +124,7 @@ public class Monster : ObjectBase
         }
     }
 
+    #region NavMesh On/Off Func
     void ChaseStart()
     {
         m_bisChase = true;
@@ -133,6 +138,7 @@ public class Monster : ObjectBase
         anim.SetBool(hashTrace, false);
         agent.enabled = false;
     }
+    #endregion
 
     protected override IEnumerator Attack()
     {
@@ -263,6 +269,8 @@ public class Monster : ObjectBase
     protected override void Die()
     {
         PlayerController.OnPlayerDie -= this.OnPlayerDie;
+
+        GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
 
         this.gameObject.layer = 2; // Ignore Raycast
         StopAllCoroutines();
