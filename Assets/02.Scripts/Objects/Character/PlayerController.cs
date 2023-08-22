@@ -67,6 +67,9 @@ public class PlayerController : Character
 
         cam = Camera.main;
         playerUICtr   = PlayerUIManager.instance;
+
+
+        PlayerUI_Init();
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
         base.Start();
     }
@@ -128,6 +131,13 @@ public class PlayerController : Character
         }
     }
 
+    private void PlayerUI_Init()
+    {
+        playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP);
+        playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
+        playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
+    }
+
     // Use => FixedUpdate()
     private void Input_init()
     {
@@ -140,7 +150,8 @@ public class PlayerController : Character
     public override void LevelUP()
     {
         base.LevelUP();
-        
+        PlayerUI_Init();
+
         m_fAttackRange = statusSetting.GetAttackRange();
 
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);

@@ -15,14 +15,16 @@ public class PlayerUIManager : MonoBehaviour
     [Header("HP UI")]
     [SerializeField] private Image hpBarImage;
     [SerializeField] private RectTransform hpHandleRT;
+    [SerializeField] private Text hpText;
 
     [Header("MP UI")]
-    [SerializeField] private Image mpBarImage;
+    [SerializeField] private Image[] mpBarImage = new Image[2];
     [SerializeField] private RectTransform mpHandleRT;
 
     [Header("EXP UI")]
     [SerializeField] private Image expBarImage;
     [SerializeField] private RectTransform expHandleRT;
+    [SerializeField] private Text expText;
 
     [Header("Player Info")]
     [SerializeField] private Text MaxHPText;
@@ -59,12 +61,14 @@ public class PlayerUIManager : MonoBehaviour
         hpHandleRT.anchorMin = vec;
         vec.y = 1;
         hpHandleRT.anchorMax = vec;
+        hpText.text = $"{_playerHP}/{_playerMaxHP}";
     }
 
     public void SetMPbar(float _playerMP, float _playerMaxMP)
     {
         float amount = (_playerMP / _playerMaxMP);
-        mpBarImage.fillAmount = amount;
+        mpBarImage[0].fillAmount = amount;
+        mpBarImage[1].fillAmount = amount;
 
         Vector2 vec;
         vec.x = amount;
@@ -85,6 +89,7 @@ public class PlayerUIManager : MonoBehaviour
         expHandleRT.anchorMin = vec;
         vec.y = 1;
         expHandleRT.anchorMax = vec;
+        expText.text = $"{_playerEXP}/{_playerMaxEXP} XP";
     }
 
     public void DisplayInfo(int _level, float _maxHP, float _maxMP, float _str, float _attackRange)
