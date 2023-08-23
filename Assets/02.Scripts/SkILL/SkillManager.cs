@@ -38,7 +38,14 @@ public class SkillManager : MonoBehaviour
         //적들의 OnDamge 함수를 호출해서 인자로 넘길 것
         playerCtr = PlayerController.instance;
         power_STR = playerCtr.GetSTR();
+        //스킬 데미지를 플레이어의 STR, 스킬의 % 수치에 비례해서 설정
+        //각 스킬은 고유의 % 데미지를 가지고 있음
         foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);
+    }
+
+    private void Update()
+    {
+        
     }
 
     //기초 스킬 세팅을 넘겨주기 위한 준비
@@ -50,7 +57,7 @@ public class SkillManager : MonoBehaviour
     public void UseSkill(SkillStatus _sk, ObjectBase _selfCtr, ref float _objectMP)
     {
         _objectMP -= _sk.GetSkillManaAmount(); //사용 Object에서 스킬 마나만큼 차감
-        float _fAttackRange = _sk.GetAttackRange();
+        //float _fAttackRange = _sk.GetAttackRange(); //공격 범위
         playerCtr.SetSkillDamage(_sk.GetSkillDamage()); //현재 스킬의 데미지를 플레이어에게 전달.
 
         switch (_sk.GetSkillType())
@@ -76,6 +83,7 @@ public class SkillManager : MonoBehaviour
 
     public void CharacterLevelUP(float _STR)
     {
+        //캐릭터가 레벨업하면 스킬 데미지도 재설정
         power_STR = _STR;
         foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);
     }
