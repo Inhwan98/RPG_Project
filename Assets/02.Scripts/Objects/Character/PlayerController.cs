@@ -68,10 +68,11 @@ public class PlayerController : Character
         cam = Camera.main;
         playerUICtr   = PlayerUIManager.instance;
 
-
         PlayerUI_Init();
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
-        base.Start();
+
+        base.Start(); //skill_List 가 부모에서 초기화 됌
+        playerUICtr.UpdateSkill_Image(skill_List);
     }
 
     private void FixedUpdate()
@@ -188,7 +189,6 @@ public class PlayerController : Character
         //Debug.Assert(destTr, "destTr is NULL !!!");
 
         m_bisAttack = true;
-        //transform.LookAt(destTr);
 
         anim.SetTrigger(curSkill.GetAnimHash());
         

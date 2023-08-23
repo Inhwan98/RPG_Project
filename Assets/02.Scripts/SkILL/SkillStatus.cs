@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public enum SkillType
@@ -22,7 +23,8 @@ public class SkillStatus
     [SerializeField] private int m_nSkillDamagePer;
     [SerializeField] private float m_fCooldown;
     [SerializeField] private float m_fManaAmount; // 요구 마나
-    [SerializeField] private GameObject effectPrefab;
+    [SerializeField] private GameObject effectPrefab; // 이펙트 효과
+    [SerializeField] private Sprite m_iSprite;
     [SerializeField] private SkillType skillType;
     private int anim_Hash;
     private float m_fSkillDamage;
@@ -48,6 +50,9 @@ public class SkillStatus
     {
         m_fSkillDamage = (m_nSkillDamagePer/100 * _power) + _power;
     }
+
+    //스킬이미지
+    public Sprite GetSkill_Sprite() { return m_iSprite; }
 
     public string GetAnimName() { return animParameterName; }
 

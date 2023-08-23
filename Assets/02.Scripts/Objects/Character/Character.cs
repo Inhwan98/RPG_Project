@@ -27,6 +27,7 @@ abstract public class Character : ObjectBase
 
         #region 기본스킬 세팅
         skill_List = skillMgr.BasicSkillSet();
+        
         #endregion
 
         #region 자동스킬 사용 세팅
@@ -83,6 +84,11 @@ abstract public class Character : ObjectBase
         }
 
         foreach (var v in _levelUP) Destroy(v, 4.0f);
+    }
+
+    public List<SkillStatus> GetCharacterSillList()
+    {
+        return skill_List;
     }
 
     protected override void Die() { }

@@ -33,6 +33,9 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private Text AttackSpeedText;
     [SerializeField] private Text AttackRangeText;
 
+    [Header("Skill Info")]
+    [SerializeField] private Image[] skill_Image = new Image[6];
+    [SerializeField] private Image[] skill_CoolTimeImage = new Image[6];
 
     private PlayerController playerCtr;
 
@@ -90,6 +93,20 @@ public class PlayerUIManager : MonoBehaviour
         vec.y = 1;
         expHandleRT.anchorMax = vec;
         expText.text = $"{_playerEXP}/{_playerMaxEXP} XP";
+    }
+
+    public void UpdateSkill_Image(List<SkillStatus> _skill_List)
+    {
+        //배운 스킬의 개수만큼 스킬 이미지 활성화
+        int size = _skill_List.Count;
+        for (int i = 0; i < size; i++)
+        {
+            skill_Image[i].sprite = _skill_List[i].GetSkill_Sprite();
+            skill_Image[i].gameObject.SetActive(true);
+
+            Debug.Log("Update Skill Image");
+        }
+
     }
 
     public void DisplayInfo(int _level, float _maxHP, float _maxMP, float _str, float _attackRange)
