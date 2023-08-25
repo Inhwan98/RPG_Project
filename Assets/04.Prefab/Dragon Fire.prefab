@@ -1377,8 +1377,8 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 8
-  m_fSensorRadius: 3.34
-  m_fSensorRange: 3.92
+  m_fSensorRadius: 5.95
+  m_fSensorRange: 0
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
   damageTr: {fileID: 1359316832}
