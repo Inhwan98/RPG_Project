@@ -26,7 +26,6 @@ public class SkillManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this.gameObject);
         #endregion
-
         //스킬의 animtion Parameter 해쉬화
         foreach (SkillStatus skill in Skills) skill.ChangeAnimHash();
     }

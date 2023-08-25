@@ -26,6 +26,7 @@ public class SkillStatus
     [SerializeField] private GameObject effectPrefab; // 이펙트 효과
     [SerializeField] private Sprite m_iSprite;
     [SerializeField] private SkillType skillType;
+    private bool m_bInUse;
     private int anim_Hash;
     private float m_fSkillDamage;
 
@@ -54,8 +55,14 @@ public class SkillStatus
     //스킬이미지
     public Sprite GetSkill_Sprite() { return m_iSprite; }
 
+    //스킬 사용 여부
+    public bool GetInUse() { return m_bInUse; }
+    public void SetInUse(bool _bInUse) { this.m_bInUse = _bInUse; }
+
+    //애니메이션 이름
     public string GetAnimName() { return animParameterName; }
 
+    //스킬의 쿨타임
     public float GetCoolDown() { return m_fCooldown; }
 
     //공격범위

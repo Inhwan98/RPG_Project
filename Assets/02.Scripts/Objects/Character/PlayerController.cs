@@ -38,7 +38,6 @@ public class PlayerController : Character
     private float zInput;
     private float runInput;
     private bool attackInput;
-    private bool m_bIsSwing = false;
 
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
@@ -65,7 +64,7 @@ public class PlayerController : Character
     {
         anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
 
-        cam = Camera.main;
+        cam           = Camera.main;
         playerUICtr   = PlayerUIManager.instance;
 
         PlayerUI_Init();
@@ -116,16 +115,31 @@ public class PlayerController : Character
     {
         Input_init();
 
-        m_fAttackRunTime += Time.deltaTime;
+        if(m_fAttackDelay > m_fAttackRunTime) m_fAttackRunTime += Time.deltaTime;
 
-        if (attackInput && !m_bIsSwing) StartCoroutine(Attack());
+        //if (attackInput && !m_bisAttack) StartCoroutine(Attack());
+        //Skill_Attack();
 
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        PlayerAttack();
+    }
+
+    private void PlayerAttack()
+    {
+        if (m_bisAttack) return;
+
+        if (attackInput) StartCoroutine(Attack());
+        else Skill_Attack();
+    }
+
+
+    private void Skill_Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             Debug.Log("1");
             StartCoroutine(SkillAttack(1));
         }
-        else if(Input.GetKeyDown(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             Debug.Log("2");
             StartCoroutine(SkillAttack(2));
@@ -181,7 +195,14 @@ public class PlayerController : Character
     protected override IEnumerator SkillAttack(int skillNum)
     {
         //현재 사용할. 스킬 0번째 부터 시작함.
-        SkillStatus curSkill = skill_List[skillNum - 1];
+        int skill_Idx = skillNum - 1;
+        SkillStatus curSkill = skill_List[skill_Idx];
+        
+        if (curSkill.GetInUse())
+        {
+            StartCoroutine(playerUICtr.SkillUsedWarring(skill_Idx));
+            yield break;
+        }
 
         //보유 마나보다 스킬 마나가 크다면 공격 중단.
         //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
@@ -194,7 +215,10 @@ public class PlayerController : Character
         
         skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
         playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
-    
+
+        StartCoroutine(playerUICtr.StartSkillCoolTime(skill_Idx, curSkill.GetCoolDown(), curSkill));
+        
+
         yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
         m_bisAttack = false;
         //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
