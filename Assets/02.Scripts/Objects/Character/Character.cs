@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using InHwan.CircularQueue;
 
-abstract public class Character : ObjectBase
+public abstract class Character : ObjectBase
 {
     [Header("SkILL Related")]
     [SerializeField] protected int skillMaxAmount = 3; //보유할 최대 스킬 개수

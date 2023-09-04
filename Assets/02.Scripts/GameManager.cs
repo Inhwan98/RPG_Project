@@ -39,8 +39,8 @@ public class GameManager : MonoBehaviour
         playerCtr = PlayerController.instance;
         playerTr = playerCtr    .transform;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
 
         //StartCoroutine(UpdateMonster());
     }
