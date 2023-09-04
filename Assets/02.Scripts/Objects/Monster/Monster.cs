@@ -8,8 +8,8 @@ public class Monster : ObjectBase
 
     [SerializeField] private int exp;
     private int monidx; //몬스터 고유 번호
-    PlayerController playerCtr;
-    Transform playerTr;
+    protected PlayerController playerCtr;
+    private Transform playerTr;
 
     private bool m_bisChase = false;
 

@@ -31,6 +31,7 @@ public class PlayerController : Character
     #region GetComponent 초기화 항목
     private Rigidbody rigid;
     private Weapon weaponCtr;
+    private Inventory _inven;
     #endregion
 
     private Camera cam;
@@ -50,6 +51,7 @@ public class PlayerController : Character
 
         rigid       = GetComponent<Rigidbody>();
         weaponCtr   = GetComponentInChildren<Weapon>();
+        _inven      = GetComponent<Inventory>();
         #region SingTone
         if (instance != null)
         {
@@ -123,6 +125,7 @@ public class PlayerController : Character
         PlayerAttack();
     }
 
+    /// <summary> Player의 기본/스킬 공격 구성 </summary>
     private void PlayerAttack()
     {
         if (m_bisAttack) return;
@@ -131,7 +134,7 @@ public class PlayerController : Character
         else Skill_Attack();
     }
 
-
+    /// <summary> Player의 스킬 공격 </summary>
     private void Skill_Attack()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -146,6 +149,7 @@ public class PlayerController : Character
         }
     }
 
+    /// <summary> Player Info UI Set </summary>
     private void PlayerUI_Init()
     {
         playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP);
@@ -263,6 +267,15 @@ public class PlayerController : Character
             LevelUP();
         }
         playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
+    }
+
+    public void AddInven(List<ItemData> itemDatas)
+    {
+        foreach(var itemdata in itemDatas)
+        {
+            _inven.Add(itemdata);
+        }
+        
     }
     
 }

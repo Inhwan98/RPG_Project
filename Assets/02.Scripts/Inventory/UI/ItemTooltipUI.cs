@@ -74,7 +74,7 @@ public class ItemTooltipUI : MonoBehaviour
         float slotHeight = slotRect.rect.height * ratio;
 
         // 툴팁 초기 위치(슬롯 우하단) 설정
-        _rt.position = slotRect.position + new Vector3(slotWidth, -slotHeight);
+        _rt.position = slotRect.position + new Vector3(slotWidth * 1.5f, -slotHeight * 1.5f);
         Vector2 pos = _rt.position;
 
         //툴팁의 크기

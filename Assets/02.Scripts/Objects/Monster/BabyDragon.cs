@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BabyDragon : Monster
 {
+    
 
     protected override void Awake()
     {
@@ -15,6 +16,16 @@ public class BabyDragon : Monster
     {
         base.Start();
         //Getinfo();
+    }
+
+    protected override void Die()
+    {
+        List<ItemData> itemDatas = new List<ItemData>();
+        itemDatas.Add(_resourcesData.GetHPportion());
+        playerCtr.AddInven(itemDatas);
+        
+
+        base.Die();
     }
 
 

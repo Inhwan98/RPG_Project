@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class ObjectBase : MonoBehaviour
+public abstract class ObjectBase : MonoBehaviour
 {
     //Objectinfo : Serializable
     [SerializeField] protected ObjectInfo statusSetting;
@@ -27,9 +27,10 @@ abstract public class ObjectBase : MonoBehaviour
     #region Animation Setting
     protected Animator anim;
     protected readonly int hashDead = Animator.StringToHash("DoDead");
-
     #endregion
 
+    protected ResourcesData _resourcesData;
+    
 
     protected virtual void Awake()
     {
@@ -38,9 +39,8 @@ abstract public class ObjectBase : MonoBehaviour
 
     protected virtual void Start()
     {
-
+        _resourcesData = ResourcesData.instance;
     }
-
 
     protected virtual void Getinfo()
     {

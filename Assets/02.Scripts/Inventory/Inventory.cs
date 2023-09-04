@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
-{    
+{
     private int _capacity;     //아이템 수용 한도
 
     [SerializeField, Range(8, 64)]
@@ -47,7 +47,7 @@ public class Inventory : MonoBehaviour
 
     /// <summary> 아이템 수용 한도 </summary>
     public int GetCapacity() => _capacity;
-    
+
     private void Awake()
     {
         _items = new Item[_maxCapacity];
@@ -65,15 +65,15 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             Debug.Log("Input 1");
-            Add(_HPportion,44);
+            Add(_HPportion, 44);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             Debug.Log("Input 2");
-            Add(_MPportion,44);
+            Add(_MPportion, 44);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
@@ -166,14 +166,14 @@ public class Inventory : MonoBehaviour
 
         // 1. 셀 수 있는 아이템이고, 동일한 아이템일 경우
         // indexA -> indexB로 개수 합치기
-        if(itemA != null && itemB != null &&
+        if (itemA != null && itemB != null &&
             itemA.GetData() == itemB.GetData() &&
             itemA is CountableItem ciA && itemB is CountableItem ciB)
         {
             int maxAmount = ciB.GetMaxAmount();
             int sum = ciA.GetAmount() + ciB.GetAmount();
 
-            if(sum <= maxAmount)
+            if (sum <= maxAmount)
             {
                 ciA.SetAmount(0);
                 ciB.SetAmount(sum);
@@ -253,6 +253,8 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    
+
     ///<summary> 인벤토리에 아이템 추가
     /// <para/> 넣는 데 실패한 아이템 개수 리턴
     /// <para/> 리턴이 0이면 넣는데 모두 성공했다는 의미
@@ -262,20 +264,20 @@ public class Inventory : MonoBehaviour
         int index;
 
         //1. 수량이 있는 아이템
-        if(itemData is CountableItemData ciData)
+        if (itemData is CountableItemData ciData)
         {
             bool findNextCountable = true;
             index = -1;
 
-            while(amount > 0)
+            while (amount > 0)
             {
                 // 1-1. 이미 해당 아이템이 인벤토리 내에 존재하고, 개수 여유 있는지 검사
-                if(findNextCountable)
+                if (findNextCountable)
                 {
                     index = FindCountableItemSlotIndex(ciData, index + 1);
 
                     // 개수 여유있는 기존재 슬롯이 더이상 없다고 판단될 경우, 빈 슬롯부터 탐색 시작
-                    if(index == -1)
+                    if (index == -1)
                     {
                         findNextCountable = false;
                     }
@@ -294,7 +296,7 @@ public class Inventory : MonoBehaviour
                     index = FindEmptySlotIndex(index + 1);
 
                     // 빈 슬롯조차 없는 경우 종료
-                    if(index ==  -1)
+                    if (index == -1)
                     {
                         break;
                     }
@@ -322,7 +324,7 @@ public class Inventory : MonoBehaviour
             if (amount == 1)
             {
                 index = FindEmptySlotIndex();
-                if(index != -1)
+                if (index != -1)
                 {
                     //아이템을 생성하여 슬롯에 추가
                     _items[index] = itemData.CreateItem();
@@ -340,7 +342,7 @@ public class Inventory : MonoBehaviour
                 index = FindEmptySlotIndex(index + 1);
 
                 // 다 넣지 못한 경우 루프 종료
-                if(index == -1)
+                if (index == -1)
                 {
                     break;
                 }
@@ -413,15 +415,44 @@ public class Inventory : MonoBehaviour
         if (_items[index] == null) return;
 
         // 사용 가능한 아이템인 경우
-        if(_items[index] is IUsableItem uItem)
+        if (_items[index] is IUsableItem uItem)
         {
             //아이템 사용
             bool succeeded = uItem.Use();
 
-            if(succeeded)
+            if (succeeded)
             {
                 UpdateSlot(index);
             }
+        }
+    }
+
+    public void TrimAll()
+    {
+        _indexSetForUpdate.Clear();
+
+        int i = -1;
+        while (_items[++i] != null) ;
+        int j = i;
+
+        while (true)
+        {
+            while (++j < _capacity && _items[j] == null) ;
+
+            if (j == _capacity)
+                break;
+
+            _indexSetForUpdate.Add(i);
+            _indexSetForUpdate.Add(j);
+
+            _items[i] = _items[j];
+            _items[j] = null;
+            i++;
+        }
+
+        foreach (var index in _indexSetForUpdate)
+        {
+            UpdateSlot(index);
         }
     }
 
@@ -433,7 +464,7 @@ public class Inventory : MonoBehaviour
         while (_items[++i] != null) ;
         int j = i;
 
-        while(true)
+        while (true)
         {
             while (++j < _capacity && _items[j] == null) ;
 
