@@ -41,10 +41,6 @@ public class Inventory : MonoBehaviour
     }
     private static readonly ItemComparer _itemComparer = new ItemComparer();
 
-    private ItemData _HPportion;
-    private ItemData _MPportion;
-    private ItemData _MidleAromor;
-
     /// <summary> 아이템 수용 한도 </summary>
     public int GetCapacity() => _capacity;
 
@@ -58,29 +54,7 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         UpdateAccessibleStatesAll();
-        _HPportion = Resources.Load<ItemData>("Item_Portion_HP");
-        _MPportion = Resources.Load<ItemData>("Item_Portion_MP");
-        _MidleAromor = Resources.Load<ItemData>("Item_Armor_Middle");
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Debug.Log("Input 1");
-            Add(_HPportion, 44);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Debug.Log("Input 2");
-            Add(_MPportion, 44);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            Debug.Log("Input 3");
-            Add(_MidleAromor);
-
-        }
+        
     }
 
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
