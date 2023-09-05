@@ -29,8 +29,8 @@ public abstract class ObjectBase : MonoBehaviour
     protected readonly int hashDead = Animator.StringToHash("DoDead");
     #endregion
 
+    /// <summary> Resource Data 클래스 </summary>
     protected ResourcesData _resourcesData;
-    
 
     protected virtual void Awake()
     {
@@ -39,7 +39,7 @@ public abstract class ObjectBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        _resourcesData = ResourcesData.instance;
+        _resourcesData = new ResourcesData();
     }
 
     protected virtual void Getinfo()
@@ -72,24 +72,19 @@ public abstract class ObjectBase : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    public float GetSkillDamage() { return m_fSkillDamage; }
-    public void  SetSkillDamage(float _skillDamage)
-    {
-        m_fSkillDamage = _skillDamage;
-    }
+    /// <summary> 스킬데미지 값 반환 </summary>
+    public float GetSkillDamage() => m_fSkillDamage;
+
+    /// <summary> 스킬데미지 값 수정 </summary>
+    public void  SetSkillDamage(float _skillDamage) => m_fSkillDamage = _skillDamage;
 
 
-    //State값 반환
-    public ObjectState GetObjState()
-    {
-        return objState;
-    }
+    /// <summary> State값 반환 </summary>
+    public ObjectState GetObjState() => objState;
+    /// <summary> Object Die 상태 반환 </summary>
+    public bool GetIsDie() => m_bisDead;
 
-    public bool GetIsDie()
-    {
-        return m_bisDead;
-    }
-    //데미지 입었을 때 함수
+    /// <summary> 대미지를 입었을 때 함수 </summary>
     public virtual void OnDamage(float _str)
     {
         this.m_fCurHP -= _str;
@@ -100,10 +95,13 @@ public abstract class ObjectBase : MonoBehaviour
         }
     }
 
+    
     public virtual void Buff(float _str) { }
 
+    /// <summary> 공격 관련 </summary>
     protected abstract IEnumerator Attack();
-    //체력이 0 이하 일 때 함수
+
+    /// <summary> 체력이 0 이하일 때 Die Event </summary>
     protected abstract void Die();
 
 

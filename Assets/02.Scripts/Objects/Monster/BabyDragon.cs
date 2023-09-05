@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class BabyDragon : Monster
+public class BabyDragon : Lv01_09
 {
-    
 
     protected override void Awake()
     {
@@ -20,7 +19,6 @@ public class BabyDragon : Monster
 
     protected override void Die()
     {
-        List<ItemData> itemDatas = new List<ItemData>();
         itemDatas.Add(_resourcesData.GetHPportion());
         playerCtr.AddInven(itemDatas);
         

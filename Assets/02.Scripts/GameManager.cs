@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     private PlayerController playerCtr;
     private Transform playerTr;
+    private ResourcesData _resourcesData;
 
     public static GameManager instance = null;
 
@@ -31,18 +32,23 @@ public class GameManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this.gameObject);
         #endregion
-
+        _resourcesData = new ResourcesData();
     }
 
     void Start()
     {
         playerCtr = PlayerController.instance;
-        playerTr = playerCtr    .transform;
+        playerTr  = playerCtr.transform;
 
         //Cursor.lockState = CursorLockMode.Locked;
         //Cursor.visible = false;
 
         //StartCoroutine(UpdateMonster());
+    }
+
+    public ResourcesData GetResourcesData()
+    {
+        return _resourcesData;
     }
 
 

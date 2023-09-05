@@ -29,6 +29,7 @@ public class Monster : ObjectBase
 
     //Drop Item
     private GameObject chestPrefab;
+    protected List<ItemData> itemDatas = new List<ItemData>();
 
 
     #region Animation Setting
@@ -195,7 +196,6 @@ public class Monster : ObjectBase
                     {
                         StartCoroutine(Attack());
                     }
-                    
 
                     break;
 

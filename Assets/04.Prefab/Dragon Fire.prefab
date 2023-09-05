@@ -1218,7 +1218,6 @@ GameObject:
   - component: {fileID: 6923244857261920877}
   - component: {fileID: 6923244857261920876}
   - component: {fileID: 6923244857261920872}
-  - component: {fileID: 1379205575}
   m_Layer: 6
   m_Name: Dragon Fire
   m_TagString: Untagged
@@ -1382,18 +1381,6 @@ MonoBehaviour:
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
   damageTr: {fileID: 1359316832}
---- !u!114 &1379205575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8378837324141898485}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc0f4596f36552b48a6194fd66dbe2e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8378837324141898487
 GameObject:
   m_ObjectHideFlags: 0
