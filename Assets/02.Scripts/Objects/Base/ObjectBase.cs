@@ -35,11 +35,12 @@ public abstract class ObjectBase : MonoBehaviour
     protected virtual void Awake()
     {
         InitObj();
+        _resourcesData = new ResourcesData();
     }
 
     protected virtual void Start()
     {
-        _resourcesData = new ResourcesData();
+        
     }
 
     protected virtual void Getinfo()

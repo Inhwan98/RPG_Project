@@ -23,6 +23,8 @@ public class Inventory : MonoBehaviour
     /// <summary> 업데이트 할 인덱스 목록 </summary>
     private HashSet<int> _indexSetForUpdate = new HashSet<int>();
 
+    private PlayerController _playerCtr;
+
     /// <summary> 아이템 데이터 타입별 정렬 가중치 </summary>
     private readonly static Dictionary<Type, int> _sortWeightDict = new Dictionary<Type, int>
         {
@@ -235,6 +237,8 @@ public class Inventory : MonoBehaviour
     /// </summary>
     public int Add(ItemData itemData, int amount = 1)
     {
+        if (itemData == null) return 0;
+
         int index;
 
         //1. 수량이 있는 아이템
@@ -394,6 +398,17 @@ public class Inventory : MonoBehaviour
             //아이템 사용
             bool succeeded = uItem.Use();
 
+            if(_items[index] is PortionItem pitem)
+            {
+                PortionItemData potionData = pitem.GetData() as PortionItemData;
+                IPortionState portionState = potionData.GetPortionState();
+
+                float value = potionData.GetValue();
+
+                if (portionState == IPortionState.HP) _playerCtr.RecoveryHP(value);
+                else if (portionState == IPortionState.MP) _playerCtr.RecoveryMP(value);
+            }
+
             if (succeeded)
             {
                 UpdateSlot(index);
@@ -468,7 +483,21 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void SetPlayerCtr(PlayerController player)
+    {
+        _playerCtr = player;
+    }
 
+    /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
+    public void InventoryActive(bool value)
+    {
+        _inventoryUI.gameObject.SetActive(value);
+        _playerCtr.SetUseInven(value);             //플레이어의 움직임 제어
+        _playerCtr.GetCameraCtr().UseInven(value); //카메라의 회전 제어
 
+        if (value) GameManager.instance.VisibleCursor();
+        else
+            GameManager.instance.InvisibleCursor();
+    }
 
 }

@@ -30,6 +30,11 @@ public class Monster : ObjectBase
     //Drop Item
     private GameObject chestPrefab;
     protected List<ItemData> itemDatas = new List<ItemData>();
+    protected Dictionary<ItemData, int> _itemDic = new Dictionary<ItemData, int>();
+
+    protected int m_nPortionDrop_MinAmount;
+    protected int m_nPortionDrop_MaxAmount;
+    protected int m_nItemDrop_percentage;
 
 
     #region Animation Setting
@@ -178,7 +183,7 @@ public class Monster : ObjectBase
         agent.SetDestination(_destTr.position);
     }
 
-
+    /// <summary> Monster FSM </summary>
     IEnumerator ObjectAction()
     {
         while (!m_bisDead)
@@ -200,7 +205,6 @@ public class Monster : ObjectBase
                     break;
 
                 case ObjectState.DEAD:
-                    Debug.Log("Monster Die");
                     Die();
                     break;
 
@@ -213,6 +217,7 @@ public class Monster : ObjectBase
         }
     }
 
+    /// <summary> 데미지를 받았을 시 </summary>
     public override void OnDamage(float _str)
     {
         if (m_bisDead) return;
@@ -235,6 +240,16 @@ public class Monster : ObjectBase
         }
     }
 
+    /// <summary> 몬스터의 드롭아이템 추가 </summary>
+    public void AddDropItem(ItemData _itemData, int _amount = 1, int _percentage = 100)
+    {
+        bool chance = Dods_ChanceMaker.GetThisChanceResult_Percentage(_percentage);
+        if (chance == false) return;
+
+        _itemDic.Add(_itemData, _amount);
+    }
+
+
     private void OnDrawGizmos()
     {
         //추격탐지
@@ -252,15 +267,11 @@ public class Monster : ObjectBase
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
         {
-            Debug.Log("PlayerWeapon");
-
             float playerStr = playerCtr.GetSTR();
             OnDamage(playerStr);
         }
         else if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerSkill"))
         {
-            Debug.Log("PlayerSkill");
-
             float playerSkillPower = playerCtr.GetSkillDamage();
             OnDamage(playerSkillPower);
         }
@@ -270,7 +281,7 @@ public class Monster : ObjectBase
     {
         PlayerController.OnPlayerDie -= this.OnPlayerDie;
 
-        GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
+        //GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
 
         this.gameObject.layer = 2; // Ignore Raycast
         StopAllCoroutines();

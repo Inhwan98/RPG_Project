@@ -18,9 +18,8 @@ public class SkillStatus
 {
     [SerializeField] private string skillName;
     [SerializeField] private string animParameterName; // 동작할 애니메이션 이름
-    [SerializeField, Header("플레이어의 스킬 범위")] private float fAttackRange;
     [Space(5)]
-    [SerializeField] private int m_nSkillDamagePer;
+    [SerializeField] private int m_nSkillDamagePer; // 스킬 % 데미지
     [SerializeField] private float m_fCooldown;
     [SerializeField] private float m_fManaAmount; // 요구 마나
     [SerializeField] private GameObject effectPrefab; // 이펙트 효과
@@ -64,10 +63,6 @@ public class SkillStatus
 
     //스킬의 쿨타임
     public float GetCoolDown() { return m_fCooldown; }
-
-    //공격범위
-    public float GetAttackRange() { return fAttackRange; }
-    public void SetAttackRange(float _fAttackRange) { this.fAttackRange = _fAttackRange; }
 
     public GameObject GetEffectObj() { return effectPrefab; }
 

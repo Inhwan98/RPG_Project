@@ -28,11 +28,13 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private InventoryPopupUI _popup;            // 팝업 UI 관리 객체
 
     [SerializeField] private Button _sortButton;
+    [SerializeField] private Button _exitButton;
 
     /// <summary> 연결된 인벤토리 </summary>
     private Inventory _inventory;
 
     //아이템 슬롯 드롭 앤 드랍
+    [SerializeField]
     private List<ItemSlotUI> _slotUIList = new List<ItemSlotUI>(); // 아이템 슬롯 리스트
     private GraphicRaycaster _gr;
     private PointerEventData _ped;
@@ -55,15 +57,14 @@ public class InventoryUI : MonoBehaviour
 
 
 
-    void Awake()
+    private void Awake()
     {
         Init();
-        _sortButton.onClick.AddListener(() => _inventory.SortAll());
-    }
-
-    void Start()
-    {
         InitSlots();
+        _sortButton.onClick.AddListener(() => _inventory.SortAll());
+        _exitButton.onClick.AddListener(() => _inventory.InventoryActive(false));
+
+        this.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -82,6 +83,7 @@ public class InventoryUI : MonoBehaviour
 
     private void Init()
     {
+        Debug.Log("Inven Init");
         TryGetComponent(out _gr);
         if (_gr == null)
             _gr = gameObject.AddComponent<GraphicRaycaster>();
@@ -284,7 +286,7 @@ public class InventoryUI : MonoBehaviour
     public void SetItemIcon(int index, Sprite icon)
     {
         EditorLog($"Set Item Icon : Slot [{index}]");
-
+        Debug.Log(_slotUIList[index]);
         _slotUIList[index].SetItem(icon);
     }
 
@@ -418,6 +420,7 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     private void InitSlots()
     {
+        Debug.Log("InitSlots");
         // 슬롯 프리팹 설정
         _slotUiPrefab.TryGetComponent(out RectTransform slotRect);
         slotRect.sizeDelta = new Vector2(_slotSize, _slotSize);
