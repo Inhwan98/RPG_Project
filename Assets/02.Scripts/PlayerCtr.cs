@@ -83,16 +83,4 @@ public class PlayerCtr : MonoBehaviour
 
         rigid.transform.Translate(movement);
     }
-
-    private void Update()
-    {
-        
-
-    }
-
-    
-
-  
-
-
 }

@@ -34,11 +34,14 @@ public class PlayerController : Character
     private Inventory _inven;
     #endregion
 
-    private Camera cam;
+    private CameraController _cameraCtr;
+
     private float xInput;
     private float zInput;
     private float runInput;
     private bool attackInput;
+
+    private bool _isUseInven;
 
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
@@ -52,6 +55,8 @@ public class PlayerController : Character
         rigid       = GetComponent<Rigidbody>();
         weaponCtr   = GetComponentInChildren<Weapon>();
         _inven      = GetComponent<Inventory>();
+
+        _inven.SetPlayerCtr(this);
         #region SingTone
         if (instance != null)
         {
@@ -66,7 +71,7 @@ public class PlayerController : Character
     {
         anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
 
-        cam           = Camera.main;
+        //_cam           = Camera.main;
         playerUICtr   = PlayerUIManager.instance;
 
         PlayerUI_Init();
@@ -78,6 +83,26 @@ public class PlayerController : Character
 
     private void FixedUpdate()
     {
+        CharacterMovement();
+
+    }
+
+    private void Update()
+    {
+        Input_init();
+
+        if(m_fAttackDelay > m_fAttackRunTime) m_fAttackRunTime += Time.deltaTime;
+
+        //if (attackInput && !m_bisAttack) StartCoroutine(Attack());
+        //Skill_Attack();
+        InventoryActiveButton();
+        PlayerAttack();
+    }
+
+    private void CharacterMovement()
+    {
+        if (_isUseInven || m_bisAttack) return;
+
         Vector3 direction = new Vector3(xInput, 0, zInput);
 
         anim.SetFloat(hashStrafe, direction.x);
@@ -86,17 +111,14 @@ public class PlayerController : Character
 
         float movementSpeed = moveSpeed;
         if (runInput < 1.0f) movementSpeed *= 0.5f;
-        if (m_bisAttack) movementSpeed = 0.0f;
 
         Vector3 movement = direction.normalized * movementSpeed * Time.fixedDeltaTime;
 
-
         anim.SetFloat(hashMoveSpeed, movementSpeed);
 
-        Quaternion destRot = cam.transform.localRotation;
+        Quaternion destRot = _cameraCtr.transform.localRotation;
         destRot.x = 0;
         destRot.z = 0;
-
 
         rigid.transform.rotation = destRot;
 
@@ -113,22 +135,10 @@ public class PlayerController : Character
         rigid.transform.Translate(movement);
     }
 
-    private void Update()
-    {
-        Input_init();
-
-        if(m_fAttackDelay > m_fAttackRunTime) m_fAttackRunTime += Time.deltaTime;
-
-        //if (attackInput && !m_bisAttack) StartCoroutine(Attack());
-        //Skill_Attack();
-
-        PlayerAttack();
-    }
-
     /// <summary> Player의 기본/스킬 공격 구성 </summary>
     private void PlayerAttack()
     {
-        if (m_bisAttack) return;
+        if (m_bisAttack || _isUseInven) return;
 
         if (attackInput) StartCoroutine(Attack());
         else Skill_Attack();
@@ -139,15 +149,26 @@ public class PlayerController : Character
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Debug.Log("1");
             StartCoroutine(SkillAttack(1));
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Debug.Log("2");
             StartCoroutine(SkillAttack(2));
         }
     }
+
+    /// <summary> Invnetory Active</summary>
+    public void InventoryActiveButton()
+    {
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            _isUseInven = !_isUseInven;
+
+            _inven.InventoryActive(_isUseInven);
+        }
+    }
+
+    public CameraController GetCameraCtr() => _cameraCtr;
 
     /// <summary> Player Info UI Set </summary>
     private void PlayerUI_Init()
@@ -258,6 +279,26 @@ public class PlayerController : Character
 
     public float GetSTR() { return m_fCurSTR;}
     public float GetHP()  { return m_fCurHP; }
+    public bool  GetUseInven() { return _isUseInven; }
+    public void  SetUseInven(bool value) { _isUseInven = value; }
+
+    /// <summary> 체력 회복 작용 </summary>
+    public void RecoveryHP(float value)
+    {
+        m_fCurHP += value;
+
+        if (m_fCurHP > m_fMaxHP) m_fCurHP = m_fMaxHP;
+        playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP);
+    }
+
+    /// <summary> 마나 회복 작용 </summary>
+    public void RecoveryMP(float value)
+    {
+        m_fCurMP += value;
+
+        if (m_fCurMP > m_fMaxHP) m_fCurMP = m_fMaxMP;
+        playerUICtr.SetMPbar(m_fCurHP, m_fMaxHP);
+    }
 
     public void SetEXP(int _exp)
     {
@@ -269,13 +310,15 @@ public class PlayerController : Character
         playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
     }
 
-    public void AddInven(List<ItemData> itemDatas)
+    public void AddInven(Dictionary<ItemData, int> _itemDic)
     {
-        foreach(var itemdata in itemDatas)
+        foreach(var itemDic in _itemDic)
         {
-            _inven.Add(itemdata);
+            _inven.Add(itemDic.Key, itemDic.Value);
         }
-        
+
     }
-    
+
+    public void SetCameraCtr(CameraController value) => _cameraCtr = value;
+
 }

@@ -19,9 +19,7 @@ public class BabyDragon : Lv01_09
 
     protected override void Die()
     {
-        itemDatas.Add(_resourcesData.GetHPportion());
-        playerCtr.AddInven(itemDatas);
-        
+        playerCtr.AddInven(_itemDic);
 
         base.Die();
     }
