@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class ObjectInfo
+public class ObjectData
 {
     [SerializeField] private int nLevel;
  

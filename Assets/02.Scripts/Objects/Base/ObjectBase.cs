@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ObjectBase : MonoBehaviour
 {
     //Objectinfo : Serializable
-    [SerializeField] protected ObjectInfo statusSetting;
+    [SerializeField] protected ObjectData statusSetting;
 
     [Space(10)]
 
