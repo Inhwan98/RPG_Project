@@ -83,7 +83,6 @@ public class InventoryUI : MonoBehaviour
 
     private void Init()
     {
-        Debug.Log("Inven Init");
         TryGetComponent(out _gr);
         if (_gr == null)
             _gr = gameObject.AddComponent<GraphicRaycaster>();
@@ -286,7 +285,6 @@ public class InventoryUI : MonoBehaviour
     public void SetItemIcon(int index, Sprite icon)
     {
         EditorLog($"Set Item Icon : Slot [{index}]");
-        Debug.Log(_slotUIList[index]);
         _slotUIList[index].SetItem(icon);
     }
 

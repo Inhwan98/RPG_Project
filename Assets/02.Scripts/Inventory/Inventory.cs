@@ -143,7 +143,7 @@ public class Inventory : MonoBehaviour
         // 1. 셀 수 있는 아이템이고, 동일한 아이템일 경우
         // indexA -> indexB로 개수 합치기
         if (itemA != null && itemB != null &&
-            itemA.GetData() == itemB.GetData() &&
+            itemA.GetData().GetID() == itemB.GetData().GetID() &&
             itemA is CountableItem ciA && itemB is CountableItem ciB)
         {
             int maxAmount = ciB.GetMaxAmount();
@@ -296,7 +296,7 @@ public class Inventory : MonoBehaviour
             }
         }
         // 2. 수량이 없는 아이템
-        else
+        else if(itemData is EquipmentItemData eiData)
         {
             // 2-1. 1개만 넎는 경우, 간단히 수행
             if (amount == 1)
@@ -305,7 +305,7 @@ public class Inventory : MonoBehaviour
                 if (index != -1)
                 {
                     //아이템을 생성하여 슬롯에 추가
-                    _items[index] = itemData.CreateItem();
+                    _items[index] = eiData.CreateItem();
                     amount = 0;
 
                     UpdateSlot(index);
@@ -326,7 +326,7 @@ public class Inventory : MonoBehaviour
                 }
 
                 //아이템을 생성하여 슬롯에 추가
-                _items[index] = itemData.CreateItem();
+                _items[index] = eiData.CreateItem();
 
                 UpdateSlot(index);
             }
@@ -354,8 +354,9 @@ public class Inventory : MonoBehaviour
                 continue;
 
             // 아이템 종류 일치, 개수 여유 확인
-            if (current.GetData() == target && current is CountableItem ci)
+            if (current.GetData().GetID() == target.GetID() && current is CountableItem ci)
             {
+                
                 if (!ci.GetIsMax())
                     return i;
             }

@@ -1352,12 +1352,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ffe021160a43c47ba50d5d19ea623d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statusSetting:
+  objData:
     nLevel: 1
     fMaxHP: 100
-    fMaxMP: 100
-    fSTR: 10
-    fAttackRange: 0
+    fCurHP: 100
+    fMaxMP: 0
+    fCurMP: 0
+    fSTR: 1
     nCurExp: 10
   m_nLevel: 0
   m_nMaxExp: 0
@@ -1368,7 +1369,6 @@ MonoBehaviour:
   m_fSkillDamage: 0
   m_fMaxMP: 0
   m_fCurMP: 0
-  m_fAttackRange: 0
   m_bisAttack: 0
   m_bisDead: 0
   objState: 0
