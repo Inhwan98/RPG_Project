@@ -36,7 +36,7 @@ public class SkillManager : MonoBehaviour
         //스킬의 Power로 유저의 STR을 받아옴.
         //적들의 OnDamge 함수를 호출해서 인자로 넘길 것
         playerCtr = PlayerController.instance;
-        power_STR = playerCtr.GetSTR();
+        power_STR = playerCtr.GetCurStr();
         //스킬 데미지를 플레이어의 STR, 스킬의 % 수치에 비례해서 설정
         //각 스킬은 고유의 % 데미지를 가지고 있음
         foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);

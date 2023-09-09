@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ObjectBase : MonoBehaviour
 {
     //Objectinfo : Serializable
-    [SerializeField] protected ObjectInfo statusSetting;
+    [SerializeField] protected ObjectData objData;
 
     [Space(10)]
 
@@ -19,7 +19,6 @@ public abstract class ObjectBase : MonoBehaviour
     [SerializeField] protected float m_fSkillDamage;
     [SerializeField] protected float m_fMaxMP;
     [SerializeField] protected float m_fCurMP;
-    [SerializeField] protected float m_fAttackRange;
     [SerializeField] protected bool  m_bisAttack;
     [SerializeField] protected bool  m_bisDead;
     [SerializeField] protected ObjectState objState; // 상태에 따른 액션
@@ -28,6 +27,18 @@ public abstract class ObjectBase : MonoBehaviour
     protected Animator anim;
     protected readonly int hashDead = Animator.StringToHash("DoDead");
     #endregion
+
+    public int   GetLevel() => m_nLevel;
+
+    public float GetMaxHP() => m_fMaxHP;
+    public float GetCurHP() => m_fCurHP;
+
+    public float GetMaxMP() => m_fMaxMP;
+    public float GetCurMP() => m_fCurMP;
+
+    public float GetCurStr() => m_fCurSTR;
+    public int GetCurExp() => m_nCurExp;
+
 
     /// <summary> Resource Data 클래스 </summary>
     protected ResourcesData _resourcesData;
@@ -47,7 +58,6 @@ public abstract class ObjectBase : MonoBehaviour
     {
         Debug.Log($"HP : {m_fCurHP}");
         Debug.Log($"STR : {m_fCurSTR}");
-        Debug.Log($"AttackRange : {m_fAttackRange}");
     }
 
     //protected abstract void OnAttack1Trigger();
@@ -56,12 +66,11 @@ public abstract class ObjectBase : MonoBehaviour
     private void InitObj()
     {
         //Status Set
-        m_nLevel       = statusSetting.GetLevel();
-        m_nCurExp      = statusSetting.GetExp();
-        m_fMaxHP       = statusSetting.GetMaxHP();
-        m_fMaxMP       = statusSetting.GetMaxMP();
-        m_fCurSTR      = statusSetting.GetSTR();
-        m_fAttackRange = statusSetting.GetAttackRange();
+        m_nLevel       = objData.GetLevel();
+        m_nCurExp      = objData.GetCurExp();
+        m_fMaxHP       = objData.GetMaxHP();
+        m_fMaxMP       = objData.GetMaxMP();
+        m_fCurSTR      = objData.GetCurSTR();
 
         m_fCurHP       = m_fMaxHP;
         m_fCurMP       = m_fMaxMP;

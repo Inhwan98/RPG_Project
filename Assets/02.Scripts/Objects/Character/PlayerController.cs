@@ -57,6 +57,7 @@ public class PlayerController : Character
         _inven      = GetComponent<Inventory>();
 
         _inven.SetPlayerCtr(this);
+
         #region SingTone
         if (instance != null)
         {
@@ -75,7 +76,7 @@ public class PlayerController : Character
         playerUICtr   = PlayerUIManager.instance;
 
         PlayerUI_Init();
-        playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
+        playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
 
         base.Start(); //skill_List 가 부모에서 초기화 됌
         playerUICtr.UpdateSkill_Image(skill_List);
@@ -99,6 +100,9 @@ public class PlayerController : Character
         PlayerAttack();
     }
 
+    /// <summary> Character dir, move, speed, rot, anim
+    /// <para/> Current Use FixedUpdate()
+    /// </summary>
     private void CharacterMovement()
     {
         if (_isUseInven || m_bisAttack) return;
@@ -178,7 +182,6 @@ public class PlayerController : Character
         playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
     }
 
-    // Use => FixedUpdate()
     private void Input_init()
     {
         xInput = Input.GetAxis("Horizontal");
@@ -187,14 +190,13 @@ public class PlayerController : Character
         attackInput = Input.GetButton("Fire1");
     }
 
+    /// <summary> Character LevelUp System </summary>
     public override void LevelUP()
     {
         base.LevelUP();
         PlayerUI_Init();
 
-        m_fAttackRange = statusSetting.GetAttackRange();
-
-        playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR, m_fAttackRange);
+        playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
     }
 
     protected override IEnumerator Attack()
@@ -277,8 +279,6 @@ public class PlayerController : Character
         GameManager.instance.PlayerDie();
     }
 
-    public float GetSTR() { return m_fCurSTR;}
-    public float GetHP()  { return m_fCurHP; }
     public bool  GetUseInven() { return _isUseInven; }
     public void  SetUseInven(bool value) { _isUseInven = value; }
 
@@ -320,5 +320,35 @@ public class PlayerController : Character
     }
 
     public void SetCameraCtr(CameraController value) => _cameraCtr = value;
+
+    [ContextMenu("SavePlayer")]
+    public void SavePlayer()
+    {
+        SaveSys.SavePlayer(this);
+    }
+
+    [ContextMenu("LoadPlaeyr")]
+    public void LoadPlaeyr()
+    {
+        ObjectData data = SaveSys.LoadPlayer();
+
+        if(data == null)
+        {
+            Debug.LogError("Player Data is NULL!!");
+            return;
+        }
+
+        m_nLevel = data.GetLevel();
+        m_fMaxHP = data.GetMaxHP();
+        m_fCurHP = data.GetCurHP();
+
+        m_fMaxMP = data.GetMaxMP();
+        m_fCurMP = data.GetCurMP();
+
+        m_fCurSTR = data.GetCurSTR();
+        m_nCurExp = data.GetCurExp();
+    }
+
+
 
 }

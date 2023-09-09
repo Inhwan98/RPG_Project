@@ -33,5 +33,4 @@ public class Lv01_09 : Monster
         AddDropItem(_resourcesData.GetMPportion(), mpPortionAmount);
         AddDropItem(_resourcesData.GetMidleAromor(), 1, m_nItemDrop_percentage);
     }
-
 }

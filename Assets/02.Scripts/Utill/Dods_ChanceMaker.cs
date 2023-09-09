@@ -28,8 +28,6 @@ public static class Dods_ChanceMaker
 
         Percentage_Chance = Percentage_Chance / 100;
 
-        UnityEngine.Debug.Log($"{Percentage_Chance}");
-
         bool Success = false;
         int RandAccuracy = 10000000;
         float RandHitRange = Percentage_Chance * RandAccuracy;

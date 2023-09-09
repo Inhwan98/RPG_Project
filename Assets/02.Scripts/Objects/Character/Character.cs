@@ -59,13 +59,13 @@ public abstract class Character : ObjectBase
 
         LevelUPEffect();
 
-        statusSetting.LevelUP();
+        objData.LevelUP();
 
-        m_nLevel  = statusSetting.GetLevel();
-        m_nCurExp = statusSetting.GetExp();
-        m_fMaxHP  = statusSetting.GetMaxHP();
-        m_fMaxMP  = statusSetting.GetMaxMP();
-        m_fCurSTR = statusSetting.GetSTR();
+        m_nLevel  = objData.GetLevel();
+        m_nCurExp = objData.GetCurExp();
+        m_fMaxHP  = objData.GetMaxHP();
+        m_fMaxMP  = objData.GetMaxMP();
+        m_fCurSTR = objData.GetCurSTR();
 
         m_fCurHP  = m_fMaxHP;
         m_fCurMP  = m_fMaxMP;

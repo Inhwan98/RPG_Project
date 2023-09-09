@@ -246,6 +246,11 @@ public class Monster : ObjectBase
         bool chance = Dods_ChanceMaker.GetThisChanceResult_Percentage(_percentage);
         if (chance == false) return;
 
+        if(_itemData == null)
+        {
+            Debug.LogError("Itemdata is Null");
+        }
+
         _itemDic.Add(_itemData, _amount);
     }
 
@@ -267,7 +272,7 @@ public class Monster : ObjectBase
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
         {
-            float playerStr = playerCtr.GetSTR();
+            float playerStr = playerCtr.GetCurStr();
             OnDamage(playerStr);
         }
         else if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerSkill"))

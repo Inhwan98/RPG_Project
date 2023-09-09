@@ -155,13 +155,12 @@ public class PlayerUIManager : MonoBehaviour
 
     }
 
-    public void DisplayInfo(int _level, float _maxHP, float _maxMP, float _str, float _attackRange)
+    public void DisplayInfo(int _level, float _maxHP, float _maxMP, float _str)
     {
         m_curLevel = _level;
         MaxHPText.text = $"최대체력 : {_maxHP}";
         MaxMPText.text = $"최대마나 : {_maxMP}";
         STRText.text = $"공격력 : {_str}";
-        AttackRangeText.text = $"공격사거리 : {_attackRange}";
         levelText.text = $"Lv.{m_curLevel}";
     }
 }
