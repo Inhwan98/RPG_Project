@@ -1,33 +1,55 @@
 ﻿using UnityEngine;
 
-[System.Serializable]
 public class ObjectData
 {
-    [SerializeField] private int nLevel;
+    [Newtonsoft.Json.JsonProperty]
+    private int nLevel;
 
-    [Header("몬스터, 플레이어 체력")]
-    [SerializeField] private float fMaxHP;
-    [SerializeField] private float fCurHP;
+    [Newtonsoft.Json.JsonProperty]
+    private float fMaxHP;
 
-    [Header("몬스터, 플레이어 마나")]
-    [SerializeField] private float fMaxMP;
-    [SerializeField] private float fCurMP;
+    [Newtonsoft.Json.JsonProperty]
+    private float fCurHP;
 
-    [Header("몬스터, 플레이어 공격력")]
-    [SerializeField] private float fCurSTR;
+    [Newtonsoft.Json.JsonProperty]
+    private float fMaxMP;
+    
+    [Newtonsoft.Json.JsonProperty]
+    private float fCurMP;
 
-    [SerializeField, Header("몬스터, 플레이어 경험치"), Tooltip("몬스터는 주는 경험치, 플레이어는 받는 경험치를 의미 한다.")]
+    [Newtonsoft.Json.JsonProperty]
+    private float fCurSTR;
+
+    [Newtonsoft.Json.JsonProperty]
     private int nCurExp;
+
+    public ObjectData()
+    {
+        Init();
+    }
 
     public ObjectData(ObjectBase objBase)
     {
         nLevel  = objBase.GetLevel();
+
         fMaxHP  = objBase.GetMaxHP();
         fCurHP  = objBase.GetCurHP();
 
         fMaxMP  = objBase.GetMaxHP();
         fCurMP  = objBase.GetCurMP();
         nCurExp = objBase.GetCurExp();
+    }
+
+    public void Init()
+    {
+        nLevel = 0;
+
+        fMaxHP = 0;
+        fCurHP = 0;
+
+        fMaxMP = 0;
+        fCurMP = 0;
+        nCurExp = 0;
     }
 
     #region Get, Set Func

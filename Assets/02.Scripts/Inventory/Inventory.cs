@@ -17,7 +17,6 @@ public class Inventory : MonoBehaviour
     private InventoryUI _inventoryUI;
 
     /// <summary> 아이템 목록 </summary>
-    [SerializeField]
     private Item[] _items;
 
     /// <summary> 업데이트 할 인덱스 목록 </summary>
@@ -48,7 +47,8 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        _items = new Item[_maxCapacity];
+        Init_InvenItems();
+
         _capacity = _initalCapacity;
         _inventoryUI.SetInventoryReference(this);
     }
@@ -57,6 +57,11 @@ public class Inventory : MonoBehaviour
     {
         UpdateAccessibleStatesAll();
         
+    }
+
+    private void OnDestroy()
+    {
+        SaveInven();
     }
 
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
@@ -296,7 +301,7 @@ public class Inventory : MonoBehaviour
             }
         }
         // 2. 수량이 없는 아이템
-        else if(itemData is EquipmentItemData eiData)
+        else
         {
             // 2-1. 1개만 넎는 경우, 간단히 수행
             if (amount == 1)
@@ -305,7 +310,7 @@ public class Inventory : MonoBehaviour
                 if (index != -1)
                 {
                     //아이템을 생성하여 슬롯에 추가
-                    _items[index] = eiData.CreateItem();
+                    _items[index] = itemData.CreateItem();
                     amount = 0;
 
                     UpdateSlot(index);
@@ -326,7 +331,7 @@ public class Inventory : MonoBehaviour
                 }
 
                 //아이템을 생성하여 슬롯에 추가
-                _items[index] = eiData.CreateItem();
+                _items[index] = itemData.CreateItem();
 
                 UpdateSlot(index);
             }
@@ -501,4 +506,16 @@ public class Inventory : MonoBehaviour
             GameManager.instance.InvisibleCursor();
     }
 
+    [ContextMenu("SaveInven")]
+    public void SaveInven()
+    {
+        SaveSys.SaveInvenItem(_items);
+    }
+
+    /// <summary> Load Data 없을시 초기화 </summary>
+    public void Init_InvenItems()
+    {
+        _items = SaveSys.LoadInvenitem();
+        if (_items == null) _items = new Item[_maxCapacity];
+    }
 }

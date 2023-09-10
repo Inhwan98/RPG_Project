@@ -34,7 +34,6 @@ public class InventoryUI : MonoBehaviour
     private Inventory _inventory;
 
     //아이템 슬롯 드롭 앤 드랍
-    [SerializeField]
     private List<ItemSlotUI> _slotUIList = new List<ItemSlotUI>(); // 아이템 슬롯 리스트
     private GraphicRaycaster _gr;
     private PointerEventData _ped;

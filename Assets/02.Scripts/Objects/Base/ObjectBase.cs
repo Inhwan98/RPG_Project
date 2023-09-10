@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ObjectBase : MonoBehaviour
 {
     //Objectinfo : Serializable
-    [SerializeField] protected ObjectData objData;
+    protected ObjectData objData;
 
     [Space(10)]
 
@@ -45,6 +45,7 @@ public abstract class ObjectBase : MonoBehaviour
 
     protected virtual void Awake()
     {
+        LoadData();
         InitObj();
         _resourcesData = new ResourcesData();
     }
@@ -113,6 +114,8 @@ public abstract class ObjectBase : MonoBehaviour
 
     /// <summary> 체력이 0 이하일 때 Die Event </summary>
     protected abstract void Die();
+
+    protected abstract void LoadData();
 
 
 }

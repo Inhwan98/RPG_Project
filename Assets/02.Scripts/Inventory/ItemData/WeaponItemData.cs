@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 /// <summary> 장비 - 무기 아이템 </summary>
 public class WeaponItemData : EquipmentItemData
 {
-    /// <summary> 공격력 </summary>
-    public int Damage => _damage;
+    [Newtonsoft.Json.JsonProperty]
+    private int _damage = 1;
 
-    [SerializeField] private int _damage = 1;
+    /// <summary> 공격력 </summary>
+    public int GetDamage() => _damage;
 
     public override Item CreateItem()
     {

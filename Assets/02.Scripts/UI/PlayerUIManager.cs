@@ -115,7 +115,7 @@ public class PlayerUIManager : MonoBehaviour
         yield break;
     }
 
-    public IEnumerator StartSkillCoolTime(int _idx, float _coolTime, SkillStatus _curSkill)
+    public IEnumerator StartSkillCoolTime(int _idx, float _coolTime, SkillData _curSkill)
     {
         _curSkill.SetInUse(true); // 현재 스킬은 사용 중으로 bool 값 상태
 
@@ -141,7 +141,7 @@ public class PlayerUIManager : MonoBehaviour
 
     
 
-    public void UpdateSkill_Image(List<SkillStatus> _skill_List)
+    public void UpdateSkill_Image(List<SkillData> _skill_List)
     {
         //배운 스킬의 개수만큼 스킬 이미지 활성화
         int size = _skill_List.Count;

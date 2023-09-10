@@ -1,8 +1,8 @@
 {
-  "_id": 100,
-  "_name": "ÁßÀåºñ °©¿Ê",
-  "_tooltip": "¸ÚÀÖ°í ´Æ¸§ÇÑ °©¿ÊÀÌ´Ù.",
-  "_IconPath": "ItemIcon/Portion/hp",
+  "_id": 10,
+  "_name": "ì¤‘ì¥ë¹„ ê°‘ì˜·",
+  "_tooltip": "ë©‹ìˆê³  ëŠ ë¦„í•œ ê°‘ì˜·ì´ë‹¤.",
+  "_IconPath": "ItemIcon/01_plate_chest",
   "_maxDurability": 100,
   "_defence": 1
 }

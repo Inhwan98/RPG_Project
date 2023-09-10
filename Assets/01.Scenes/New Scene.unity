@@ -1720,7 +1720,6 @@ MonoBehaviour:
   _popup: {fileID: 1244094178}
   _sortButton: {fileID: 587303603}
   _exitButton: {fileID: 1859844820}
-  _slotUIList: []
   _showDebug: 1
   __showPreview: 1
   __previewAlpha: 0.1
@@ -16201,27 +16200,27 @@ PrefabInstance:
       objectReference: {fileID: 2066967373}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: m_fCurHP
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: m_fCurMP
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: m_fMaxHP
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: m_fMaxMP
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: m_nLevel
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: m_fCurSTR
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 401092651, guid: a9c77110a045add4b81e011ab6663e9c, type: 3}
       propertyPath: objData.fSTR

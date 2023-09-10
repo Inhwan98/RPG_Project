@@ -51,6 +51,8 @@ public class Monster : ObjectBase
 
     protected override void Awake()
     {
+        
+
         base.Awake();
         agent = GetComponent<NavMeshAgent>();
 
@@ -311,6 +313,27 @@ public class Monster : ObjectBase
     private void OnDestroy()
     {
         GameManager.instance.SubCurrentMonsters();    
+    }
+
+    protected override void LoadData()
+    {
+        objData = SaveSys.LoadObject("MonData.Json");
+
+        if (objData == null)
+        {
+            Debug.LogError("Player Data is NULL!!");
+            return;
+        }
+
+        m_nLevel = objData.GetLevel();
+        m_fMaxHP = objData.GetMaxHP();
+        m_fCurHP = objData.GetCurHP();
+
+        m_fMaxMP = objData.GetMaxMP();
+        m_fCurMP = objData.GetCurMP();
+
+        m_fCurSTR = objData.GetCurSTR();
+        m_nCurExp = objData.GetCurExp();
     }
 }
 

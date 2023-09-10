@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
 public abstract class ItemData
 {
-    [SerializeField] private int _id;
-    [SerializeField] private string _name; //아이템 이름
-    [Multiline]
-    [SerializeField] private string _tooltip; //아이템 설명
-    [SerializeField] private string _IconPath;
+    [Newtonsoft.Json.JsonProperty]
+    private int _id;
 
-    [SerializeField] private Sprite _iconSprite; //아이템 아이콘
+    [Newtonsoft.Json.JsonProperty]
+    private string _name; //아이템 이름
+
+    [Multiline]
+    [Newtonsoft.Json.JsonProperty]
+    private string _tooltip; //아이템 설명
+
+    [Newtonsoft.Json.JsonProperty]
+    private string _IconPath;
+
+    private Sprite _iconSprite; //아이템 아이콘
     //[SerializeField] private GameObject _dropItemPrefab; //바닥에 떨어질 때 생성할 프리팹
 
     public int GetID() { return _id; }

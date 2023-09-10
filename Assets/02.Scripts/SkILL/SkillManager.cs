@@ -8,7 +8,7 @@ public class SkillManager : MonoBehaviour
 
     [SerializeField] private float power_STR; // 유저의 힘을 할당받을 것
     [SerializeField] protected LayerMask targetLayer; // 몬스터의 레이어
-    [SerializeField] private List<SkillStatus> Skills = new List<SkillStatus>(); // 게임 내 모든 스킬
+    [SerializeField] private List<SkillData> Skills = new List<SkillData>(); // 게임 내 모든 스킬
 
     private PlayerController playerCtr;
 
@@ -27,7 +27,7 @@ public class SkillManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         #endregion
         //스킬의 animtion Parameter 해쉬화
-        foreach (SkillStatus skill in Skills) skill.ChangeAnimHash();
+        foreach (SkillData skill in Skills) skill.ChangeAnimHash();
     }
 
     private void Start()
@@ -39,7 +39,7 @@ public class SkillManager : MonoBehaviour
         power_STR = playerCtr.GetCurStr();
         //스킬 데미지를 플레이어의 STR, 스킬의 % 수치에 비례해서 설정
         //각 스킬은 고유의 % 데미지를 가지고 있음
-        foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);
+        foreach (SkillData skill in Skills) skill.SetSkillDamage(power_STR);
     }
 
     private void Update()
@@ -48,12 +48,12 @@ public class SkillManager : MonoBehaviour
     }
 
     //기초 스킬 세팅을 넘겨주기 위한 준비
-    public List<SkillStatus> BasicSkillSet()
+    public List<SkillData> BasicSkillSet()
     {
         return Skills;
     }
 
-    public void UseSkill(SkillStatus _sk, ObjectBase _selfCtr, ref float _objectMP)
+    public void UseSkill(SkillData _sk, ObjectBase _selfCtr, ref float _objectMP)
     {
         _objectMP -= _sk.GetSkillManaAmount(); //사용 Object에서 스킬 마나만큼 차감
         //float _fAttackRange = _sk.GetAttackRange(); //공격 범위
@@ -84,7 +84,7 @@ public class SkillManager : MonoBehaviour
     {
         //캐릭터가 레벨업하면 스킬 데미지도 재설정
         power_STR = _STR;
-        foreach (SkillStatus skill in Skills) skill.SetSkillDamage(power_STR);
+        foreach (SkillData skill in Skills) skill.SetSkillDamage(power_STR);
     }
 
 }
