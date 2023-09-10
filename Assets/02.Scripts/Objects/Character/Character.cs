@@ -7,7 +7,7 @@ public abstract class Character : ObjectBase
 {
     [Header("SkILL Related")]
     [SerializeField] protected int skillMaxAmount = 3; //보유할 최대 스킬 개수
-    [SerializeField] protected List<SkillStatus> skill_List;
+    [SerializeField] protected List<SkillData> skill_List;
 
     //스킬을 자동 실행할 원형 큐
     // protected CircularQueue<SkillStatus> circualrQueue;
@@ -86,7 +86,7 @@ public abstract class Character : ObjectBase
         foreach (var v in _levelUP) Destroy(v, 4.0f);
     }
 
-    public List<SkillStatus> GetCharacterSillList()
+    public List<SkillData> GetCharacterSillList()
     {
         return skill_List;
     }

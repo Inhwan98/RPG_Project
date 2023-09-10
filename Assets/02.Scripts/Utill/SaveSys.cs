@@ -1,5 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Newtonsoft.Json;
 using System.IO;
+
 
 
 public static class SaveSys
@@ -7,63 +11,74 @@ public static class SaveSys
     public static void SavePlayer(PlayerController playerCtr)
     {
         ObjectData playerData = new ObjectData(playerCtr);
-        string jsonData = JsonUtility.ToJson(playerData, true);
+        string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
 
         string path = Path.Combine(Application.dataPath, "PlayerData.json");
 
         File.WriteAllText(path, jsonData);
     }
 
-    public static void Saveitem(ItemData itemdata)
+    /// <summary> Inventory Data 저장 </summary>
+    public static void SaveInvenItem(Item[] items)
     {
-        string jsonData = JsonUtility.ToJson(itemdata, true);
+        string jsonData = JsonConvert.SerializeObject(items, Formatting.Indented);
 
         string path = Path.Combine(Application.dataPath, "Item.Json");
 
         File.WriteAllText(path, jsonData);
     }
 
-
-    public static ObjectData LoadPlayer()
+    public static Item[] LoadInvenitem()
     {
-        string path = Path.Combine(Application.dataPath, "PlayerData.Json");
+        string path = Path.Combine(Application.dataPath, "Item.Json");
+        string jsonData;
+        Item[] invenData;
+
+        if (File.Exists(path))
+        {
+            jsonData = File.ReadAllText(path);
+            invenData = JsonConvert.DeserializeObject<Item[]>(jsonData);
+            //playerData = JsonUtility.FromJson<ObjectData>(jsonData);
+            return invenData;
+        }
+        else
+        {
+            Debug.LogError($"Save File Not Found in {path}");
+        }
+        return null;
+    }
+
+    /// <summary> Json => Object Data 반환 </summary>
+    public static ObjectData LoadObject(string fileName)
+    {
+        string path = Path.Combine(Application.dataPath, fileName);
         string jsonData;
         ObjectData playerData;
 
         if (File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            playerData = JsonUtility.FromJson<ObjectData>(jsonData);
+            playerData = JsonConvert.DeserializeObject<ObjectData>(jsonData);
+            //playerData = JsonUtility.FromJson<ObjectData>(jsonData);
             return playerData;
         }
         else
         {
-            path = Path.Combine(Application.dataPath, "PlayerStartData.Json");
-
-            if(File.Exists(path))
-            {
-                jsonData = File.ReadAllText(path);
-                playerData = JsonUtility.FromJson<ObjectData>(jsonData);
-                return playerData;
-            }
-            else
-            {
-                Debug.LogError($"Save File Not Found in {path}");
-            }
+            Debug.LogError($"Save File Not Found in {path}");
         }
         return null;
     }
 
-    public static T LoadItem<T>(string name) where T : ItemData
+    public static T LoadItem<T>(string fileName) where T : ItemData
     {
-        string path = Path.Combine(Application.dataPath, name);
+        string path = Path.Combine(Application.dataPath, fileName);
         string jsonData;
         T data;
 
         if(File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            data = JsonUtility.FromJson<T>(jsonData);
+            data = JsonConvert.DeserializeObject<T>(jsonData);
             data.SetIcon();
             return data;
         }

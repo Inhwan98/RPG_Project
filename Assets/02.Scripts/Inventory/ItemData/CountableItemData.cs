@@ -4,7 +4,9 @@ using UnityEngine;
 
 public abstract class CountableItemData : ItemData
 {
-    [SerializeField] private int _maxAmount = 99;
+    [Newtonsoft.Json.JsonProperty]
+    private int _maxAmount = 99;
 
     public int GetMaxAmount() { return _maxAmount; }
+
 }

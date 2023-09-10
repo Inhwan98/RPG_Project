@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary> 수량을 셀 수 있는 아이템 </summary>
+
 public abstract class CountableItem : Item
 {
+    [Newtonsoft.Json.JsonProperty]
     private CountableItemData m_countableData;
+
+    [Newtonsoft.Json.JsonProperty]
     protected int m_nAmount; // 현재 아이템 개수
-    
+
+    [Newtonsoft.Json.JsonProperty]
     private bool m_bIsMax; // 수량이 가득 찼는지 여부
 
     public int GetAmount() => m_nAmount;

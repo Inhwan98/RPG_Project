@@ -223,7 +223,7 @@ public class PlayerController : Character
     {
         //현재 사용할. 스킬 0번째 부터 시작함.
         int skill_Idx = skillNum - 1;
-        SkillStatus curSkill = skill_List[skill_Idx];
+        SkillData curSkill = skill_List[skill_Idx];
         
         if (curSkill.GetInUse())
         {
@@ -328,25 +328,25 @@ public class PlayerController : Character
     }
 
     [ContextMenu("LoadPlaeyr")]
-    public void LoadPlaeyr()
+    protected override void LoadData()
     {
-        ObjectData data = SaveSys.LoadPlayer();
+        objData = SaveSys.LoadObject("PlayerData.Json");
 
-        if(data == null)
+        if(objData == null)
         {
             Debug.LogError("Player Data is NULL!!");
             return;
         }
 
-        m_nLevel = data.GetLevel();
-        m_fMaxHP = data.GetMaxHP();
-        m_fCurHP = data.GetCurHP();
+        m_nLevel = objData.GetLevel();
+        m_fMaxHP = objData.GetMaxHP();
+        m_fCurHP = objData.GetCurHP();
 
-        m_fMaxMP = data.GetMaxMP();
-        m_fCurMP = data.GetCurMP();
+        m_fMaxMP = objData.GetMaxMP();
+        m_fCurMP = objData.GetCurMP();
 
-        m_fCurSTR = data.GetCurSTR();
-        m_nCurExp = data.GetCurExp();
+        m_fCurSTR = objData.GetCurSTR();
+        m_nCurExp = objData.GetCurExp();
     }
 
 

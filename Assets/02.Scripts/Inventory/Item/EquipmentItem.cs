@@ -6,25 +6,30 @@ using UnityEngine;
 /// <summary> 장비 아이템</summary>
 public abstract class EquipmentItem : Item
 {
-    public EquipmentItemData EquipmentData { get; private set; }
-
-    
+    [Newtonsoft.Json.JsonProperty]
     private int _durability; // 내구도
+
+    [Newtonsoft.Json.JsonProperty]
+    private EquipmentItemData equipmentData;
+
+
+    public void SetEequipmentData(EquipmentItemData value) => equipmentData = value;
+    public EquipmentItemData GetEequipmentData() => equipmentData;
 
     /// <summary> 현재 내구도 </summary>
     public int GetDurability() => _durability;
     public void SetDurability(int value)
     {
         if (value < 0) value = 0;
-        if (value > EquipmentData.GetMaxDurability())
-            value = EquipmentData.GetMaxDurability();
+        if (value > equipmentData.GetMaxDurability())
+            value = equipmentData.GetMaxDurability();
 
         _durability = value;
     }
 
     public EquipmentItem(EquipmentItemData data) : base(data)
     {
-        EquipmentData = data;
+        equipmentData = data;
         _durability = data.GetMaxDurability();
     }
 

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Item
+public class Item
 {
+    [Newtonsoft.Json.JsonProperty]
     private ItemData m_data;
 
     public Item(ItemData _data) => this.m_data = _data;
