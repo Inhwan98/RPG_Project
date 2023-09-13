@@ -62,7 +62,10 @@ public class InventoryUI : MonoBehaviour
         InitSlots();
         _sortButton.onClick.AddListener(() => _inventory.SortAll());
         _exitButton.onClick.AddListener(() => _inventory.InventoryActive(false));
+    }
 
+    private void Start()
+    {
         this.gameObject.SetActive(false);
     }
 
@@ -417,7 +420,6 @@ public class InventoryUI : MonoBehaviour
     /// </summary>
     private void InitSlots()
     {
-        Debug.Log("InitSlots");
         // ½½·Ô ÇÁ¸®ÆÕ ¼³Á¤
         _slotUiPrefab.TryGetComponent(out RectTransform slotRect);
         slotRect.sizeDelta = new Vector2(_slotSize, _slotSize);

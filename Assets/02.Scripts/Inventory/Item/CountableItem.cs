@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 /// <summary> 수량을 셀 수 있는 아이템 </summary>
 
@@ -32,6 +33,7 @@ public abstract class CountableItem : Item
 
     public CountableItem(CountableItemData data, int amount = 1) : base(data)
     {
+        Type = "CountableItem";
         m_countableData = data;
         SetAmount(amount);
     }

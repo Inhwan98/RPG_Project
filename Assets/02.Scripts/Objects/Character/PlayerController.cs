@@ -159,6 +159,10 @@ public class PlayerController : Character
         {
             StartCoroutine(SkillAttack(2));
         }
+        else if(Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            StartCoroutine(SkillAttack(3));
+        }
     }
 
     /// <summary> Invnetory Active</summary>
@@ -221,20 +225,20 @@ public class PlayerController : Character
 
     protected override IEnumerator SkillAttack(int skillNum)
     {
-        //현재 사용할. 스킬 0번째 부터 시작함.
+        //현재 사용할 스킬. 0번째 부터 시작함.
         int skill_Idx = skillNum - 1;
         SkillData curSkill = skill_List[skill_Idx];
         
+        //사용 가능 상태가 아니면
         if (curSkill.GetInUse())
         {
+            //빨간색 이미지가 깜빡거림
             StartCoroutine(playerUICtr.SkillUsedWarring(skill_Idx));
             yield break;
         }
 
         //보유 마나보다 스킬 마나가 크다면 공격 중단.
         //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
-
-        //Debug.Assert(destTr, "destTr is NULL !!!");
 
         m_bisAttack = true;
 
@@ -326,6 +330,15 @@ public class PlayerController : Character
     {
         SaveSys.SavePlayer(this);
     }
+
+    [ContextMenu("SaveSkillSet")]
+    public void SaveSkillSet()
+    {
+        SaveSys.SavePlayerSkillSet(skill_List);
+    }
+
+    
+
 
     [ContextMenu("LoadPlaeyr")]
     protected override void LoadData()

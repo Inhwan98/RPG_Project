@@ -4,8 +4,6 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
 
-
-
 public static class SaveSys
 {
     public static void SavePlayer(PlayerController playerCtr)
@@ -18,10 +16,42 @@ public static class SaveSys
         File.WriteAllText(path, jsonData);
     }
 
+    public static List<SkillData> LoadSkillSet()
+    {
+        string path = Path.Combine(Application.dataPath, "PlayerSkillSetData.Json");
+        string jsonData;
+        if (File.Exists(path))
+        {
+            jsonData = File.ReadAllText(path);
+            List<SkillData> SkillSet = JsonConvert.DeserializeObject<List<SkillData>>(jsonData);
+            return SkillSet;
+        }
+        else
+        {
+            Debug.LogError("LoadSkillSet Path is NULL!!");
+            return null;
+        }
+    }
+
+    public static void SavePlayerSkillSet(List<SkillData> skillset)
+    {
+
+        //string jsonData = JsonUtility.ToJson(skillset, true);
+
+        string jsonData = JsonConvert.SerializeObject(skillset, Formatting.Indented);
+
+        string path = Path.Combine(Application.dataPath, "PlayerSkillSetData.Json");
+
+        File.WriteAllText(path, jsonData);
+    }
+
     /// <summary> Inventory Data 저장 </summary>
     public static void SaveInvenItem(Item[] items)
     {
-        string jsonData = JsonConvert.SerializeObject(items, Formatting.Indented);
+        string jsonData = JsonConvert.SerializeObject(items, Formatting.Indented, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.All
+        });
 
         string path = Path.Combine(Application.dataPath, "Item.Json");
 
@@ -32,18 +62,22 @@ public static class SaveSys
     {
         string path = Path.Combine(Application.dataPath, "Item.Json");
         string jsonData;
-        Item[] invenData;
+        Item[] items;
 
         if (File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            invenData = JsonConvert.DeserializeObject<Item[]>(jsonData);
-            //playerData = JsonUtility.FromJson<ObjectData>(jsonData);
-            return invenData;
+            items = JsonConvert.DeserializeObject<Item[]>(jsonData, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+
+            });
+      
+            return items;
         }
         else
         {
-            Debug.LogError($"Save File Not Found in {path}");
+            
         }
         return null;
     }

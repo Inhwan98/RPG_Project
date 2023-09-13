@@ -47,10 +47,11 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        Init_InvenItems();
-
         _capacity = _initalCapacity;
         _inventoryUI.SetInventoryReference(this);
+
+        Init_InvenItems();
+
     }
 
     private void Start()
@@ -192,9 +193,11 @@ public class Inventory : MonoBehaviour
 
         Item item = _items[index];
 
+        
         // 1. 아이템이 슬롯에 존재하는 경우
         if (item != null)
         {
+            
             //아이콘 등록
             _inventoryUI.SetItemIcon(index, item.GetData().GetIconSprite());
 
@@ -422,35 +425,6 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void TrimAll()
-    {
-        _indexSetForUpdate.Clear();
-
-        int i = -1;
-        while (_items[++i] != null) ;
-        int j = i;
-
-        while (true)
-        {
-            while (++j < _capacity && _items[j] == null) ;
-
-            if (j == _capacity)
-                break;
-
-            _indexSetForUpdate.Add(i);
-            _indexSetForUpdate.Add(j);
-
-            _items[i] = _items[j];
-            _items[j] = null;
-            i++;
-        }
-
-        foreach (var index in _indexSetForUpdate)
-        {
-            UpdateSlot(index);
-        }
-    }
-
     /// <summary> 빈 슬롯 없이 채우면서 아이템 종류별로 정렬하기 </summary>
     public void SortAll()
     {
@@ -512,10 +486,39 @@ public class Inventory : MonoBehaviour
         SaveSys.SaveInvenItem(_items);
     }
 
+    [ContextMenu("printItem")]
+    public void PrintItem()
+    {
+        foreach(var a in _items)
+        {
+            if (a == null) continue;
+            
+            if (a is EquipmentItem eiA)
+            {
+                Debug.Log(eiA.GetDurability());
+            }
+        }
+    }
+
     /// <summary> Load Data 없을시 초기화 </summary>
     public void Init_InvenItems()
     {
+       
         _items = SaveSys.LoadInvenitem();
-        if (_items == null) _items = new Item[_maxCapacity];
+
+        if (_items == null)
+        {
+            _items = new Item[_maxCapacity];
+            return;
+        }
+        else
+        {
+            for(int i = 0; i < _items.Length; i++)
+            {
+                if (_items[i] == null) continue;
+                _items[i].GetData().SetIcon();
+                UpdateSlot(i);
+            }
+        }
     }
 }
