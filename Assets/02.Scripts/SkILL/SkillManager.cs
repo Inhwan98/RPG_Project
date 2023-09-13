@@ -12,10 +12,6 @@ public class SkillManager : MonoBehaviour
 
     private PlayerController playerCtr;
 
-    [Header("Damage UI")]
-    private GameObject damageTextObj;
-    
-
     private void Awake()
     {
         #region SingTone
@@ -27,12 +23,13 @@ public class SkillManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         #endregion
         //스킬의 animtion Parameter 해쉬화
-        foreach (SkillData skill in Skills) skill.ChangeAnimHash();
+        Skills = SaveSys.LoadSkillSet();
+        foreach (SkillData skill in Skills) skill.Init();
+           
     }
 
     private void Start()
     {
-        damageTextObj = Resources.Load<GameObject>("Prefab/DamageUI");
         //스킬의 Power로 유저의 STR을 받아옴.
         //적들의 OnDamge 함수를 호출해서 인자로 넘길 것
         playerCtr = PlayerController.instance;
@@ -59,25 +56,27 @@ public class SkillManager : MonoBehaviour
         //float _fAttackRange = _sk.GetAttackRange(); //공격 범위
         playerCtr.SetSkillDamage(_sk.GetSkillDamage()); //현재 스킬의 데미지를 플레이어에게 전달.
 
-        switch (_sk.GetSkillType())
-        {
-            case SkillType.SINGLE:
+        #region 스킬타입
+        //switch (_sk.GetSkillType())
+        //{
+        //    case SkillType.SINGLE:
 
-                //GameObject _hitEffect = Instantiate(_sk.GetEffectObj(), _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
-                //Destroy(_hitEffect, 1f);
-                break;
+        //        //GameObject _hitEffect = Instantiate(_sk.GetEffectObj(), _objCtr.transform.position, Quaternion.identity, _objCtr.transform);
+        //        //Destroy(_hitEffect, 1f);
+        //        break;
 
-            case SkillType.ARROUND_TARGET:
-               
+        //    case SkillType.ARROUND_TARGET:
 
-                break;
 
-            case SkillType.BUFF_SELF:
-                _selfCtr.Buff(power_STR);
-                GameObject _healEffect = Instantiate(_sk.GetEffectObj(), _selfCtr.transform.position + Vector3.up, Quaternion.identity, _selfCtr.transform);
-                Destroy(_healEffect, 2f);
-                break;
-        }
+        //        break;
+
+        //    case SkillType.BUFF_SELF:
+        //        _selfCtr.Buff(power_STR);
+        //        GameObject _healEffect = Instantiate(_sk.GetEffectObj(), _selfCtr.transform.position + Vector3.up, Quaternion.identity, _selfCtr.transform);
+        //        Destroy(_healEffect, 2f);
+        //        break;
+        //}
+        #endregion
     }
 
     public void CharacterLevelUP(float _STR)

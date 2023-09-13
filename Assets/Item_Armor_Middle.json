@@ -4,5 +4,5 @@
   "_tooltip": "멋있고 늠름한 갑옷이다.",
   "_IconPath": "ItemIcon/01_plate_chest",
   "_maxDurability": 100,
-  "_defence": 1
+  "_defence": 10
 }

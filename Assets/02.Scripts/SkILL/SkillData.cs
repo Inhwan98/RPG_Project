@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
 
 [System.Serializable]
 public enum SkillType
@@ -16,15 +17,15 @@ public enum SkillType
 [System.Serializable]
 public class SkillData
 {
-    [SerializeField] private string skillName;
-    [SerializeField] private string animParameterName; // 동작할 애니메이션 이름
-    [Space(5)]
-    [SerializeField] private int m_nSkillDamagePer; // 스킬 % 데미지
-    [SerializeField] private float m_fCooldown;
-    [SerializeField] private float m_fManaAmount; // 요구 마나
-    [SerializeField] private GameObject effectPrefab; // 이펙트 효과
-    [SerializeField] private Sprite m_iSprite;
-    [SerializeField] private SkillType skillType;
+    [JsonProperty, SerializeField] private string m_sSkillName;
+    [JsonProperty, SerializeField] private string m_sAnimParameterName; // 동작할 애니메이션 이름
+    [JsonProperty, SerializeField] private string m_sSpritePath;
+    [JsonProperty, SerializeField] private int m_nSkillDamagePer; // 스킬 % 데미지
+    [JsonProperty, SerializeField] private float m_fCooldown;
+    [JsonProperty, SerializeField] private float m_fManaAmount; // 요구 마나
+    
+
+    private Sprite m_iSprite;
     private bool m_bInUse;
     private int anim_Hash;
     private float m_fSkillDamage;
@@ -32,16 +33,30 @@ public class SkillData
     //public int  GetHash() { return anim_hash; }
     //public void SetHash(int _anim_Hash) { this.anim_hash = _anim_Hash; }
 
-    public void ChangeAnimHash()
+    /// <summary> 애니메이션의 Parameter를 int로 해싱 한다. </summary>
+    /// 
+    public void Init()
     {
-        anim_Hash = Animator.StringToHash(animParameterName);
+        SetAnimHash();
+        SetSpriteImage();
     }
 
+    public void SetAnimHash()
+    {
+        anim_Hash = Animator.StringToHash(m_sAnimParameterName);
+    }
+
+    public void SetSpriteImage()
+    {
+        m_iSprite = Resources.Load<Sprite>(m_sSpritePath);
+    }
+
+    /// <summary> 애니메이션의 해쉬코드 </summary>
     public int GetAnimHash() { return anim_Hash; }
 
     public float GetSkillManaAmount() { return m_fManaAmount; }
 
-    //스킬데미지
+    /// <summary> 스킬의 데미지 </summary>
     public float GetSkillDamagePer() { return m_nSkillDamagePer; }
     public void SetSkillDamagePer(int _skillDamagePer) { m_nSkillDamagePer = _skillDamagePer; }
 
@@ -59,12 +74,8 @@ public class SkillData
     public void SetInUse(bool _bInUse) { this.m_bInUse = _bInUse; }
 
     //애니메이션 이름
-    public string GetAnimName() { return animParameterName; }
+    public string GetAnimName() { return m_sAnimParameterName; }
 
     //스킬의 쿨타임
     public float GetCoolDown() { return m_fCooldown; }
-
-    public GameObject GetEffectObj() { return effectPrefab; }
-
-    public SkillType GetSkillType() { return skillType; }
 }
