@@ -19,9 +19,6 @@ public class Inventory : MonoBehaviour
     /// <summary> 아이템 목록 </summary>
     private Item[] _items;
 
-    /// <summary> 업데이트 할 인덱스 목록 </summary>
-    private HashSet<int> _indexSetForUpdate = new HashSet<int>();
-
     private PlayerController _playerCtr;
 
     /// <summary> 아이템 데이터 타입별 정렬 가중치 </summary>

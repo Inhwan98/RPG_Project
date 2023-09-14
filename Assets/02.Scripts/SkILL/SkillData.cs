@@ -19,10 +19,11 @@ public class SkillData
 {
     [JsonProperty, SerializeField] private string m_sSkillName;
     [JsonProperty, SerializeField] private string m_sAnimParameterName; // 동작할 애니메이션 이름
+    [JsonProperty, SerializeField] private string m_sToolTip; //스킬 설명
     [JsonProperty, SerializeField] private string m_sSpritePath;
-    [JsonProperty, SerializeField] private int m_nSkillDamagePer; // 스킬 % 데미지
-    [JsonProperty, SerializeField] private float m_fCooldown;
-    [JsonProperty, SerializeField] private float m_fManaAmount; // 요구 마나
+    [JsonProperty, SerializeField] private int    m_nSkillDamagePer; // 스킬 % 데미지
+    [JsonProperty, SerializeField] private float  m_fCooldown;
+    [JsonProperty, SerializeField] private float  m_fManaAmount; // 요구 마나
     
 
     private Sprite m_iSprite;
