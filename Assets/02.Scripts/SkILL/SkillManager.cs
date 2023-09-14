@@ -6,10 +6,9 @@ public class SkillManager : MonoBehaviour
 {
     public static SkillManager instance = null;
 
-    [SerializeField] private float power_STR; // 유저의 힘을 할당받을 것
-    [SerializeField] protected LayerMask targetLayer; // 몬스터의 레이어
     [SerializeField] private List<SkillData> Skills = new List<SkillData>(); // 게임 내 모든 스킬
 
+    private float power_STR; // 유저의 힘을 할당받을 것
     private PlayerController playerCtr;
 
     private void Awake()
