@@ -57,7 +57,13 @@ public class ItemTooltipUI : MonoBehaviour
     public void SetItemInfo(ItemData data)
     {
         _titleText.text = data.GetName();
-        _contentText.text = data.GetTooltip();
+        _contentText.text = data.GetToolTip();
+    }
+
+    public void SetItemInfo(SkillData data)
+    {
+        _titleText.text = data.GetSKillName();
+        _contentText.text = data.GetToolTip();
     }
 
     /// <summary> 툴팁의 위치 조정 </summary>

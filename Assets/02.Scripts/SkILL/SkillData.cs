@@ -52,6 +52,11 @@ public class SkillData
         m_iSprite = Resources.Load<Sprite>(m_sSpritePath);
     }
 
+    /// <summary> 스킬 이름 반환 </summary>
+    public string GetSKillName() => m_sSkillName;
+    /// <summary> 툴팁 내용 반환 </summary>
+    public string GetToolTip() => m_sToolTip;
+
     /// <summary> 애니메이션의 해쉬코드 </summary>
     public int GetAnimHash() { return anim_Hash; }
 

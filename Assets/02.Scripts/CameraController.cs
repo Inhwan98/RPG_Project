@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
 
     private float angle;
 
-    private bool _isUseInven;
+    private bool _isUseWindow;
 
     Vector3 velocity;
 
@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
     /// <summary> 카메라의 회전 </summary>
     private void RotateCam()
     {
-        if (_isUseInven) return;
+        if (_isUseWindow) return;
 
         float yRot = Input.GetAxis("Mouse X");
 
@@ -73,9 +73,9 @@ public class CameraController : MonoBehaviour
     }
 
     /// <summary> 플레이어 Inven의 상태 반영 </summary>
-    public void UseInven(bool value)
+    public void UseWindow(bool value)
     {
-        _isUseInven = value;
+        _isUseWindow = value;
     }
 
     
