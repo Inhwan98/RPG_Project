@@ -31,8 +31,6 @@ public class AnimationEventEffects : MonoBehaviour
             Debug.LogError("Incorrect effect number or effect is null");
         }
 
-        Debug.Log(EffectNumber);
-
         var instance = Instantiate(Effects[EffectNumber].GetEffect(), Effects[EffectNumber].GetStartTr().position, Effects[EffectNumber].GetStartTr().rotation);
 
         if (Effects[EffectNumber].GetUseLocalPos())

@@ -7,11 +7,11 @@ public abstract class Character : ObjectBase
 {
     [Header("SkILL Related")]
     [SerializeField] protected int skillMaxAmount = 3; //보유할 최대 스킬 개수
-    [SerializeField] protected List<SkillData> skill_List;
+    [SerializeField] protected SkillData[] skill_Datas;
 
     //스킬을 자동 실행할 원형 큐
     // protected CircularQueue<SkillStatus> circualrQueue;
-    protected SkillManager skillMgr;
+    protected SkillManager _skillMgr;
     private GameObject[] levelUPEffect; //레벨업 이펙트
 
     protected override void Awake()
@@ -23,10 +23,8 @@ public abstract class Character : ObjectBase
 
     protected override void Start()
     {
-        skillMgr = SkillManager.instance;
-
         #region 기본스킬 세팅
-        skill_List = skillMgr.BasicSkillSet();
+        skill_Datas = _skillMgr.BasicSkillSet();
         
         #endregion
 
@@ -71,7 +69,7 @@ public abstract class Character : ObjectBase
         m_fCurMP  = m_fMaxMP;
         m_nMaxExp = m_nLevel * 20;
 
-        skillMgr.CharacterLevelUP(m_fCurSTR); //스킬의 공격력도 업데이트 해준다.
+        _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
     }
 
     private void LevelUPEffect()
@@ -86,9 +84,9 @@ public abstract class Character : ObjectBase
         foreach (var v in _levelUP) Destroy(v, 4.0f);
     }
 
-    public List<SkillData> GetCharacterSillList()
+    public SkillData[] GetCharacterSillList()
     {
-        return skill_List;
+        return skill_Datas;
     }
 
     protected override void Die() { }

@@ -42,6 +42,7 @@ public class PlayerController : Character
     private bool attackInput;
 
     private bool _isUseInven;
+    private bool _isUseSkillWindow;
 
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
@@ -55,8 +56,10 @@ public class PlayerController : Character
         rigid       = GetComponent<Rigidbody>();
         weaponCtr   = GetComponentInChildren<Weapon>();
         _inven      = GetComponent<Inventory>();
+        _skillMgr   = GetComponent<SkillManager>();
 
         _inven.SetPlayerCtr(this);
+        _skillMgr.SetPlayerCtr(this);
 
         #region SingTone
         if (instance != null)
@@ -79,7 +82,7 @@ public class PlayerController : Character
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
 
         base.Start(); //skill_List 가 부모에서 초기화 됌
-        playerUICtr.UpdateSkill_Image(skill_List);
+        playerUICtr.UpdateSkill_Image(skill_Datas);
     }
 
     private void FixedUpdate()
@@ -96,7 +99,7 @@ public class PlayerController : Character
 
         //if (attackInput && !m_bisAttack) StartCoroutine(Attack());
         //Skill_Attack();
-        InventoryActiveButton();
+        StatusWindowActiveButton();
         PlayerAttack();
     }
 
@@ -105,7 +108,7 @@ public class PlayerController : Character
     /// </summary>
     private void CharacterMovement()
     {
-        if (_isUseInven || m_bisAttack) return;
+        if (_isUseInven || _isUseSkillWindow || m_bisAttack) return;
 
         Vector3 direction = new Vector3(xInput, 0, zInput);
 
@@ -142,7 +145,7 @@ public class PlayerController : Character
     /// <summary> Player의 기본/스킬 공격 구성 </summary>
     private void PlayerAttack()
     {
-        if (m_bisAttack || _isUseInven) return;
+        if (m_bisAttack || _isUseInven || _isUseSkillWindow) return;
 
         if (attackInput) StartCoroutine(Attack());
         else Skill_Attack();
@@ -166,7 +169,7 @@ public class PlayerController : Character
     }
 
     /// <summary> Invnetory Active</summary>
-    public void InventoryActiveButton()
+    public void StatusWindowActiveButton()
     {
         if(Input.GetKeyDown(KeyCode.I))
         {
@@ -174,7 +177,15 @@ public class PlayerController : Character
 
             _inven.InventoryActive(_isUseInven);
         }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            _isUseSkillWindow = !_isUseSkillWindow;
+
+            _skillMgr.SkillWindowActive(_isUseSkillWindow);
+        }
     }
+
 
     public CameraController GetCameraCtr() => _cameraCtr;
 
@@ -227,7 +238,7 @@ public class PlayerController : Character
     {
         //현재 사용할 스킬. 0번째 부터 시작함.
         int skill_Idx = skillNum - 1;
-        SkillData curSkill = skill_List[skill_Idx];
+        SkillData curSkill = skill_Datas[skill_Idx];
         
         //사용 가능 상태가 아니면
         if (curSkill.GetInUse())
@@ -244,7 +255,7 @@ public class PlayerController : Character
 
         anim.SetTrigger(curSkill.GetAnimHash());
         
-        skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
+        _skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
         playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
 
         StartCoroutine(playerUICtr.StartSkillCoolTime(skill_Idx, curSkill.GetCoolDown(), curSkill));
@@ -334,11 +345,8 @@ public class PlayerController : Character
     [ContextMenu("SaveSkillSet")]
     public void SaveSkillSet()
     {
-        SaveSys.SavePlayerSkillSet(skill_List);
+        SaveSys.SavePlayerSkillSet(skill_Datas);
     }
-
-    
-
 
     [ContextMenu("LoadPlaeyr")]
     protected override void LoadData()
@@ -361,7 +369,4 @@ public class PlayerController : Character
         m_fCurSTR = objData.GetCurSTR();
         m_nCurExp = objData.GetCurExp();
     }
-
-
-
 }

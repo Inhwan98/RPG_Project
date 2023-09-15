@@ -141,13 +141,13 @@ public class PlayerUIManager : MonoBehaviour
 
     
 
-    public void UpdateSkill_Image(List<SkillData> _skill_List)
+    public void UpdateSkill_Image(SkillData[] _skill_datas)
     {
         //배운 스킬의 개수만큼 스킬 이미지 활성화
-        int size = _skill_List.Count;
+        int size = _skill_datas.Length;
         for (int i = 0; i < size; i++)
         {
-            skill_Image[i].sprite = _skill_List[i].GetSkill_Sprite();
+            skill_Image[i].sprite = _skill_datas[i].GetSkill_Sprite();
             skill_Image[i].gameObject.SetActive(true);
 
             Debug.Log("Update Skill Image");

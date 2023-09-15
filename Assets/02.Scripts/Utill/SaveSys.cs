@@ -16,14 +16,14 @@ public static class SaveSys
         File.WriteAllText(path, jsonData);
     }
 
-    public static List<SkillData> LoadSkillSet()
+    public static SkillData[] LoadSkillSet()
     {
         string path = Path.Combine(Application.dataPath, "PlayerSkillSetData.Json");
         string jsonData;
         if (File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            List<SkillData> SkillSet = JsonConvert.DeserializeObject<List<SkillData>>(jsonData);
+            SkillData[] SkillSet = JsonConvert.DeserializeObject<SkillData[]>(jsonData);
             return SkillSet;
         }
         else
@@ -33,7 +33,7 @@ public static class SaveSys
         }
     }
 
-    public static void SavePlayerSkillSet(List<SkillData> skillset)
+    public static void SavePlayerSkillSet(SkillData[] skillset)
     {
 
         //string jsonData = JsonUtility.ToJson(skillset, true);

@@ -469,8 +469,8 @@ public class Inventory : MonoBehaviour
     public void InventoryActive(bool value)
     {
         _inventoryUI.gameObject.SetActive(value);
-        _playerCtr.SetUseInven(value);             //플레이어의 움직임 제어
-        _playerCtr.GetCameraCtr().UseInven(value); //카메라의 회전 제어
+        //_playerCtr.SetUseInven(value);             //플레이어의 움직임 제어
+        _playerCtr.GetCameraCtr().UseWindow(value); //카메라의 회전 제어
 
         if (value) GameManager.instance.VisibleCursor();
         else

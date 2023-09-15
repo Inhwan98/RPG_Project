@@ -23,7 +23,7 @@ public abstract class ItemData
 
     public int GetID() { return _id; }
     public string GetName() { return _name; }
-    public string GetTooltip() { return _tooltip; }
+    public string GetToolTip() { return _tooltip; }
     public Sprite GetIconSprite() { return _iconSprite; }
 
     public void SetIcon()

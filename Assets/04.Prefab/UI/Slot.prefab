@@ -339,10 +339,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _padding: 1
   _iconImage: {fileID: 4626621856841721109}
-  _amountText: {fileID: 6675093202256924059}
   _highlightImage: {fileID: 1788978349968804092}
   _highlightAlpha: 0.5
   _highlightFadeDuration: 0.2
+  _amountText: {fileID: 6675093202256924059}
 --- !u!1 &6714235330509947705
 GameObject:
   m_ObjectHideFlags: 0

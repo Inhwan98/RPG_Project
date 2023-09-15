@@ -29,19 +29,13 @@ public abstract class EquipmentItem : Item
 
     public EquipmentItem(EquipmentItemData data) : base(data)
     {
+        if (data == null) return;
+
         Type = "EquipmentItem";
         equipmentData = data;
 
-        if (data != null)
-        {
-            _durability = data.GetMaxDurability();
-            Debug.Log("data Not null");
-        }
-        else
-        {
-            // data가 null일 때 대비한 처리
-            Debug.Log("data null");
-        }
+        _durability = data.GetMaxDurability();
+        Debug.Log("data Not null");
     }
 
     // Item Data 외의 필드값에 대한 매개변수를 갖는 생성자는 추가로 제공하지 않음
