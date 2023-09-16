@@ -60,6 +60,7 @@ public class PlayerController : Character
 
         _inven.SetPlayerCtr(this);
         _skillMgr.SetPlayerCtr(this);
+        _skillMgr.SetSkillPower(m_fCurSTR);
 
         #region SingTone
         if (instance != null)
@@ -82,7 +83,7 @@ public class PlayerController : Character
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
 
         base.Start(); //skill_List 가 부모에서 초기화 됌
-        playerUICtr.UpdateSkill_Image(skill_Datas);
+
     }
 
     private void FixedUpdate()
@@ -101,6 +102,11 @@ public class PlayerController : Character
         //Skill_Attack();
         StatusWindowActiveButton();
         PlayerAttack();
+    }
+
+    public void UpdateSkillUI()
+    {
+        playerUICtr.UpdateSkill_Image(skill_Datas);
     }
 
     /// <summary> Character dir, move, speed, rot, anim
@@ -165,6 +171,14 @@ public class PlayerController : Character
         else if(Input.GetKeyDown(KeyCode.Alpha3))
         {
             StartCoroutine(SkillAttack(3));
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            StartCoroutine(SkillAttack(4));
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            StartCoroutine(SkillAttack(5));
         }
     }
 
@@ -239,7 +253,10 @@ public class PlayerController : Character
         //현재 사용할 스킬. 0번째 부터 시작함.
         int skill_Idx = skillNum - 1;
         SkillData curSkill = skill_Datas[skill_Idx];
-        
+
+        //획득하지 않은 상태면
+        if (curSkill.GetIsAcquired() == false) yield break;
+
         //사용 가능 상태가 아니면
         if (curSkill.GetInUse())
         {
@@ -368,5 +385,12 @@ public class PlayerController : Character
 
         m_fCurSTR = objData.GetCurSTR();
         m_nCurExp = objData.GetCurExp();
+    }
+
+    /// <summary> 스킬 UI 까지 가팅 업데이트 </summary>
+    public void SetPlayerSkills(SkillData[] skill_datas)
+    {
+        skill_Datas = skill_datas;
+        UpdateSkillUI();
     }
 }

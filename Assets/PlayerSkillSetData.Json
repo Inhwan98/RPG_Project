@@ -17,13 +17,8 @@
     "m_fCooldown": 7.0,
     "m_fManaAmount": 15.0
   },
-  {
-    "m_sSkillName": "쇼크웨이브",
-    "m_sAnimParameterName": "DoSKILL_3",
-    "m_sToolTip": "전기 충격파",
-    "m_sSpritePath": "Skill_Icon/쇼크웨이브",
-    "m_nSkillDamagePer": 100,
-    "m_fCooldown": 7.0,
-    "m_fManaAmount": 15.0
-  }
+  null,
+  null,
+  null,
+  null
 ]

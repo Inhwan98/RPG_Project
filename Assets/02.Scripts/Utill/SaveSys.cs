@@ -16,14 +16,14 @@ public static class SaveSys
         File.WriteAllText(path, jsonData);
     }
 
-    public static SkillData[] LoadSkillSet()
+    public static SkillData[] LoadSkillSet(string filename)
     {
-        string path = Path.Combine(Application.dataPath, "PlayerSkillSetData.Json");
+        string path = Path.Combine(Application.dataPath, filename);
         string jsonData;
         if (File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            SkillData[] SkillSet = JsonConvert.DeserializeObject<SkillData[]>(jsonData);
+            SkillData[] SkillSet = JsonConvert.DeserializeObject<SkillData[]>(jsonData); 
             return SkillSet;
         }
         else

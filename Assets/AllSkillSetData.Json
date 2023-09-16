@@ -1,0 +1,54 @@
+[
+  {
+    "m_sSkillName": "소드슬래쉬",
+    "m_sAnimParameterName": "DoSKILL_1",
+    "m_sToolTip": "5연속 공격",
+    "m_sSpritePath": "Skill_Icon/소드슬래쉬",
+    "m_nSkillDamagePer": 50,
+    "m_fCooldown": 12.0,
+    "m_fManaAmount": 10.0,
+    "m_bAcquired": true
+  },
+  {
+    "m_sSkillName": "열파참",
+    "m_sAnimParameterName": "DoSKILL_2",
+    "m_sToolTip": "던파 서유리",
+    "m_sSpritePath": "Skill_Icon/열파참",
+    "m_nSkillDamagePer": 100,
+    "m_fCooldown": 7.0,
+    "m_fManaAmount": 15.0,
+    "m_bAcquired": true
+  },
+  {
+    "m_sSkillName": "쇼크웨이브",
+    "m_sAnimParameterName": "DoSKILL_3",
+    "m_sToolTip": "전기 충격파",
+    "m_sSpritePath": "Skill_Icon/쇼크웨이브",
+    "m_nSkillDamagePer": 100,
+    "m_fCooldown": 7.0,
+    "m_fManaAmount": 15.0,
+    "m_bAcquired": true
+  },
+  {
+    "m_sSkillName": "차지웨이브",
+    "m_sAnimParameterName": "DoSKILL_4",
+    "m_sToolTip": "기를 모아 강력한 원거리 공격을 한다.",
+    "m_sSpritePath": "Skill_Icon/차지웨이브",
+    "m_nSkillDamagePer": 200,
+    "m_fCooldown": 15,
+    "m_fManaAmount": 20.0,
+    "m_bAcquired": true
+  },
+  {
+    "m_sSkillName": "폭풍참격",
+    "m_sAnimParameterName": "DoSKILL_5",
+    "m_sToolTip": "빠른 속도로 상대에게 연속적으로 참격을 가한다.",
+    "m_sSpritePath": "Skill_Icon/폭풍참격",
+    "m_nSkillDamagePer": 110,
+    "m_fCooldown": 10,
+    "m_fManaAmount": 20.0,
+    "m_bAcquired": true
+  }
+
+
+]

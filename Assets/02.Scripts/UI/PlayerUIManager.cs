@@ -147,9 +147,10 @@ public class PlayerUIManager : MonoBehaviour
         int size = _skill_datas.Length;
         for (int i = 0; i < size; i++)
         {
+            if (_skill_datas[i] == null) continue;
+
             skill_Image[i].sprite = _skill_datas[i].GetSkill_Sprite();
             skill_Image[i].gameObject.SetActive(true);
-
             Debug.Log("Update Skill Image");
         }
 

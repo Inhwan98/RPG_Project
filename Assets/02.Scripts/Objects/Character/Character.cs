@@ -23,11 +23,6 @@ public abstract class Character : ObjectBase
 
     protected override void Start()
     {
-        #region 기본스킬 세팅
-        skill_Datas = _skillMgr.BasicSkillSet();
-        
-        #endregion
-
         #region 자동스킬 사용 세팅
         //circualrQueue = new CircularQueue<SkillStatus>(skillMaxAmount);
         //기초 세팅 될 스킬을 미리 원형 큐에 넣어 둔다.

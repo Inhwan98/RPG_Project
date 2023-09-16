@@ -93,7 +93,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5255262306266655917
 RectTransform:
   m_ObjectHideFlags: 0
@@ -338,6 +338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _padding: 1
+  _iconGo: {fileID: 5761689959767017967}
   _iconImage: {fileID: 4626621856841721109}
   _highlightImage: {fileID: 1788978349968804092}
   _highlightAlpha: 0.5
