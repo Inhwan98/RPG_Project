@@ -10,8 +10,9 @@ public class SkillManager : MonoBehaviour
    
     /// <summary> 아이템 목록 </summary>
     private SkillData[] _skills;
+    private List<SkillData> _playerHaveSkills = new List<SkillData>();
 
-    private int _maxSkillSize = 6;
+    private int _maxSkillSize = 4;
 
     private float power_STR; // 유저의 힘을 할당받을 것
     private PlayerController _playerCtr;
@@ -19,12 +20,17 @@ public class SkillManager : MonoBehaviour
 
     private void Awake()
     {
-        _skillTreeUI.SetInventoryReference(this);
+        _skillTreeUI.SetSkillTreeReference(this);
+
+        Init_Skills();
     }
 
     private void Start()
     {
-        Init_Skills();
+        //SetSkillDataDamage();
+        HandOverPlayerSkills();
+
+        UpdateAllSlot();
         UpdateAccessibleStatesAll();
 
     }
@@ -141,9 +147,9 @@ public class SkillManager : MonoBehaviour
     /// <para/> 넣는 데 실패한 아이템 개수 리턴
     /// <para/> 리턴이 0이면 넣는데 모두 성공했다는 의미
     /// </summary>
-    public int Add(SkillData itemData, int amount = 1)
+    public int Add(SkillData skillData, int amount = 1)
     {
-        if (itemData == null) return 0;
+        if (skillData == null) return 0;
 
         int index;
 
@@ -155,7 +161,7 @@ public class SkillManager : MonoBehaviour
             if (index != -1)
             {
                 //아이템을 생성하여 슬롯에 추가
-                _skills[index] = itemData;
+                _skills[index] = skillData;
                 amount = 0;
 
                 UpdateSlot(index);
@@ -176,7 +182,7 @@ public class SkillManager : MonoBehaviour
             }
 
             //아이템을 생성하여 슬롯에 추가
-            _skills[index] = itemData;
+            _skills[index] = skillData;
 
             UpdateSlot(index);
         }
@@ -209,6 +215,11 @@ public class SkillManager : MonoBehaviour
         _playerCtr = player;
     }
 
+    public void SetSkillPower(float value)
+    {
+        power_STR = value;
+    }
+
     /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
     public void SkillWindowActive(bool value)
     {
@@ -225,12 +236,9 @@ public class SkillManager : MonoBehaviour
 
     /// <summary> Load Data 없을시 초기화 </summary>
     public void Init_Skills()
-    {
-        
-        _skills = SaveSys.LoadSkillSet();
+    { 
+        _skills = SaveSys.LoadSkillSet("AllSkillSetData.Json");
 
-        //foreach (SkillData skill in _skills) skill.Init();
-        
         if (_skills == null)
         {
             _skills = new SkillData[_maxSkillSize];
@@ -241,19 +249,11 @@ public class SkillManager : MonoBehaviour
             for (int i = 0; i < _skills.Length; i++)
             {
                 if (_skills[i] == null) continue;
+
                 _skills[i].Init();
-                UpdateSlot(i);
+                _skills[i].SetSkillDamage(power_STR);
             }
         }
-
-        SetSkillDataDamage();
-
-    }
-
-    //기초 스킬 세팅을 넘겨주기 위한 준비
-    public SkillData[] BasicSkillSet()
-    {
-        return _skills;
     }
 
     public void UseSkill(SkillData _skilldata, ObjectBase _selfCtr, ref float _objectMP)
@@ -285,10 +285,24 @@ public class SkillManager : MonoBehaviour
         #endregion
     }
 
+    /// <summary> 스킬의 데미지 설정 : 플레이어 비례 </summary>
     public void SetSkillDataDamage()
     {
-        //캐릭터가 레벨업하면 스킬 데미지도 재설정
-        power_STR = _playerCtr.GetCurStr();
         foreach (SkillData skill in _skills) skill.SetSkillDamage(power_STR);
+    }
+
+    /// <summary> 플레이어에게 스킬 초기화 해서 전달. </summary>
+    private void HandOverPlayerSkills()
+    {
+        foreach(var a in _skills)
+        {
+            if (a == null) continue;
+            if(a.GetIsAcquired())
+            {
+                _playerHaveSkills.Add(a);
+            }
+        }
+
+        _playerCtr.SetPlayerSkills(_playerHaveSkills.ToArray());
     }
 }

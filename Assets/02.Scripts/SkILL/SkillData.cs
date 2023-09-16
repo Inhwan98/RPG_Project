@@ -24,7 +24,8 @@ public class SkillData
     [JsonProperty, SerializeField] private int    m_nSkillDamagePer; // 스킬 % 데미지
     [JsonProperty, SerializeField] private float  m_fCooldown;
     [JsonProperty, SerializeField] private float  m_fManaAmount; // 요구 마나
-    
+    [JsonProperty, SerializeField] private bool   m_bAcquired;  // 스킬 습득 체크
+
 
     private Sprite m_iSprite;
     private bool m_bInUse;
@@ -52,11 +53,24 @@ public class SkillData
         m_iSprite = Resources.Load<Sprite>(m_sSpritePath);
     }
 
+    public void DisPlay()
+    {
+        Debug.Log(m_sSkillName);
+        Debug.Log(m_sAnimParameterName);
+        Debug.Log(m_sToolTip);
+        Debug.Log(m_sSpritePath);
+        Debug.Log(m_nSkillDamagePer);
+        Debug.Log(m_fCooldown);
+        Debug.Log(m_fManaAmount);
+    }
+
     /// <summary> 스킬 이름 반환 </summary>
     public string GetSKillName() => m_sSkillName;
     /// <summary> 툴팁 내용 반환 </summary>
     public string GetToolTip() => m_sToolTip;
 
+    /// <summary> 스킬 획득 여부 </summary>
+    public bool GetIsAcquired() => m_bAcquired;
     /// <summary> 애니메이션의 해쉬코드 </summary>
     public int GetAnimHash() { return anim_Hash; }
 

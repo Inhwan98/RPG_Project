@@ -128,6 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _padding: 1
+  _iconGo: {fileID: 4877410978166664427}
   _iconImage: {fileID: 4877410978166664437}
   _highlightImage: {fileID: 110028654799670098}
   _highlightAlpha: 0.5
@@ -219,7 +220,7 @@ GameObject:
   - component: {fileID: 4877410977348962098}
   - component: {fileID: 4877410977348962099}
   m_Layer: 5
-  m_Name: Skill_Fill
+  m_Name: Skill_Fill_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -295,7 +296,7 @@ GameObject:
   - component: {fileID: 4877410978166664436}
   - component: {fileID: 4877410978166664437}
   m_Layer: 5
-  m_Name: Skill_Image
+  m_Name: Skill_Image_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

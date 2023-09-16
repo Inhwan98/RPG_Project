@@ -6,7 +6,10 @@ using UnityEngine.UI;
 public class SlotUIBase : MonoBehaviour
 {
     [Tooltip("슬롯 내에서 아이콘과 슬롯 사이의 여백")]
-    [SerializeField] private float _padding = 1f;
+    [SerializeField] protected float _padding = 1f;
+
+    [Tooltip("아이템 아이콘 이미지 게임오브젝트")]
+    [SerializeField] protected GameObject _iconGo;
 
     [Tooltip("아이템 아이콘 이미지")]
     [SerializeField] protected Image _iconImage;
@@ -24,10 +27,10 @@ public class SlotUIBase : MonoBehaviour
     private int index;
 
     private RectTransform _slotRect;
-    private RectTransform _iconRect;
+    protected RectTransform _iconRect;
     private RectTransform _highlightRect;
 
-    private GameObject _iconGo;
+   
 
     private GameObject _highlightGo;
 
@@ -68,12 +71,12 @@ public class SlotUIBase : MonoBehaviour
 
 
     //아이콘 활성화 / 비활성화
-    private void ShowIcon() => _iconGo.SetActive(true);
+    private void ShowIcon()
+    {
+        _iconGo.SetActive(true);
+    }
+
     private void HideIcon() => _iconGo.SetActive(false);
-
-
-    
-
 
     private void Awake()
     {
@@ -89,23 +92,16 @@ public class SlotUIBase : MonoBehaviour
         _highlightRect = _highlightImage.rectTransform;
 
         // Game Objects
-        _iconGo = _iconRect.gameObject;
+        //_iconGo = _iconRect.gameObject;
         _highlightGo = _highlightImage.gameObject;
 
         // Images
         _slotImage = GetComponent<Image>();
     }
 
-    private void InitValues()
+    protected virtual void InitValues()
     {
-        // 1. Item Icon, Highlight Rect
-        _iconRect.pivot = new Vector2(0.5f, 0.5f); // 피벗은 중앙
-        _iconRect.anchorMin = Vector2.zero;        // 앵커는 Top Left
-        _iconRect.anchorMax = Vector2.one;
 
-        // 패딩 조절
-        _iconRect.offsetMin = Vector2.one * (_padding);
-        _iconRect.offsetMax = Vector2.one * (-_padding);
 
         // 아이콘과 하이라이트 크기가 동일하도록
         _highlightRect.pivot = _iconRect.pivot;

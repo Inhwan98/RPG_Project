@@ -8,7 +8,7 @@ public class SkillTreeUI : StateInfoUI
 {
 
     /// <summary> 연결된 인벤토리 </summary>
-    private SkillManager _skillTree;
+    private SkillManager _skillManager;
 
     protected override void Start()
     {
@@ -28,17 +28,17 @@ public class SkillTreeUI : StateInfoUI
             return;
 
         // 툴팁 정보 갱신
-        _itemTooltip.SetItemInfo(_skillTree.GetSKillData(slot.GetIndex()));
+        _itemTooltip.SetItemInfo(_skillManager.GetSKillData(slot.GetIndex()));
 
         // 툴팁 위치 조정
         _itemTooltip.SetRectPosition(slot.GetSlotRect());
     }
 
 
-    /// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
-    public void SetInventoryReference(SkillManager skillTree)
+    /// <summary> 스킬매니져 참조 등록 (스킬매니져 직접 호출) </summary>
+    public void SetSkillTreeReference(SkillManager skillMgr)
     {
-        _skillTree = skillTree;
+        _skillManager = skillMgr;
     }
 
     protected override void EndDrag()
@@ -71,7 +71,7 @@ public class SkillTreeUI : StateInfoUI
     /// <summary> UI 및 인벤토리에서 아이템 제거 </summary>
     protected override void TryRemoveItem(int index)
     {
-        _skillTree.Remove(index);
+        _skillManager.Remove(index);
     }
 
     /// <summary> 두 슬롯의 아이템 교환 </summary>
@@ -79,7 +79,7 @@ public class SkillTreeUI : StateInfoUI
     {
         if (from == to) return;
         from.SwapOnMoveIcon(to);
-        _skillTree.Swap(from.GetIndex(), to.GetIndex());
+        _skillManager.Swap(from.GetIndex(), to.GetIndex());
     }
 
 
