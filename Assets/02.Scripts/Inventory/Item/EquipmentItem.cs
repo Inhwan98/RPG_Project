@@ -35,7 +35,6 @@ public abstract class EquipmentItem : Item
         equipmentData = data;
 
         _durability = data.GetMaxDurability();
-        Debug.Log("data Not null");
     }
 
     // Item Data 외의 필드값에 대한 매개변수를 갖는 생성자는 추가로 제공하지 않음

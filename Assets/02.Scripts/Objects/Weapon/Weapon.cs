@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour
 {
     [SerializeField] private IWeaponType weaponType;
 
-    [SerializeField] private Collider meleeArea;
+    private Collider meleeArea;
     private TrailRenderer weaponTrail;
 
     private void Awake()

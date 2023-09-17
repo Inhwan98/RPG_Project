@@ -47,6 +47,7 @@ public class PlayerController : Character
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
     //플레이어 UI (HPbar) Manager
+    [SerializeField]
     private PlayerUIManager playerUICtr;
 
     protected override void Awake()
@@ -77,7 +78,6 @@ public class PlayerController : Character
         anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
 
         //_cam           = Camera.main;
-        playerUICtr   = PlayerUIManager.instance;
 
         PlayerUI_Init();
         playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
@@ -179,6 +179,10 @@ public class PlayerController : Character
         else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             StartCoroutine(SkillAttack(5));
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            StartCoroutine(SkillAttack(6));
         }
     }
 
@@ -329,7 +333,7 @@ public class PlayerController : Character
         m_fCurMP += value;
 
         if (m_fCurMP > m_fMaxHP) m_fCurMP = m_fMaxMP;
-        playerUICtr.SetMPbar(m_fCurHP, m_fMaxHP);
+        playerUICtr.SetMPbar(m_fCurMP, m_fMaxHP);
     }
 
     public void SetEXP(int _exp)
@@ -342,6 +346,7 @@ public class PlayerController : Character
         playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
     }
 
+    /// <summary> 몬스터의 아이템을 Inventory로 전달 </summary>
     public void AddInven(Dictionary<ItemData, int> _itemDic)
     {
         foreach(var itemDic in _itemDic)
@@ -387,10 +392,11 @@ public class PlayerController : Character
         m_nCurExp = objData.GetCurExp();
     }
 
-    /// <summary> 스킬 UI 까지 가팅 업데이트 </summary>
+    /// <summary> 스킬 UI 까지 같이 업데이트 </summary>
     public void SetPlayerSkills(SkillData[] skill_datas)
     {
         skill_Datas = skill_datas;
+
         UpdateSkillUI();
     }
 }

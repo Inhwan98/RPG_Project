@@ -44,11 +44,10 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        _capacity = _initalCapacity;
+        
+        _capacity = _maxCapacity;
         _inventoryUI.SetInventoryReference(this);
-
         Init_InvenItems();
-
     }
 
     private void Start()
@@ -483,24 +482,11 @@ public class Inventory : MonoBehaviour
         SaveSys.SaveInvenItem(_items);
     }
 
-    [ContextMenu("printItem")]
-    public void PrintItem()
-    {
-        foreach(var a in _items)
-        {
-            if (a == null) continue;
-            
-            if (a is EquipmentItem eiA)
-            {
-                Debug.Log(eiA.GetDurability());
-            }
-        }
-    }
-
     /// <summary> Load Data 없을시 초기화 </summary>
     public void Init_InvenItems()
     {
-       
+        Debug.Log("Init_Inven");
+
         _items = SaveSys.LoadInvenitem();
 
         if (_items == null)

@@ -12,7 +12,7 @@ public class SkillManager : MonoBehaviour
     private SkillData[] _skills;
     private List<SkillData> _playerHaveSkills = new List<SkillData>();
 
-    private int _maxSkillSize = 4;
+    private int _maxSkillSize = 6;
 
     private float power_STR; // 유저의 힘을 할당받을 것
     private PlayerController _playerCtr;
@@ -27,7 +27,7 @@ public class SkillManager : MonoBehaviour
 
     private void Start()
     {
-        //SetSkillDataDamage();
+        SetSkillDataDamage();
         HandOverPlayerSkills();
 
         UpdateAllSlot();
@@ -251,7 +251,7 @@ public class SkillManager : MonoBehaviour
                 if (_skills[i] == null) continue;
 
                 _skills[i].Init();
-                _skills[i].SetSkillDamage(power_STR);
+                //_skills[i].SetSkillDamage(power_STR);
             }
         }
     }

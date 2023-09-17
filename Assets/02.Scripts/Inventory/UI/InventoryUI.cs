@@ -199,6 +199,7 @@ public class InventoryUI : StateInfoUI
     /// </summary>
     private void InitSlots()
     {
+        Debug.Log("InitSlots");
         // ½½·Ô ÇÁ¸®ÆÕ ¼³Á¤
         _slotUiPrefab.TryGetComponent(out RectTransform slotRect);
         slotRect.sizeDelta = new Vector2(_slotSize, _slotSize);
