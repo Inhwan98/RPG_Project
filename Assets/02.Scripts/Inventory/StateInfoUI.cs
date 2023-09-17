@@ -217,6 +217,7 @@ public abstract class StateInfoUI : MonoBehaviour
     /// <summary> 슬롯에서 아이템 아이콘 제거, 개수 텍스트 숨기기 </summary>
     internal void RemoveItem(int index)
     {
+        
         _slotUIList[index].RemoveItem();
     }
 
