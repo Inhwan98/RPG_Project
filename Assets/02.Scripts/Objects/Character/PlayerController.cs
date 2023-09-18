@@ -31,7 +31,7 @@ public class PlayerController : Character
     #region GetComponent 초기화 항목
     private Rigidbody rigid;
     private Weapon weaponCtr;
-    private Inventory _inven;
+    private ItemInventory _inven;
     #endregion
 
     private CameraController _cameraCtr;
@@ -56,7 +56,7 @@ public class PlayerController : Character
 
         rigid       = GetComponent<Rigidbody>();
         weaponCtr   = GetComponentInChildren<Weapon>();
-        _inven      = GetComponent<Inventory>();
+        _inven      = GetComponent<ItemInventory>();
         _skillMgr   = GetComponent<SkillManager>();
 
         _inven.SetPlayerCtr(this);
@@ -104,10 +104,7 @@ public class PlayerController : Character
         PlayerAttack();
     }
 
-    public void UpdateSkillUI()
-    {
-        playerUICtr.UpdateSkill_Image(skill_Datas);
-    }
+
 
     /// <summary> Character dir, move, speed, rot, anim
     /// <para/> Current Use FixedUpdate()
@@ -261,13 +258,13 @@ public class PlayerController : Character
         //획득하지 않은 상태면
         if (curSkill.GetIsAcquired() == false) yield break;
 
-        //사용 가능 상태가 아니면
-        if (curSkill.GetInUse())
-        {
-            //빨간색 이미지가 깜빡거림
-            StartCoroutine(playerUICtr.SkillUsedWarring(skill_Idx));
-            yield break;
-        }
+        ////사용 가능 상태가 아니면
+        //if (curSkill.GetInUse())
+        //{
+        //    //빨간색 이미지가 깜빡거림
+        //    StartCoroutine(playerUICtr.SkillUsedWarring(skill_Idx));
+        //    yield break;
+        //}
 
         //보유 마나보다 스킬 마나가 크다면 공격 중단.
         //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
@@ -279,7 +276,7 @@ public class PlayerController : Character
         _skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
         playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
 
-        StartCoroutine(playerUICtr.StartSkillCoolTime(skill_Idx, curSkill.GetCoolDown(), curSkill));
+        //StartCoroutine(playerUICtr.StartSkillCoolTime(skill_Idx, curSkill.GetCoolDown(), curSkill));
         
 
         yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
@@ -397,6 +394,11 @@ public class PlayerController : Character
     {
         skill_Datas = skill_datas;
 
-        UpdateSkillUI();
+        //UpdateSkillUI();
     }
+
+    //public void UpdateSkillUI()
+    //{
+    //    playerUICtr.UpdateSkill_Image(skill_Datas);
+    //}
 }
