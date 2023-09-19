@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using System.Text;
+using TMPro;
 
 public class ItemTooltipUI : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class ItemTooltipUI : MonoBehaviour
     private Text _titleText; //아이템 이름 텍스트
 
     [SerializeField]
-    private Text _contentText; //아이템 설명 텍스트
+    private TMP_Text _contentText; //아이템 설명 텍스트
 
     private RectTransform _rt;
     private CanvasScaler _canvasScaler;
@@ -57,13 +58,35 @@ public class ItemTooltipUI : MonoBehaviour
     public void SetItemInfo(ItemData data)
     {
         _titleText.text = data.GetName();
+
+        StringBuilder sb = new StringBuilder();
+
+        if(data is ArmorItemData armorData)
+        {
+
+        }
+
         _contentText.text = data.GetToolTip();
     }
 
     public void SetItemInfo(SkillData data)
     {
         _titleText.text = data.GetSKillName();
-        _contentText.text = data.GetToolTip();
+
+        StringBuilder sb = new StringBuilder();
+
+        //스킬 UI에 나타나는 습득레벨제한 표시. 플레이어가 낮다면 빨간색으로 표시
+        if(PlayerController.instance.GetLevel() < data.GetSkillUsedLevel())
+            sb.Append($"제한 레벨 : <color=#ff0000>{data.GetSkillUsedLevel()}</color><br>");
+        else
+            sb.Append($"제한 레벨 : {data.GetSkillUsedLevel()}<br>");
+
+        sb.Append($"재사용 대기시간 : {data.GetCoolDown()}<br>");
+        sb.Append($"마나 소모 : <color=#0000ff>{data.GetSkillManaAmount()}</color><br>");
+        sb.Append($"피해량 : 공격력의 <color=#ff7f00>{data.GetSkillDamagePer()}% </color><br>");
+        sb.Append($"<br><color=#ffff00>스킬설명 </color> : <br>");
+        sb.Append($"{data.GetToolTip()}");
+        _contentText.text = sb.ToString();
     }
 
     /// <summary> 툴팁의 위치 조정 </summary>

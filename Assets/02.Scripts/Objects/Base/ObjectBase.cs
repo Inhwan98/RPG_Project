@@ -13,12 +13,12 @@ public abstract class ObjectBase : MonoBehaviour
     [SerializeField] protected int   m_nLevel;
     [SerializeField] protected int   m_nMaxExp;
     [SerializeField] protected int   m_nCurExp;
-    [SerializeField] protected float m_fMaxHP;
-    [SerializeField] protected float m_fCurHP;
-    [SerializeField] protected float m_fCurSTR;
-    [SerializeField] protected float m_fSkillDamage;
-    [SerializeField] protected float m_fMaxMP;
-    [SerializeField] protected float m_fCurMP;
+    [SerializeField] protected int m_nMaxHP;
+    [SerializeField] protected int m_nCurHP;
+    [SerializeField] protected int m_nCurSTR;
+    [SerializeField] protected int m_nSkillDamage;
+    [SerializeField] protected int m_nMaxMP;
+    [SerializeField] protected int m_nCurMP;
     [SerializeField] protected bool  m_bisAttack;
     [SerializeField] protected bool  m_bisDead;
     [SerializeField] protected ObjectState objState; // 상태에 따른 액션
@@ -28,15 +28,15 @@ public abstract class ObjectBase : MonoBehaviour
     protected readonly int hashDead = Animator.StringToHash("DoDead");
     #endregion
 
-    public int   GetLevel() => m_nLevel;
+    public int GetLevel() => m_nLevel;
 
-    public float GetMaxHP() => m_fMaxHP;
-    public float GetCurHP() => m_fCurHP;
+    public int GetMaxHP() => m_nMaxHP;
+    public int GetCurHP() => m_nCurHP;
 
-    public float GetMaxMP() => m_fMaxMP;
-    public float GetCurMP() => m_fCurMP;
+    public int GetMaxMP() => m_nMaxMP;
+    public int GetCurMP() => m_nCurMP;
 
-    public float GetCurStr() => m_fCurSTR;
+    public int GetCurStr() => m_nCurSTR;
     public int GetCurExp() => m_nCurExp;
 
 
@@ -57,8 +57,8 @@ public abstract class ObjectBase : MonoBehaviour
 
     protected virtual void Getinfo()
     {
-        Debug.Log($"HP : {m_fCurHP}");
-        Debug.Log($"STR : {m_fCurSTR}");
+        Debug.Log($"HP : {m_nCurHP}");
+        Debug.Log($"STR : {m_nCurSTR}");
     }
 
     //protected abstract void OnAttack1Trigger();
@@ -69,12 +69,12 @@ public abstract class ObjectBase : MonoBehaviour
         //Status Set
         m_nLevel       = objData.GetLevel();
         m_nCurExp      = objData.GetCurExp();
-        m_fMaxHP       = objData.GetMaxHP();
-        m_fMaxMP       = objData.GetMaxMP();
-        m_fCurSTR      = objData.GetCurSTR();
+        m_nMaxHP       = objData.GetMaxHP();
+        m_nMaxMP       = objData.GetMaxMP();
+        m_nCurSTR      = objData.GetCurSTR();
 
-        m_fCurHP       = m_fMaxHP;
-        m_fCurMP       = m_fMaxMP;
+        m_nCurHP       = m_nMaxHP;
+        m_nCurMP       = m_nMaxMP;
         //State Set
         objState = ObjectState.IDLE;
 
@@ -84,10 +84,10 @@ public abstract class ObjectBase : MonoBehaviour
     }
 
     /// <summary> 스킬데미지 값 반환 </summary>
-    public float GetSkillDamage() => m_fSkillDamage;
+    public int GetSkillDamage() => m_nSkillDamage;
 
     /// <summary> 스킬데미지 값 수정 </summary>
-    public void  SetSkillDamage(float _skillDamage) => m_fSkillDamage = _skillDamage;
+    public void  SetSkillDamage(int _skillDamage) => m_nSkillDamage = _skillDamage;
 
 
     /// <summary> State값 반환 </summary>
@@ -96,18 +96,18 @@ public abstract class ObjectBase : MonoBehaviour
     public bool GetIsDie() => m_bisDead;
 
     /// <summary> 대미지를 입었을 때 함수 </summary>
-    public virtual void OnDamage(float _str)
+    public virtual void OnDamage(int _str)
     {
-        this.m_fCurHP -= _str;
+        this.m_nCurHP -= _str;
         //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
-        if (m_fCurHP <= 0)// 체력이 0 이하
+        if (m_nCurHP <= 0)// 체력이 0 이하
         {
             this.objState = ObjectState.DEAD;
         }
     }
 
     
-    public virtual void Buff(float _str) { }
+    public virtual void Buff(int _str) { }
 
     /// <summary> 공격 관련 </summary>
     protected abstract IEnumerator Attack();

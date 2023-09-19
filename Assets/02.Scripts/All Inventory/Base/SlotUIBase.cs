@@ -78,7 +78,7 @@ public class SlotUIBase : MonoBehaviour
 
     private void HideIcon() => _iconGo.SetActive(false);
 
-    private void Awake()
+    protected virtual void Awake()
     {
         InitComponents();
         InitValues();
@@ -99,9 +99,16 @@ public class SlotUIBase : MonoBehaviour
         _slotImage = GetComponent<Image>();
     }
 
-    protected virtual void InitValues()
+    private void InitValues()
     {
+        // 1. Item Icon, Highlight Rect
+        _iconRect.pivot = new Vector2(0.5f, 0.5f); // 피벗은 중앙
+        _iconRect.anchorMin = Vector2.zero;        // 앵커는 Top Left
+        _iconRect.anchorMax = Vector2.one;
 
+        // 패딩 조절
+        _iconRect.offsetMin = Vector2.one * (_padding);
+        _iconRect.offsetMax = Vector2.one * (-_padding);
 
         // 아이콘과 하이라이트 크기가 동일하도록
         _highlightRect.pivot = _iconRect.pivot;
@@ -136,24 +143,28 @@ public class SlotUIBase : MonoBehaviour
     }
 
 
-
-
-    /// <summary> 다른 슬롯과 아이템 교환  </summary>
-    public void SwapOnMoveIcon(SlotUIBase other)
+    /// <summary> 다른 슬롯과 아이템 교환 </summary>
+    public void SwapOnMoveIcon(SlotUIBase other, bool isJustCopy = false)
     {
         if (other == null) return;
         if (other == this) return; // 자기 자신과 교환 불가
+        if (other is InvenSkillSlotUI) return;
         if (!this.GetIsAccessible()) return;
         if (!other.GetIsAccessible()) return;
 
         var temp = _iconImage.sprite;
+
+        other.SetItem(temp);
+
+        //단순히 스킬 습득위한 복사면 리턴
+        if (isJustCopy) return;
 
         // 1. 대상에 아이템이 있는 경우 : 교환
         if (other.GetHasItem()) SetItem(other.GetIconImage().sprite);
         // 2. 없는 경우 : 이동
         else RemoveItem();
 
-        other.SetItem(temp);
+        
     }
 
 

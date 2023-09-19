@@ -160,7 +160,7 @@ public class Monster : ObjectBase
 
         ObjectBase _objCtr = destTr.GetComponent<ObjectBase>();
 
-        _objCtr.OnDamage(m_fCurSTR);
+        _objCtr.OnDamage(m_nCurSTR);
         yield return new WaitForSeconds(1);
         m_bisAttack = false;
     }
@@ -220,11 +220,11 @@ public class Monster : ObjectBase
     }
 
     /// <summary> 데미지를 받았을 시 </summary>
-    public override void OnDamage(float _str)
+    public override void OnDamage(int _str)
     {
         if (m_bisDead) return;
 
-        this.m_fCurHP -= _str;
+        this.m_nCurHP -= _str;
 
         UI_Damage damageUICtr;
         GameObject _damageText;
@@ -233,7 +233,7 @@ public class Monster : ObjectBase
         damageUICtr = _damageText.GetComponent<UI_Damage>();
         damageUICtr.SetDamageText(_str);
         //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
-        if (m_fCurHP <= 0)// 체력이 0 이하
+        if (m_nCurHP <= 0)// 체력이 0 이하
         {
             playerCtr.SetEXP(m_nCurExp);
                 
@@ -274,12 +274,12 @@ public class Monster : ObjectBase
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
         {
-            float playerStr = playerCtr.GetCurStr();
+            int playerStr = playerCtr.GetCurStr();
             OnDamage(playerStr);
         }
         else if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerSkill"))
         {
-            float playerSkillPower = playerCtr.GetSkillDamage();
+            int playerSkillPower = playerCtr.GetSkillDamage();
             OnDamage(playerSkillPower);
         }
     }
@@ -326,13 +326,13 @@ public class Monster : ObjectBase
         }
 
         m_nLevel = objData.GetLevel();
-        m_fMaxHP = objData.GetMaxHP();
-        m_fCurHP = objData.GetCurHP();
+        m_nMaxHP = objData.GetMaxHP();
+        m_nCurHP = objData.GetCurHP();
 
-        m_fMaxMP = objData.GetMaxMP();
-        m_fCurMP = objData.GetCurMP();
+        m_nMaxMP = objData.GetMaxMP();
+        m_nCurMP = objData.GetCurMP();
 
-        m_fCurSTR = objData.GetCurSTR();
+        m_nCurSTR = objData.GetCurSTR();
         m_nCurExp = objData.GetCurExp();
     }
 }

@@ -58,10 +58,11 @@ public class PlayerController : Character
         weaponCtr   = GetComponentInChildren<Weapon>();
         _inven      = GetComponent<ItemInventory>();
         _skillMgr   = GetComponent<SkillManager>();
+        _skInvenUI  = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
 
         _inven.SetPlayerCtr(this);
         _skillMgr.SetPlayerCtr(this);
-        _skillMgr.SetSkillPower(m_fCurSTR);
+        _skillMgr.SetSkillPower(m_nCurSTR);
 
         #region SingTone
         if (instance != null)
@@ -80,7 +81,7 @@ public class PlayerController : Character
         //_cam           = Camera.main;
 
         PlayerUI_Init();
-        playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
+        playerUICtr.DisplayInfo(m_nLevel, m_nMaxHP, m_nMaxMP, m_nCurSTR);
 
         base.Start(); //skill_List 가 부모에서 초기화 됌
 
@@ -207,8 +208,8 @@ public class PlayerController : Character
     /// <summary> Player Info UI Set </summary>
     private void PlayerUI_Init()
     {
-        playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP);
-        playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
+        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP);
+        playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
         playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
     }
 
@@ -226,7 +227,7 @@ public class PlayerController : Character
         base.LevelUP();
         PlayerUI_Init();
 
-        playerUICtr.DisplayInfo(m_nLevel, m_fMaxHP, m_fMaxMP, m_fCurSTR);
+        playerUICtr.DisplayInfo(m_nLevel, m_nMaxHP, m_nMaxMP, m_nCurSTR);
     }
 
     protected override IEnumerator Attack()
@@ -249,6 +250,10 @@ public class PlayerController : Character
         }
     }
 
+    /// <summary> Player의 스킬 공격 
+    /// <para/> SKill Manager의 플레이어 스킬Index 를 지닌
+    /// <para/> skill_Datas[] 배열 이용
+    /// </summary>
     protected override IEnumerator SkillAttack(int skillNum)
     {
         //현재 사용할 스킬. 0번째 부터 시작함.
@@ -256,15 +261,15 @@ public class PlayerController : Character
         SkillData curSkill = skill_Datas[skill_Idx];
 
         //획득하지 않은 상태면
-        if (curSkill.GetIsAcquired() == false) yield break;
+        if (curSkill == null) yield break;
 
-        ////사용 가능 상태가 아니면
-        //if (curSkill.GetInUse())
-        //{
-        //    //빨간색 이미지가 깜빡거림
-        //    StartCoroutine(playerUICtr.SkillUsedWarring(skill_Idx));
-        //    yield break;
-        //}
+        //사용 가능 상태가 아니면
+        if (curSkill.GetInUse())
+        {
+            //빨간색 이미지가 깜빡거림
+            StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
+            yield break;
+        }
 
         //보유 마나보다 스킬 마나가 크다면 공격 중단.
         //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
@@ -273,10 +278,10 @@ public class PlayerController : Character
 
         anim.SetTrigger(curSkill.GetAnimHash());
         
-        _skillMgr.UseSkill(curSkill, this, ref m_fCurMP);
-        playerUICtr.SetMPbar(m_fCurMP, m_fMaxMP);
+        _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
+        playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
 
-        //StartCoroutine(playerUICtr.StartSkillCoolTime(skill_Idx, curSkill.GetCoolDown(), curSkill));
+        StartCoroutine(_skInvenUI.StartSkillCoolTime(skill_Idx, curSkill));
         
 
         yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
@@ -284,21 +289,21 @@ public class PlayerController : Character
         //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
     }
 
-    public override void Buff(float _str)
+    public override void Buff(int _str)
     {
         base.Buff(_str);
-        playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP); //HP Bar UI 수정
+        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
     }
 
-    public override void OnDamage(float _str)
+    public override void OnDamage(int _str)
     {
-        this.m_fCurHP -= _str;
+        this.m_nCurHP -= _str;
         //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
 
         //if (m_fCurHP <= 0) this.objState = ObjectState.DEAD; //사망 없음
 
-        if (m_fCurHP <= 0) m_fCurHP = 0;
-        playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP); //HP Bar UI 수정
+        if (m_nCurHP <= 0) m_nCurHP = 0;
+        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
     }
 
     protected override void Die()
@@ -316,21 +321,21 @@ public class PlayerController : Character
     public void  SetUseInven(bool value) { _isUseInven = value; }
 
     /// <summary> 체력 회복 작용 </summary>
-    public void RecoveryHP(float value)
+    public void RecoveryHP(int value)
     {
-        m_fCurHP += value;
+        m_nCurHP += value;
 
-        if (m_fCurHP > m_fMaxHP) m_fCurHP = m_fMaxHP;
-        playerUICtr.SetHPbar(m_fCurHP, m_fMaxHP);
+        if (m_nCurHP > m_nMaxHP) m_nCurHP = m_nMaxHP;
+        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP);
     }
 
     /// <summary> 마나 회복 작용 </summary>
-    public void RecoveryMP(float value)
+    public void RecoveryMP(int value)
     {
-        m_fCurMP += value;
+        m_nCurMP += value;
 
-        if (m_fCurMP > m_fMaxHP) m_fCurMP = m_fMaxMP;
-        playerUICtr.SetMPbar(m_fCurMP, m_fMaxHP);
+        if (m_nCurMP > m_nMaxHP) m_nCurMP = m_nMaxMP;
+        playerUICtr.SetMPbar(m_nCurMP, m_nMaxHP);
     }
 
     public void SetEXP(int _exp)
@@ -379,26 +384,26 @@ public class PlayerController : Character
         }
 
         m_nLevel = objData.GetLevel();
-        m_fMaxHP = objData.GetMaxHP();
-        m_fCurHP = objData.GetCurHP();
+        m_nMaxHP = objData.GetMaxHP();
+        m_nCurHP = objData.GetCurHP();
 
-        m_fMaxMP = objData.GetMaxMP();
-        m_fCurMP = objData.GetCurMP();
+        m_nMaxMP = objData.GetMaxMP();
+        m_nCurMP = objData.GetCurMP();
 
-        m_fCurSTR = objData.GetCurSTR();
+        m_nCurSTR = objData.GetCurSTR();
         m_nCurExp = objData.GetCurExp();
     }
 
-    /// <summary> 스킬 UI 까지 같이 업데이트 </summary>
-    public void SetPlayerSkills(SkillData[] skill_datas)
+    /// <summary> 모든 스킬 덮어 씌우기 </summary>
+    public void SetPlayerSkill(SkillData[] skill_datas)
     {
         skill_Datas = skill_datas;
-
-        //UpdateSkillUI();
     }
 
-    //public void UpdateSkillUI()
-    //{
-    //    playerUICtr.UpdateSkill_Image(skill_Datas);
-    //}
+    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
+    public void SetPlayerSkill(int idx, SkillData skillData)
+    {
+        skill_Datas[idx] = skillData;
+    }
+
 }

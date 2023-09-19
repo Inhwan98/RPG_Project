@@ -72,8 +72,8 @@ public abstract class InvenUIBase : MonoBehaviour
     private void ShowOrHideItemToolTip()
     {
         // 마우스가 유효한 아이템 아이콘 위에 올라와 있다면 툴팁 보여주기
-        bool isValid =
-            _pointerOverSlot != null && _pointerOverSlot.GetHasItem() && _pointerOverSlot.GetIsAccessible()
+        bool isValid =                                                 //09.19
+            _pointerOverSlot != null && _pointerOverSlot.GetHasItem() //&& _pointerOverSlot.GetIsAccessible()
             && (_pointerOverSlot != _beginDragSlot); //드래그 시작한 슬롯이면 보여주지 않기
 
         if (isValid)
@@ -93,7 +93,7 @@ public abstract class InvenUIBase : MonoBehaviour
             _beginDragSlot = RaycastAndGetFirstComponent<SlotUIBase>();
 
             //아이템을 갖고 있는 슬롯만 해당
-            if (_beginDragSlot != null && _beginDragSlot.GetHasItem())
+            if (_beginDragSlot != null && _beginDragSlot.GetHasItem() && _beginDragSlot.GetIsAccessible())
             {
                 //위치 기억, 참조 등록
                 _beginDragIconTransform = _beginDragSlot.GetIconRect().transform;
@@ -121,7 +121,7 @@ public abstract class InvenUIBase : MonoBehaviour
     {
         if (_beginDragSlot == null) return;
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(_leftClick))
         {
             //위치 이름
             _beginDragIconTransform.position =
@@ -132,7 +132,7 @@ public abstract class InvenUIBase : MonoBehaviour
     /// <summary>  클릭을 뗄 경우 /// </summary>
     private void OnPointerUp()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(_leftClick))
         {
             // End Drag
             if (_beginDragSlot != null)
@@ -214,7 +214,7 @@ public abstract class InvenUIBase : MonoBehaviour
         _slotUIList[index].SetItem(icon);
     }
 
-   
+
 
     /// <summary> 슬롯에서 아이템 아이콘 제거, 개수 텍스트 숨기기 </summary>
     internal void RemoveItem(int index)
