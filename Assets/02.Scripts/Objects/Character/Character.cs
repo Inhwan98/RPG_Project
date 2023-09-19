@@ -7,11 +7,13 @@ public abstract class Character : ObjectBase
 {
     [Header("SkILL Related")]
     [SerializeField] protected int skillMaxAmount = 3; //보유할 최대 스킬 개수
-    [SerializeField] protected SkillData[] skill_Datas;
+    [SerializeField] protected SkillData[] skill_Datas = new SkillData[6];
 
     //스킬을 자동 실행할 원형 큐
     // protected CircularQueue<SkillStatus> circualrQueue;
     protected SkillManager _skillMgr;
+    protected Skill_InvenUI _skInvenUI;
+
     private GameObject[] levelUPEffect; //레벨업 이펙트
 
     protected override void Awake()
@@ -36,13 +38,13 @@ public abstract class Character : ObjectBase
     }
 
 
-    public override void Buff(float _str)
+    public override void Buff(int _str)
     {
-        this.m_fCurHP += _str;
+        this.m_nCurHP += _str;
         
-        if (m_fCurHP >= m_fMaxHP)// 체력이 맥스 이상이면
+        if (m_nCurHP >= m_nMaxHP)// 체력이 맥스 이상이면
         {
-            m_fCurHP = m_fMaxHP;
+            m_nCurHP = m_nMaxHP;
         }
     }
 
@@ -56,12 +58,12 @@ public abstract class Character : ObjectBase
 
         m_nLevel  = objData.GetLevel();
         m_nCurExp = objData.GetCurExp();
-        m_fMaxHP  = objData.GetMaxHP();
-        m_fMaxMP  = objData.GetMaxMP();
-        m_fCurSTR = objData.GetCurSTR();
+        m_nMaxHP  = objData.GetMaxHP();
+        m_nMaxMP  = objData.GetMaxMP();
+        m_nCurSTR = objData.GetCurSTR();
 
-        m_fCurHP  = m_fMaxHP;
-        m_fCurMP  = m_fMaxMP;
+        m_nCurHP  = m_nMaxHP;
+        m_nCurMP  = m_nMaxMP;
         m_nMaxExp = m_nLevel * 20;
 
         _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
@@ -83,6 +85,7 @@ public abstract class Character : ObjectBase
     {
         return skill_Datas;
     }
+
 
     protected override void Die() { }
     protected abstract IEnumerator SkillAttack(int skillNum);

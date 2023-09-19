@@ -1,9 +1,9 @@
 {
   "nLevel": 1,
-  "fMaxHP": 100.0,
-  "fCurHP": 100.0,
-  "fMaxMP": 100.0,
-  "fCurMP": 100.0,
-  "fCurSTR": 10.0,
-  "nCurExp": 0
+  "nMaxHP": 100,
+  "nCurHP": 100,
+  "nMaxMP": 100,
+  "nCurMP": 100,
+  "nCurSTR": 10,
+  "nCurExp": 10
 }

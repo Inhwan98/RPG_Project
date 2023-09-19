@@ -1,9 +1,10 @@
 {
   "_id": 10,
-  "_name": "HP 포션",
+  "_usedLevel": 1,
+  "_name": "최하급 HP 포션",
   "_tooltip": "맛있는 포션",
   "_IconPath": "ItemIcon/Portion/hp",
   "_maxAmount": 99,
-  "_value": 10.0,
+  "_value": 10,
   "_portionState": 0
 }

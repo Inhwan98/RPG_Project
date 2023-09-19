@@ -11,6 +11,9 @@ public abstract class ItemData
     [Newtonsoft.Json.JsonProperty]
     private string _name; //아이템 이름
 
+    [Newtonsoft.Json.JsonProperty]
+    private int _usedLevel; //제한 레벨
+
     [Multiline]
     [Newtonsoft.Json.JsonProperty]
     private string _tooltip; //아이템 설명
@@ -22,6 +25,7 @@ public abstract class ItemData
     //[SerializeField] private GameObject _dropItemPrefab; //바닥에 떨어질 때 생성할 프리팹
 
     public int GetID() { return _id; }
+    public int GetUsedLevel() { return _usedLevel; }
     public string GetName() { return _name; }
     public string GetToolTip() { return _tooltip; }
     public Sprite GetIconSprite() { return _iconSprite; }

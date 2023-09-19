@@ -6,19 +6,19 @@ public class ObjectData
     private int nLevel;
 
     [Newtonsoft.Json.JsonProperty]
-    private float fMaxHP;
+    private int nMaxHP;
 
     [Newtonsoft.Json.JsonProperty]
-    private float fCurHP;
+    private int nCurHP;
 
     [Newtonsoft.Json.JsonProperty]
-    private float fMaxMP;
+    private int nMaxMP;
     
     [Newtonsoft.Json.JsonProperty]
-    private float fCurMP;
+    private int nCurMP;
 
     [Newtonsoft.Json.JsonProperty]
-    private float fCurSTR;
+    private int nCurSTR;
 
     [Newtonsoft.Json.JsonProperty]
     private int nCurExp;
@@ -32,11 +32,11 @@ public class ObjectData
     {
         nLevel  = objBase.GetLevel();
 
-        fMaxHP  = objBase.GetMaxHP();
-        fCurHP  = objBase.GetCurHP();
+        nMaxHP  = objBase.GetMaxHP();
+        nCurHP  = objBase.GetCurHP();
 
-        fMaxMP  = objBase.GetMaxHP();
-        fCurMP  = objBase.GetCurMP();
+        nMaxMP  = objBase.GetMaxHP();
+        nCurMP  = objBase.GetCurMP();
         nCurExp = objBase.GetCurExp();
     }
 
@@ -44,22 +44,22 @@ public class ObjectData
     {
         nLevel = 0;
 
-        fMaxHP = 0;
-        fCurHP = 0;
+        nMaxHP = 0;
+        nCurHP = 0;
 
-        fMaxMP = 0;
-        fCurMP = 0;
+        nMaxMP = 0;
+        nCurMP = 0;
         nCurExp = 0;
     }
 
     #region Get, Set Func
-    public float GetMaxHP() { return fMaxHP; }
-    public float GetCurHP() { return fCurHP; }
+    public int GetMaxHP() { return nMaxHP; }
+    public int GetCurHP() { return nCurHP; }
 
-    public float GetMaxMP() { return fMaxMP; }
-    public float GetCurMP() { return fCurMP; }
+    public int GetMaxMP() { return nMaxMP; }
+    public int GetCurMP() { return nCurMP; }
 
-    public float GetCurSTR() { return fCurSTR; }
+    public int GetCurSTR() { return nCurSTR; }
 
     public int GetLevel() { return nLevel; }
 
@@ -67,23 +67,23 @@ public class ObjectData
 
     public void LevelUP()
     {
-        nLevel       += 1;
-        fMaxHP       *= 1.5f;
-        fMaxMP       *= 1.4f;
-        fCurSTR      *= 1.5f;
-        nCurExp       = 0;
+        nLevel   = 1;
+        nMaxHP   = (int)(nMaxHP  * 1.5f);
+        nMaxMP   = (int)(nMaxMP  * 1.4f);
+        nCurSTR  = (int)(nCurSTR * 1.5f);
+        nCurExp  = 0;
     }
 
     public void Start_Init()
     {
         nLevel = 1;
-        fMaxHP = 100;
-        fCurHP = fMaxHP;
+        nMaxHP = 100;
+        nCurHP = nMaxHP;
 
-        fMaxMP = 100;
-        fCurMP = fMaxHP;
+        nMaxMP = 100;
+        nCurMP = nMaxHP;
 
-        fCurSTR = 10;
+        nCurSTR = 10;
         nCurExp = 0;
     }
 
