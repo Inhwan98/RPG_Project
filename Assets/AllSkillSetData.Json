@@ -14,7 +14,7 @@
   {
     "m_sSkillName": "열파참",
     "m_nSkillLevel": 1,
-    "m_nUsedLevel": 2,
+    "m_nUsedLevel": 1,
     "m_sAnimParameterName": "DoSKILL_2",
     "m_sToolTip": "던파 서유리",
     "m_sSpritePath": "Skill_Icon/열파참",
@@ -26,7 +26,7 @@
   {
     "m_sSkillName": "쇼크웨이브",
     "m_nSkillLevel": 1,
-    "m_nUsedLevel": 3,
+    "m_nUsedLevel": 1,
     "m_sAnimParameterName": "DoSKILL_3",
     "m_sToolTip": "전기 충격파",
     "m_sSpritePath": "Skill_Icon/쇼크웨이브",
@@ -38,7 +38,7 @@
   {
     "m_sSkillName": "차지웨이브",
     "m_nSkillLevel": 1,
-    "m_nUsedLevel": 4,
+    "m_nUsedLevel": 1,
     "m_sAnimParameterName": "DoSKILL_4",
     "m_sToolTip": "기를 모아 강력한 원거리 공격을 한다.",
     "m_sSpritePath": "Skill_Icon/차지웨이브",
@@ -50,7 +50,7 @@
   {
     "m_sSkillName": "폭풍참격",
     "m_nSkillLevel": 1,
-    "m_nUsedLevel": 5,
+    "m_nUsedLevel": 1,
     "m_sAnimParameterName": "DoSKILL_5",
     "m_sToolTip": "빠른 속도로 상대에게 연속적으로 참격을 가한다.",
     "m_sSpritePath": "Skill_Icon/폭풍참격",
@@ -62,9 +62,9 @@
   {
     "m_sSkillName": "천지개벽",
     "m_nSkillLevel": 1,
-    "m_nUsedLevel": 6,
+    "m_nUsedLevel": 1,
     "m_sAnimParameterName": "DoSKILL_6",
-    "m_sToolTip": "광범위한 참격 공격을 시전하는 강력한 스킬로, 주변의 넓은 범위에 폭발적인 힘을 가해 적들에게 엄청난 피해를 입힙니다.",
+    "m_sToolTip": "주변의 넓은 범위에 폭발적인 힘을 가해 적들에게 엄청난 피해를 입힙니다.",
     "m_sSpritePath": "Skill_Icon/천지개벽",
     "m_nSkillDamagePer": 300,
     "m_fCooldown": 10,

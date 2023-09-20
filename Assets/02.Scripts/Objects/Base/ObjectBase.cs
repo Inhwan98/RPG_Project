@@ -13,12 +13,12 @@ public abstract class ObjectBase : MonoBehaviour
     [SerializeField] protected int   m_nLevel;
     [SerializeField] protected int   m_nMaxExp;
     [SerializeField] protected int   m_nCurExp;
-    [SerializeField] protected int m_nMaxHP;
-    [SerializeField] protected int m_nCurHP;
-    [SerializeField] protected int m_nCurSTR;
-    [SerializeField] protected int m_nSkillDamage;
-    [SerializeField] protected int m_nMaxMP;
-    [SerializeField] protected int m_nCurMP;
+    [SerializeField] protected int   m_nMaxHP;
+    [SerializeField] protected int   m_nCurHP;
+    [SerializeField] protected int   m_nCurSTR;
+    [SerializeField] protected int   m_nSkillDamage;
+    [SerializeField] protected int   m_nMaxMP;
+    [SerializeField] protected int   m_nCurMP;
     [SerializeField] protected bool  m_bisAttack;
     [SerializeField] protected bool  m_bisDead;
     [SerializeField] protected ObjectState objState; // 상태에 따른 액션

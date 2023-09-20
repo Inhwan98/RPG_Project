@@ -66,6 +66,7 @@ public abstract class Character : ObjectBase
         m_nCurMP  = m_nMaxMP;
         m_nMaxExp = m_nLevel * 20;
 
+        _skillMgr.SetSkillPower(m_nCurSTR);
         _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
     }
 

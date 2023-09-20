@@ -1,0 +1,239 @@
+fileFormatVersion: 2
+guid: 016164ad5a984a04797ef3c38018beae
+ModelImporter:
+  serializedVersion: 21100
+  internalIDToNameTable:
+  - first:
+      74: -8945691123924629249
+    second: Armature|Idle
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Armature|Idle
+      takeName: Armature|Idle
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 85
+      wrapMode: 2
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton:
+    - name: DuckNPC(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Armature
+      parentName: DuckNPC(Clone)
+      position: {x: -1.0653298, y: 1.4647855, z: -0.009060062}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: Main
+      parentName: Armature
+      position: {x: 0.008160806, y: 2.5088848e-12, z: 0.000051868614}
+      rotation: {x: 0.7069201, y: 0.01624783, z: -0.016247928, w: 0.7069201}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: UpperLeg.L
+      parentName: Main
+      position: {x: 0.003730523, y: -0.000629937, z: -0.0038347137}
+      rotation: {x: -0.69465876, y: -0.07462688, z: 0.71544206, w: -0.0047643506}
+      scale: {x: 0.9999976, y: 0.9999998, z: 0.99999326}
+    - name: Calf.L
+      parentName: UpperLeg.L
+      position: {x: 3.7252902e-11, y: 0.0068474254, z: -8.9406965e-10}
+      rotation: {x: -0.17397319, y: 0.0053408686, z: 0.081608325, w: 0.9813486}
+      scale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+    - name: Foot.L
+      parentName: Calf.L
+      position: {x: 1.11758706e-10, y: 0.006982817, z: 0.0000000016996636}
+      rotation: {x: 0.059420295, y: 0.56070304, z: 0.8249503, w: 0.039222155}
+      scale: {x: 1, y: 1.0000002, z: 0.99999994}
+    - name: Foot.L_end
+      parentName: Foot.L
+      position: {x: -0, y: 0.004622151, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: UpperLeg.R
+      parentName: Main
+      position: {x: 0.0033529243, y: -0.0007027929, z: 0.003984028}
+      rotation: {x: 0.7003332, y: 0.074661486, z: 0.7098885, w: -0.004169261}
+      scale: {x: 0.99999774, y: 0.99999994, z: 0.9999941}
+    - name: Calf.R
+      parentName: UpperLeg.R
+      position: {x: -1.11758706e-10, y: 0.0068474268, z: 8.405186e-10}
+      rotation: {x: 0.1749912, y: -0.0021253882, z: 0.07940154, w: 0.9813608}
+      scale: {x: 0.9999999, y: 1, z: 1.0000001}
+    - name: Foot.R
+      parentName: Calf.R
+      position: {x: 4.0978193e-10, y: 0.0069828164, z: 3.213063e-10}
+      rotation: {x: -0.8051185, y: -0.12381151, z: -0.15195982, w: 0.55978847}
+      scale: {x: 1, y: 0.9999999, z: 1}
+    - name: Foot.R_end
+      parentName: Foot.R
+      position: {x: -0, y: 0.004622151, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Waist
+      parentName: Main
+      position: {x: 2.2351741e-10, y: 0.0045071007, z: 6.106227e-17}
+      rotation: {x: 0.0000000016149162, y: 0.000000053182777, z: 0.017706526, w: 0.99984324}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: Chest
+      parentName: Waist
+      position: {x: 4.9360094e-10, y: 0.008748641, z: -3.2751578e-17}
+      rotation: {x: -0.0000000015238925, y: 0.000000017990148, z: -0.074047096, w: 0.9972548}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Arm.L
+      parentName: Chest
+      position: {x: 0.0022291397, y: 0.0060986583, z: -0.00519445}
+      rotation: {x: -0.82277274, y: -0.14251779, z: 0.10620089, w: 0.53986585}
+      scale: {x: 1, y: 0.9999998, z: 0.9999999}
+    - name: Arm.L_end
+      parentName: Arm.L
+      position: {x: -0, y: 0.0126467105, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Arm.R
+      parentName: Chest
+      position: {x: 0.0019118908, y: 0.006012977, z: 0.0052440423}
+      rotation: {x: 0.82911515, y: 0.09794091, z: 0.079974346, w: 0.5445915}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: Arm.R_end
+      parentName: Arm.R
+      position: {x: -0, y: 0.01264671, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Neck
+      parentName: Chest
+      position: {x: -2.9802322e-10, y: 0.010234744, z: 0}
+      rotation: {x: -0.000000009941775, y: 0.000000028288326, z: 0.18970335, w: 0.98184144}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: Head
+      parentName: Neck
+      position: {x: 5.9604643e-10, y: 0.00831961, z: 1.3322676e-16}
+      rotation: {x: 0.000000002739764, y: 0.000000006859113, z: 0.0340453, w: 0.9994203}
+      scale: {x: 1, y: 0.99999994, z: 1}
+    - name: Head_end
+      parentName: Head
+      position: {x: -0, y: 0.006890785, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Duck
+      parentName: DuckNPC(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 1
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

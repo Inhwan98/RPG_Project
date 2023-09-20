@@ -97,7 +97,7 @@ public class SkillData
     public int GetSkillDamage() { return m_nSkillDamage; }
     public void SetSkillDamage(float _power)
     {
-        m_nSkillDamage = (int)((m_nSkillDamagePer/100 * _power) + _power);
+        m_nSkillDamage = (int)(m_nSkillDamagePer/100.0 * _power);
     }
 
     //스킬이미지

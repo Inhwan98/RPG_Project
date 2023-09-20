@@ -24,12 +24,11 @@ public class Monster : ObjectBase
     [SerializeField] private float m_fTargetRange = 0.2f;
 
     [Header("Damage UI")]
-    [SerializeField] private Transform damageTr;
-    private GameObject damageTextObj;
+    [SerializeField] private Transform _damageTr;
+    private GameObject _damageTextObj;
 
     //Drop Item
-    private GameObject chestPrefab;
-    protected List<ItemData> itemDatas = new List<ItemData>();
+    protected List<ItemData> _itemDatas = new List<ItemData>();
     protected Dictionary<ItemData, int> _itemDic = new Dictionary<ItemData, int>();
 
     protected int m_nPortionDrop_MinAmount;
@@ -56,8 +55,7 @@ public class Monster : ObjectBase
         base.Awake();
         agent = GetComponent<NavMeshAgent>();
 
-        damageTextObj = Resources.Load<GameObject>("Prefab/DamageUI");
-        chestPrefab   = Resources.Load<GameObject>("Prefab/Treasure_Chest");
+        _damageTextObj = Resources.Load<GameObject>("Prefab/DamageText");
     }
 
     protected override void Start()
@@ -226,12 +224,12 @@ public class Monster : ObjectBase
 
         this.m_nCurHP -= _str;
 
-        UI_Damage damageUICtr;
-        GameObject _damageText;
+
+        GameObject damageText;
         
-        _damageText = Instantiate(damageTextObj, damageTr.position, Quaternion.identity, transform);
-        damageUICtr = _damageText.GetComponent<UI_Damage>();
-        damageUICtr.SetDamageText(_str);
+        damageText = Instantiate(_damageTextObj, _damageTr.position, Quaternion.identity, transform);
+        damageText.GetComponent<TextMesh>().text = $"{_str}";
+    
         //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
         if (m_nCurHP <= 0)// 체력이 0 이하
         {

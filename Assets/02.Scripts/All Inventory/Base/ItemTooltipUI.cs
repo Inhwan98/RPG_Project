@@ -61,14 +61,25 @@ public class ItemTooltipUI : MonoBehaviour
 
         StringBuilder sb = new StringBuilder();
 
-        if(data is ArmorItemData armorData)
-        {
+        //인벤 UI에 나타나는 습득레벨제한 표시. 플레이어가 낮다면 빨간색으로 표시
+        if (PlayerController.instance.GetLevel() < data.GetUsedLevel())
+            sb.Append($"제한 레벨 : <color=#ff0000>{data.GetUsedLevel()}</color><br>");
+        else
+            sb.Append($"제한 레벨 : {data.GetUsedLevel()}<br>");
 
-        }
+        if (data is PortionItemData portionData)
+            sb.Append($"회복량 :{portionData.GetValue()}<br>");
+        else if (data is ArmorItemData armorData)
+            sb.Append($"방어력 : {armorData.GetDefence()}<br>");
+        else if (data is WeaponItemData weaponData)
+            sb.Append($"공격력 : {weaponData.GetDamage()}<br>");
 
-        _contentText.text = data.GetToolTip();
+        sb.Append($"<br><br> {data.GetToolTip()}");
+
+        _contentText.text = sb.ToString();
     }
 
+    ///<summary> 툴팁 UI에 스킬 정보 등록 </summary>
     public void SetItemInfo(SkillData data)
     {
         _titleText.text = data.GetSKillName();
@@ -79,13 +90,15 @@ public class ItemTooltipUI : MonoBehaviour
         if(PlayerController.instance.GetLevel() < data.GetSkillUsedLevel())
             sb.Append($"제한 레벨 : <color=#ff0000>{data.GetSkillUsedLevel()}</color><br>");
         else
-            sb.Append($"제한 레벨 : {data.GetSkillUsedLevel()}<br>");
+            sb.Append($"제한 레벨 : {data.GetSkillUsedLevel()}<br><br>");
 
+        sb.Append($"스킬 레벨 : {data.GetSkillLevel()}<br>"); ;
         sb.Append($"재사용 대기시간 : {data.GetCoolDown()}<br>");
         sb.Append($"마나 소모 : <color=#0000ff>{data.GetSkillManaAmount()}</color><br>");
         sb.Append($"피해량 : 공격력의 <color=#ff7f00>{data.GetSkillDamagePer()}% </color><br>");
         sb.Append($"<br><color=#ffff00>스킬설명 </color> : <br>");
         sb.Append($"{data.GetToolTip()}");
+
         _contentText.text = sb.ToString();
     }
 

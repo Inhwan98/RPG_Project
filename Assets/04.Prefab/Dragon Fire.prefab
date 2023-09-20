@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1359316831}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.02, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8378837324141999831}
@@ -1352,23 +1352,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ffe021160a43c47ba50d5d19ea623d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objData:
-    nLevel: 1
-    fMaxHP: 100
-    fCurHP: 100
-    fMaxMP: 0
-    fCurMP: 0
-    fSTR: 1
-    nCurExp: 10
   m_nLevel: 0
   m_nMaxExp: 0
   m_nCurExp: 0
-  m_fMaxHP: 0
-  m_fCurHP: 0
-  m_fCurSTR: 0
-  m_fSkillDamage: 0
-  m_fMaxMP: 0
-  m_fCurMP: 0
+  m_nMaxHP: 0
+  m_nCurHP: 0
+  m_nCurSTR: 0
+  m_nSkillDamage: 0
+  m_nMaxMP: 0
+  m_nCurMP: 0
   m_bisAttack: 0
   m_bisDead: 0
   objState: 0
@@ -1380,7 +1372,7 @@ MonoBehaviour:
   m_fSensorRange: 0
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
-  damageTr: {fileID: 1359316832}
+  _damageTr: {fileID: 1359316832}
 --- !u!1 &8378837324141898487
 GameObject:
   m_ObjectHideFlags: 0

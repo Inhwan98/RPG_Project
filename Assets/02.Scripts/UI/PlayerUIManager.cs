@@ -8,8 +8,6 @@ public class PlayerUIManager : MonoBehaviour
 {
     public static PlayerUIManager instance = null;
     
-    [Header("Level UI")]
-    [SerializeField] TMP_Text levelText;
     private int m_curLevel;
 
     [Header("HP UI")]
@@ -19,20 +17,11 @@ public class PlayerUIManager : MonoBehaviour
 
     [Header("MP UI")]
     [SerializeField] private Image[] mpBarImage = new Image[2];
-    [SerializeField] private RectTransform mpHandleRT;
 
     [Header("EXP UI")]
     [SerializeField] private Image expBarImage;
     [SerializeField] private RectTransform expHandleRT;
     [SerializeField] private Text expText;
-
-    [Header("Player Info")]
-    [SerializeField] private Text MaxHPText;
-    [SerializeField] private Text MaxMPText;
-    [SerializeField] private Text STRText;
-    [SerializeField] private Text AttackSpeedText;
-    [SerializeField] private Text AttackRangeText;
-
 
     private PlayerController playerCtr;
 
@@ -51,7 +40,7 @@ public class PlayerUIManager : MonoBehaviour
         playerCtr = PlayerController.instance;
     }
 
-    public void SetHPbar(int _playerHP, int _playerMaxHP)
+    public void SetHPbar(float _playerHP, float _playerMaxHP)
     {
         float amount = (_playerHP / _playerMaxHP);
         hpBarImage.fillAmount = amount;
@@ -65,18 +54,11 @@ public class PlayerUIManager : MonoBehaviour
         hpText.text = $"{_playerHP}/{_playerMaxHP}";
     }
 
-    public void SetMPbar(int _playerMP, int _playerMaxMP)
+    public void SetMPbar(float _playerMP, float _playerMaxMP)
     {
         float amount = (_playerMP / _playerMaxMP);
         mpBarImage[0].fillAmount = amount;
         mpBarImage[1].fillAmount = amount;
-
-        Vector2 vec;
-        vec.x = amount;
-        vec.y = 0;
-        mpHandleRT.anchorMin = vec;
-        vec.y = 1;
-        mpHandleRT.anchorMax = vec;
     }
 
     public void SetEXPbar(float _playerEXP, float _playerMaxEXP)
@@ -96,9 +78,6 @@ public class PlayerUIManager : MonoBehaviour
     public void DisplayInfo(int _level, float _maxHP, float _maxMP, float _str)
     {
         m_curLevel = _level;
-        MaxHPText.text = $"최대체력 : {_maxHP}";
-        MaxMPText.text = $"최대마나 : {_maxMP}";
-        STRText.text = $"공격력 : {_str}";
-        levelText.text = $"Lv.{m_curLevel}";
+     
     }
 }
