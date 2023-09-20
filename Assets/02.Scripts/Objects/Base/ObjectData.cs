@@ -67,7 +67,7 @@ public class ObjectData
 
     public void LevelUP()
     {
-        nLevel   = 1;
+        nLevel   += 1;
         nMaxHP   = (int)(nMaxHP  * 1.5f);
         nMaxMP   = (int)(nMaxMP  * 1.4f);
         nCurSTR  = (int)(nCurSTR * 1.5f);

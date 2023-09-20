@@ -93,19 +93,21 @@ public class SkillManager : MonoBehaviour
         _skInvenUI.SetItemAccessibleState(_skillArray[index], index);
     }
 
-    public void SkillLevelUP(int index)
+    public void SkillLevelUP(int index, InvenSkillSlotUI skillSlotUI)
     {
         //스킬 제한 레벨이 더 높다면 스킬 레벨업 x
         if (!ComparePlayerLevelToSkillLevel(index)) return;
-        // 스킬 레벨 1이라면 레벨업 x
-        if (_skillArray[index].GetSkillLevel() == 1) return;
+        // 스킬을 배우지 않았다면 리턴
+        if (!_skillArray[index].GetIsAcquired()) return;
+        
         _skillArray[index].LevelUP();
+        _skillArray[index].SetSkillDamage(power_STR);
+        skillSlotUI.SetLevelText(_skillArray[index].GetSkillLevel());
     }
 
     /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
     private void UpdateAccessibleStatesAll()
     {
-        
         _skInvenUI.SetAccessibleSlotRange(_maxSkillSize);
     }
 

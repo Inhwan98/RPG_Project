@@ -38,9 +38,8 @@ public class Skill_InvenUI : InvenUIBase
 
             //스킬슬롯의 버튼 변수 할당 (같은 고유 인덱스를 가진다)
             plusButton[i] = skillSlot.GetPlusButton();
+            plusButton[i].onClick.AddListener(() => _skillManager.SkillLevelUP(index, skillSlot));
             plusButton[i].onClick.AddListener(() => _skillManager.UpdateAccessibleAcquiredState(index));
-            plusButton[i].onClick.AddListener(() => _skillManager.SkillLevelUP(index));
-
         }
     }
 
@@ -108,6 +107,7 @@ public class Skill_InvenUI : InvenUIBase
         }
     }
 
+    /// <summary> 스킬을 습득한 상태로 만들고, 활성화 시킨다. </summary>
     public void SetItemAccessibleState(SkillData data, int index)
     {
         data.SetIsAcquired(true);

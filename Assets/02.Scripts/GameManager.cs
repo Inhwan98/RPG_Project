@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+
         playerCtr = PlayerController.instance;
         playerTr  = playerCtr.transform;
 
