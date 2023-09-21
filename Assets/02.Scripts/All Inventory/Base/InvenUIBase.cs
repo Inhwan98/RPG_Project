@@ -169,6 +169,7 @@ public abstract class InvenUIBase : MonoBehaviour
             {
                 OnCurrentEnter();
             }
+       
         }
         else
         {
