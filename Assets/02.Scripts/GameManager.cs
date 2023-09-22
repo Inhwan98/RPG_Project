@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     private ResourcesData _resourcesData;
 
     public static GameManager instance = null;
+    private DialogSystem _dialogSystem;
+    private QuestSystem _questSystem;
 
     private void Awake()
     {
@@ -33,11 +35,13 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         #endregion
         _resourcesData = new ResourcesData();
+        _dialogSystem = GetComponent<DialogSystem>();
+        _questSystem = GetComponent<QuestSystem>();
+
     }
 
     void Start()
     {
-
         playerCtr = PlayerController.instance;
         playerTr  = playerCtr.transform;
 
@@ -102,4 +106,7 @@ public class GameManager : MonoBehaviour
         m_bisPlayerDie = true;
         Debug.Log("´ÙÀÌ");
     }
+
+    public DialogSystem GetDialogSystem() =>  _dialogSystem;
+    public QuestSystem GetQuestSystem() => _questSystem;
 }

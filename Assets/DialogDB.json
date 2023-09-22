@@ -1,55 +1,57 @@
 {
-  "Entities": [
+  "Dialog": [
     {
-      "EventName": "여행의시작",
-      "branch": "1",
-      "name": "코하쿠",
-      "dialog": "안녕하세요 박인환입니다."
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "안녕하세요 박인환입니다."
     },
     {
-      "EventName": null,
-      "branch": "1",
-      "name": "미사키",
-      "dialog": "오늘은 대화 시스템 제작에 대해 배워보도록 하겠습니다."
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "플레이어",
+      "sDialog": "오늘은 대화 시스템 제작에 대해 배워보도록 하겠습니다."
     },
     {
-      "EventName": null,
-      "branch": "1",
-      "name": "코하쿠",
-      "dialog": "대사를 Dialogs에 입력해두면 순차적으로 재생하게 됩니다."
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "대사를 Dialogs에 입력해두면 순차적으로 재생하게 됩니다."
     },
     {
-      "EventName": "end",
-      "branch": null,
-      "name": null,
-      "dialog": null
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "플레이어",
+      "sDialog": "이렇게 DialogSystem을 여러개 만들어서 분기를 구분할 수 있습니다."
     },
     {
-      "EventName": "이장과 대화하기",
-      "branch": "2",
-      "name": "코하쿠",
-      "dialog": "이렇게 DialogSystem을 여러개 만들어서 분기를 구분할 수 있습니다."
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "Duck 촌장",
+      "sDialog": "대사로 이루어진 분기 사이에 캐릭터를 움직이거나 오브젝트를 생성하는 것과 같이"
     },
     {
-      "EventName": null,
-      "branch": "2",
-      "name": "미사키",
-      "dialog": "대사로 이루어진 분기 사이에 캐릭터를 움직이거나 오브젝트를 생성하는 것과 같이"
-    },
-    {
-      "EventName": null,
-      "branch": "2",
-      "name": "미사키",
-      "dialog": [
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "Duck 촌장",
+      "sDialog": [
         "게임 진행에 필요한 여러 행동을 하고",
         "필요할 때 또 대사를 출력하도록 합니다."
       ]
-    },
+    }
+  ],
+  "Quest": [
     {
-      "EventName": "end",
-      "branch": null,
-      "name": null,
-      "dialog": null
+      "nQuestID": "1",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "1",
+      "sQuestName": "촌장과의 대화",
+      "sDiscription": "마을에 불청객이 왔다는데... 촌장을 찾아가보자.",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100"
     }
   ]
 }

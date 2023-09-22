@@ -406,4 +406,24 @@ public class PlayerController : Character
         skill_Datas[idx] = skillData;
     }
 
+    private void OnTriggerEnter(Collider coll)
+    {
+        if(coll.gameObject.layer == LayerMask.NameToLayer("NPC"))
+        {
+            NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
+            Debug.Assert(npcCtr != null, "npcCtr is NULL");
+            int id = npcCtr.GetID();
+
+            StartCoroutine(PlayDialog(id));
+        }
+    }
+
+    private IEnumerator PlayDialog(int id)
+    {
+        var dialogSys = GameManager.instance.GetDialogSystem();
+        dialogSys.SetDialogData(id);
+
+        yield return new WaitUntil(() => dialogSys.UpdateDialog());
+    }
+
 }
