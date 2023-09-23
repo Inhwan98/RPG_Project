@@ -24,7 +24,7 @@ public abstract class ObjectBase : MonoBehaviour
     [SerializeField] protected ObjectState objState; // 상태에 따른 액션
     
     #region Animation Setting
-    protected Animator anim;
+    protected Animator _anim;
     protected readonly int hashDead = Animator.StringToHash("DoDead");
     #endregion
 
@@ -39,15 +39,14 @@ public abstract class ObjectBase : MonoBehaviour
     public int GetCurStr() => m_nCurSTR;
     public int GetCurExp() => m_nCurExp;
 
-
     /// <summary> Resource Data 클래스 </summary>
-    protected ResourcesData _resourcesData;
+    //protected ResourcesData _resourcesData;
 
     protected virtual void Awake()
     {
         LoadData();
         InitObj();
-        _resourcesData = new ResourcesData();
+        //_resourcesData = new ResourcesData();
     }
 
     protected virtual void Start()
@@ -80,7 +79,7 @@ public abstract class ObjectBase : MonoBehaviour
 
         //Component Set
  
-        anim = GetComponent<Animator>();
+        _anim = GetComponent<Animator>();
     }
 
     /// <summary> 스킬데미지 값 반환 </summary>

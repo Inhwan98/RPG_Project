@@ -2,48 +2,62 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuestSystem : MonoBehaviour
+public class QuestSystem
 {
 
-    QuestData[] questDatas;
-    List<QuestData> possibleToProceedQuest = new List<QuestData>();
+    private QuestData[] _questDatas;
+    private List<QuestData> _possibleToProceedQuest = new List<QuestData>();
+    private List<QuestData> _completeQuest = new List<QuestData>();
 
-    int playerLevel;
-
-    private void Awake()
+    public QuestSystem()
     {
-        questDatas = SaveSys.LoadDialogData().Quest;
+        _questDatas = SaveSys.LoadDialogData().Quest;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        UpdateToQuestList();
-    }
 
-    public void UpdateToQuestList()
+    /// <summary>
+    /// 플레이어의 레벨을 기준으로
+    /// 가능한 퀘스트 목록을 업데이트한다.
+    /// </summary>
+    public List<QuestData> GetQuestList(int playerLevel)
     {
-        for(int i = 0; i < questDatas.Length; i++)
+        _possibleToProceedQuest.Clear();
+        _completeQuest.Clear();
+
+        for (int i = 0; i < _questDatas.Length; i++)
         {
-            int conditionLevel = questDatas[i].nConditionLevel;
+            int conditionLevel = _questDatas[i].nConditionLevel;
+            bool isCompleteQuest = _questDatas[i].bIsComplete;
             //플레이어 레벨과 퀘스트 조건 레벨 비교
-            if (CompareToPlayerLevel(conditionLevel))
+            if (CompareToPlayerLevel(playerLevel, conditionLevel))
             {
-                possibleToProceedQuest.Add(questDatas[i]);
-            }
+                //완료되지 않은 퀘스트는 현재 퀘스트 목록에 추가
+                if(!isCompleteQuest)
+                {
+                    _possibleToProceedQuest.Add(_questDatas[i]);
+                }
+                else
+                {
+                    _completeQuest.Add(_questDatas[i]);
+                }
 
+            }
         }
+        return _possibleToProceedQuest;
     }
+
 
 
     /// <summary> 
     /// Player Level과 Quest 제한 레벨 비교
     /// 플레이어 레벨이 더 높거나 같아야 참이다.
     /// </summary>
-    public bool CompareToPlayerLevel(int questLevel)
+    public bool CompareToPlayerLevel(int playerLevel, int questLevel)
     {
-        return PlayerController.instance.GetLevel() >= questLevel;
+        return playerLevel >= questLevel;
     }
+
+
 
 
 

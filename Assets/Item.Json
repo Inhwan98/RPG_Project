@@ -1,143 +1,17 @@
 {
   "$type": "Item[], Assembly-CSharp",
   "$values": [
-    {
-      "$type": "PortionItem, Assembly-CSharp",
-      "m_nAmount": 16,
-      "Type": "PortionItem",
-      "m_countableData": {
-        "$type": "PortionItemData, Assembly-CSharp",
-        "_value": 10,
-        "_portionState": 0,
-        "_maxAmount": 99,
-        "_id": 10,
-        "_name": "최하급 HP 포션",
-        "_usedLevel": 1,
-        "_tooltip": "맛있는 포션",
-        "_IconPath": "ItemIcon/Portion/hp"
-      },
-      "m_bIsMax": false,
-      "m_data": {
-        "$type": "PortionItemData, Assembly-CSharp",
-        "_value": 10,
-        "_portionState": 0,
-        "_maxAmount": 99,
-        "_id": 10,
-        "_name": "최하급 HP 포션",
-        "_usedLevel": 1,
-        "_tooltip": "맛있는 포션",
-        "_IconPath": "ItemIcon/Portion/hp"
-      }
-    },
-    {
-      "$type": "PortionItem, Assembly-CSharp",
-      "m_nAmount": 15,
-      "Type": "PortionItem",
-      "m_countableData": {
-        "$type": "PortionItemData, Assembly-CSharp",
-        "_value": 10,
-        "_portionState": 1,
-        "_maxAmount": 99,
-        "_id": 9,
-        "_name": "MP 포션",
-        "_usedLevel": 1,
-        "_tooltip": "맛있는 MP 포션",
-        "_IconPath": "ItemIcon/Portion/mp"
-      },
-      "m_bIsMax": false,
-      "m_data": {
-        "$type": "PortionItemData, Assembly-CSharp",
-        "_value": 10,
-        "_portionState": 1,
-        "_maxAmount": 99,
-        "_id": 9,
-        "_name": "MP 포션",
-        "_usedLevel": 1,
-        "_tooltip": "맛있는 MP 포션",
-        "_IconPath": "ItemIcon/Portion/mp"
-      }
-    },
-    {
-      "$type": "ArmorItem, Assembly-CSharp",
-      "Type": "ArmorItem",
-      "_durability": 100,
-      "equipmentData": {
-        "$type": "ArmorItemData, Assembly-CSharp",
-        "_defence": 10,
-        "_maxDurability": 100,
-        "_id": 10,
-        "_name": "중장비 갑옷",
-        "_usedLevel": 1,
-        "_tooltip": "멋있고 늠름한 갑옷이다.",
-        "_IconPath": "ItemIcon/01_plate_chest"
-      },
-      "m_data": {
-        "$type": "ArmorItemData, Assembly-CSharp",
-        "_defence": 10,
-        "_maxDurability": 100,
-        "_id": 10,
-        "_name": "중장비 갑옷",
-        "_usedLevel": 1,
-        "_tooltip": "멋있고 늠름한 갑옷이다.",
-        "_IconPath": "ItemIcon/01_plate_chest"
-      }
-    },
     null,
     null,
     null,
     null,
     null,
     null,
-    {
-      "$type": "ArmorItem, Assembly-CSharp",
-      "Type": "ArmorItem",
-      "_durability": 100,
-      "equipmentData": {
-        "$type": "ArmorItemData, Assembly-CSharp",
-        "_defence": 10,
-        "_maxDurability": 100,
-        "_id": 10,
-        "_name": "중장비 갑옷",
-        "_usedLevel": 1,
-        "_tooltip": "멋있고 늠름한 갑옷이다.",
-        "_IconPath": "ItemIcon/01_plate_chest"
-      },
-      "m_data": {
-        "$type": "ArmorItemData, Assembly-CSharp",
-        "_defence": 10,
-        "_maxDurability": 100,
-        "_id": 10,
-        "_name": "중장비 갑옷",
-        "_usedLevel": 1,
-        "_tooltip": "멋있고 늠름한 갑옷이다.",
-        "_IconPath": "ItemIcon/01_plate_chest"
-      }
-    },
-    {
-      "$type": "ArmorItem, Assembly-CSharp",
-      "Type": "ArmorItem",
-      "_durability": 100,
-      "equipmentData": {
-        "$type": "ArmorItemData, Assembly-CSharp",
-        "_defence": 10,
-        "_maxDurability": 100,
-        "_id": 10,
-        "_name": "중장비 갑옷",
-        "_usedLevel": 1,
-        "_tooltip": "멋있고 늠름한 갑옷이다.",
-        "_IconPath": "ItemIcon/01_plate_chest"
-      },
-      "m_data": {
-        "$type": "ArmorItemData, Assembly-CSharp",
-        "_defence": 10,
-        "_maxDurability": 100,
-        "_id": 10,
-        "_name": "중장비 갑옷",
-        "_usedLevel": 1,
-        "_tooltip": "멋있고 늠름한 갑옷이다.",
-        "_IconPath": "ItemIcon/01_plate_chest"
-      }
-    },
+    null,
+    null,
+    null,
+    null,
+    null,
     null,
     null,
     null,

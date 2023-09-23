@@ -16,13 +16,15 @@ public class GameManager : MonoBehaviour
     private int AllMonstersNum; //생성된 모든 몬스터의 수
     private bool m_bisPlayerDie; //플레이어가 죽었는가
 
-    private PlayerController playerCtr;
-    private Transform playerTr;
+    [SerializeField]
+    private PlayerController _playerCtr;
+
     private ResourcesData _resourcesData;
 
     public static GameManager instance = null;
     private DialogSystem _dialogSystem;
     private QuestSystem _questSystem;
+
 
     private void Awake()
     {
@@ -35,15 +37,13 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
         #endregion
         _resourcesData = new ResourcesData();
-        _dialogSystem = GetComponent<DialogSystem>();
-        _questSystem = GetComponent<QuestSystem>();
+        _dialogSystem = new DialogSystem();
+        _questSystem = new QuestSystem();
 
     }
 
     void Start()
     {
-        playerCtr = PlayerController.instance;
-        playerTr  = playerCtr.transform;
 
         InvisibleCursor();
 
@@ -99,6 +99,11 @@ public class GameManager : MonoBehaviour
     public void SubCurrentMonsters()
     {
         --currentMonsters;
+    }
+
+    public void SetPlayerCtr(PlayerController playerCtr)
+    {
+        _playerCtr = playerCtr;
     }
 
     public void PlayerDie()

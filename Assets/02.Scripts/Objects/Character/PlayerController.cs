@@ -11,6 +11,8 @@ public class PlayerController : Character
     public delegate void PlayerDiehandler();             //델리게이트 선언
     public static event PlayerDiehandler OnPlayerDie;    //이벤트 선언
 
+    [SerializeField] private GameManager _gameMgr;
+
     #region Anim Hashing Init
     private readonly int hashStrafe      = Animator.StringToHash("Strafe");
     private readonly int hashForward     = Animator.StringToHash("Forward");
@@ -29,8 +31,8 @@ public class PlayerController : Character
     [SerializeField] private float moveSpeed = 5.0f;
 
     #region GetComponent 초기화 항목
-    private Rigidbody rigid;
-    private Weapon weaponCtr;
+    private Rigidbody _rigid;
+    private Weapon _weaponCtr;
     private ItemInventory _inven;
     #endregion
 
@@ -47,23 +49,20 @@ public class PlayerController : Character
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
     //플레이어 UI (HPbar) Manager
-    [SerializeField]
-    private PlayerUIManager playerUICtr;
+
+    
+    [SerializeField, Header("UI Controllers Contacts")]
+    private GameObject _UIManagerGo;
+
+    private PlayerUIManager _playerUICtr;
+    private DialogUI _dialogUI;
+    private QuestUI _questUI;
+
+    private List<QuestData> _currentQuest;
+    private QuestSystem _questSystem;
 
     protected override void Awake()
     {
-        base.Awake();
-
-        rigid       = GetComponent<Rigidbody>();
-        weaponCtr   = GetComponentInChildren<Weapon>();
-        _inven      = GetComponent<ItemInventory>();
-        _skillMgr   = GetComponent<SkillManager>();
-        _skInvenUI  = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
-
-        _inven.SetPlayerCtr(this);
-        _skillMgr.SetPlayerCtr(this);
-        _skillMgr.SetSkillPower(m_nCurSTR);
-
         #region SingTone
         if (instance != null)
         {
@@ -72,19 +71,61 @@ public class PlayerController : Character
         instance = this;
         DontDestroyOnLoad(this.gameObject);
         #endregion
+
+        base.Awake();
+
+        PlayerController_Init();
+        
+    }
+
+    /// <summary> 플레이어 초기화 </summary>
+    private void PlayerController_Init()
+    {
+        #region GetComponent
+        _rigid = GetComponent<Rigidbody>();
+        _weaponCtr = GetComponentInChildren<Weapon>();
+        _inven = GetComponent<ItemInventory>();
+        _skillMgr = GetComponent<SkillManager>();
+        #endregion
+
+        _inven.SetPlayerCtr(this);
+        _skillMgr.SetPlayerCtr(this);
+        _skillMgr.SetSkillPower(m_nCurSTR);
+
+        //UI
+        _skInvenUI = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
+        _playerUICtr = _UIManagerGo.GetComponent<PlayerUIManager>();
+        _playerUICtr.SetPlayerCtrReference(this);
+        _dialogUI = _UIManagerGo.GetComponent<DialogUI>();
+        _questUI = _UIManagerGo.GetComponent<QuestUI>();
+
     }
 
     protected override void Start()
     {
-        anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
-
         //_cam           = Camera.main;
+        _gameMgr = GameManager.instance;
+        _gameMgr.SetPlayerCtr(this); // 게임매니져에게 플레이어 스크립트 참조시킴
+        _questSystem = _gameMgr.GetQuestSystem();            //모든 Quest 정보 받아오기
+
+        UpdateQuest();
+
+        _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
 
         PlayerUI_Init();
-        playerUICtr.DisplayInfo(m_nLevel, m_nMaxHP, m_nMaxMP, m_nCurSTR);
+       
 
         base.Start(); //skill_List 가 부모에서 초기화 됌
 
+    }
+
+    /// <summary>
+    /// 퀘스트 정보를 업데이트 해준다.
+    /// </summary>
+    private void UpdateQuest()
+    {
+        _currentQuest = _questSystem.GetQuestList(m_nLevel); //플레이어 레벨에 따른 Quest 정보
+        _questUI.UpdateQuestUI(_currentQuest); //현재 진행 가능한 퀘스트 업데이트
     }
 
     private void FixedUpdate()
@@ -105,7 +146,14 @@ public class PlayerController : Character
         PlayerAttack();
     }
 
+    /// <summary> 모든 스킬 덮어 씌우기 </summary>
+    public void SetPlayerSkill(SkillData[] skill_datas) => skill_Datas = skill_datas;
+    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
+    public void SetPlayerSkill(int idx, SkillData skillData) => skill_Datas[idx] = skillData;
+    public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;
+    public CameraController GetCameraCtr() => _cameraCtr;
 
+   
 
     /// <summary> Character dir, move, speed, rot, anim
     /// <para/> Current Use FixedUpdate()
@@ -116,22 +164,22 @@ public class PlayerController : Character
 
         Vector3 direction = new Vector3(xInput, 0, zInput);
 
-        anim.SetFloat(hashStrafe, direction.x);
-        anim.SetFloat(hashForward, direction.z);
-        anim.SetFloat(hashRun, runInput);
+        _anim.SetFloat(hashStrafe, direction.x);
+        _anim.SetFloat(hashForward, direction.z);
+        _anim.SetFloat(hashRun, runInput);
 
         float movementSpeed = moveSpeed;
         if (runInput < 1.0f) movementSpeed *= 0.5f;
 
         Vector3 movement = direction.normalized * movementSpeed * Time.fixedDeltaTime;
 
-        anim.SetFloat(hashMoveSpeed, movementSpeed);
+        _anim.SetFloat(hashMoveSpeed, movementSpeed);
 
         Quaternion destRot = _cameraCtr.transform.localRotation;
         destRot.x = 0;
         destRot.z = 0;
 
-        rigid.transform.rotation = destRot;
+        _rigid.transform.rotation = destRot;
 
 
         //if (zInput >= 0.1)
@@ -143,7 +191,7 @@ public class PlayerController : Character
         //    rigid.rotation = destRot;
         //}
 
-        rigid.transform.Translate(movement);
+        _rigid.transform.Translate(movement);
     }
 
     /// <summary> Player의 기본/스킬 공격 구성 </summary>
@@ -158,6 +206,7 @@ public class PlayerController : Character
     /// <summary> Player의 스킬 공격 </summary>
     private void Skill_Attack()
     {
+        #region Input Alpha 1~6
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             StartCoroutine(SkillAttack(1));
@@ -182,6 +231,7 @@ public class PlayerController : Character
         {
             StartCoroutine(SkillAttack(6));
         }
+        #endregion
     }
 
     /// <summary> Invnetory Active</summary>
@@ -202,15 +252,13 @@ public class PlayerController : Character
         }
     }
 
-
-    public CameraController GetCameraCtr() => _cameraCtr;
-
     /// <summary> Player Info UI Set </summary>
     private void PlayerUI_Init()
     {
-        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP);
-        playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
-        playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
+        _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP);
+        _playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
+        _playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
+        _playerUICtr.DisplayInfo(m_nLevel, m_nMaxHP, m_nMaxMP, m_nCurSTR);
     }
 
     private void Input_init()
@@ -227,17 +275,16 @@ public class PlayerController : Character
         base.LevelUP();
         PlayerUI_Init();
 
-        playerUICtr.DisplayInfo(m_nLevel, m_nMaxHP, m_nMaxMP, m_nCurSTR);
     }
 
     protected override IEnumerator Attack()
     {
         if(m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
         {
-            weaponCtr.Use();
+            _weaponCtr.Use();
             //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
             if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
-            anim.SetTrigger(hashAttack[m_nAttackCount]);
+            _anim.SetTrigger(hashAttack[m_nAttackCount]);
 
             m_nAttackCount++;
             if (m_nAttackCount >= 3) m_nAttackCount = 0;
@@ -276,15 +323,15 @@ public class PlayerController : Character
 
         m_bisAttack = true;
 
-        anim.SetTrigger(curSkill.GetAnimHash());
+        _anim.SetTrigger(curSkill.GetAnimHash());
         
         _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
-        playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
+        _playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
 
         StartCoroutine(_skInvenUI.StartSkillCoolTime(skill_Idx, curSkill));
         
 
-        yield return new WaitUntil(() => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+        yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
         m_bisAttack = false;
         //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
     }
@@ -292,7 +339,7 @@ public class PlayerController : Character
     public override void Buff(int _str)
     {
         base.Buff(_str);
-        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
+        _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
     }
 
     public override void OnDamage(int _str)
@@ -303,14 +350,14 @@ public class PlayerController : Character
         //if (m_fCurHP <= 0) this.objState = ObjectState.DEAD; //사망 없음
 
         if (m_nCurHP <= 0) m_nCurHP = 0;
-        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
+        _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
     }
 
     protected override void Die()
     {
         Debug.Log("Player Die");
         StopAllCoroutines();
-        anim.SetTrigger(hashDead);
+        _anim.SetTrigger(hashDead);
         m_bisDead = true;
 
         OnPlayerDie(); //delegate event Play
@@ -326,7 +373,7 @@ public class PlayerController : Character
         m_nCurHP += value;
 
         if (m_nCurHP > m_nMaxHP) m_nCurHP = m_nMaxHP;
-        playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP);
+        _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP);
     }
 
     /// <summary> 마나 회복 작용 </summary>
@@ -335,7 +382,7 @@ public class PlayerController : Character
         m_nCurMP += value;
 
         if (m_nCurMP > m_nMaxHP) m_nCurMP = m_nMaxMP;
-        playerUICtr.SetMPbar(m_nCurMP, m_nMaxHP);
+        _playerUICtr.SetMPbar(m_nCurMP, m_nMaxHP);
     }
 
     public void SetEXP(int _exp)
@@ -345,7 +392,7 @@ public class PlayerController : Character
         {
             LevelUP();
         }
-        playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
+        _playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
     }
 
     /// <summary> 몬스터의 아이템을 Inventory로 전달 </summary>
@@ -394,17 +441,7 @@ public class PlayerController : Character
         m_nCurExp = objData.GetCurExp();
     }
 
-    /// <summary> 모든 스킬 덮어 씌우기 </summary>
-    public void SetPlayerSkill(SkillData[] skill_datas)
-    {
-        skill_Datas = skill_datas;
-    }
 
-    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
-    public void SetPlayerSkill(int idx, SkillData skillData)
-    {
-        skill_Datas[idx] = skillData;
-    }
 
     private void OnTriggerEnter(Collider coll)
     {
@@ -412,18 +449,32 @@ public class PlayerController : Character
         {
             NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
             Debug.Assert(npcCtr != null, "npcCtr is NULL");
-            int id = npcCtr.GetID();
+          
+            //현재 퀘스트 목록 중
+            foreach(var quest in _currentQuest)
+            {
+                //해당 NPC의 ID와 일치하는게 있다면
+                if (quest.nID == npcCtr.GetID())
+                {
+                    StartCoroutine(PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
 
-            StartCoroutine(PlayDialog(id));
+                    break;
+
+                }
+            }
         }
     }
 
-    private IEnumerator PlayDialog(int id)
+    private IEnumerator PlayDialog(QuestData questData)
     {
-        var dialogSys = GameManager.instance.GetDialogSystem();
-        dialogSys.SetDialogData(id);
+        int id = questData.nID;
+        int branch = questData.nBranch;
 
-        yield return new WaitUntil(() => dialogSys.UpdateDialog());
+        _dialogUI.SetDialogList(id, branch);
+        yield return new WaitUntil(() => _dialogUI.UpdateDialog());
+
+        questData.bIsComplete = true;
+        UpdateQuest();
     }
 
 }

@@ -23,7 +23,7 @@ public class PlayerUIManager : MonoBehaviour
     [SerializeField] private RectTransform expHandleRT;
     [SerializeField] private Text expText;
 
-    private PlayerController playerCtr;
+    private PlayerController _playerCtr;
 
     private void Awake()
     {
@@ -35,9 +35,10 @@ public class PlayerUIManager : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
 
     }
-    void Start()
+
+    public void SetPlayerCtrReference(PlayerController playerCtr)
     {
-        playerCtr = PlayerController.instance;
+        _playerCtr = playerCtr;
     }
 
     public void SetHPbar(float _playerHP, float _playerMaxHP)

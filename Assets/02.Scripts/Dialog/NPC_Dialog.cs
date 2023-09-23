@@ -5,7 +5,7 @@ using UnityEngine;
 public class NPC_Dialog : MonoBehaviour
 {
     [SerializeField]
-    private DialogSystem dialogSystem01;
+    private DialogUI dialogSystem01;
 
     private IEnumerator Start()
     {

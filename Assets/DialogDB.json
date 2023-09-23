@@ -4,54 +4,95 @@
       "nQuestID": "1",
       "nBranch": "1",
       "sName": "Duck 촌장",
-      "sDialog": "안녕하세요 박인환입니다."
+      "sDialog": "당신이 이번에 새로 온 모험자인가...?"
     },
     {
       "nQuestID": "1",
       "nBranch": "1",
       "sName": "플레이어",
-      "sDialog": "오늘은 대화 시스템 제작에 대해 배워보도록 하겠습니다."
+      "sDialog": "(긍정의 의미로 고개를 끄덕인다)"
     },
     {
       "nQuestID": "1",
       "nBranch": "1",
       "sName": "Duck 촌장",
-      "sDialog": "대사를 Dialogs에 입력해두면 순차적으로 재생하게 됩니다."
+      "sDialog": "몬스터를 잡아주게"
     },
     {
       "nQuestID": "1",
-      "nBranch": "2",
+      "nBranch": "3",
       "sName": "플레이어",
-      "sDialog": "이렇게 DialogSystem을 여러개 만들어서 분기를 구분할 수 있습니다."
+      "sDialog": "(잡아온 몬스터의 조각을 내민다)"
     },
     {
       "nQuestID": "1",
-      "nBranch": "2",
+      "nBranch": "3",
       "sName": "Duck 촌장",
-      "sDialog": "대사로 이루어진 분기 사이에 캐릭터를 움직이거나 오브젝트를 생성하는 것과 같이"
+      "sDialog": "오오... 이것은..."
     },
     {
       "nQuestID": "1",
-      "nBranch": "2",
+      "nBranch": "3",
       "sName": "Duck 촌장",
-      "sDialog": [
-        "게임 진행에 필요한 여러 행동을 하고",
-        "필요할 때 또 대사를 출력하도록 합니다."
-      ]
+      "sDialog": "정말 고맙네 <br> 여기 보상이네"
     }
   ],
   "Quest": [
     {
       "nQuestID": "1",
+      "nBranch": "1",
       "nConditionLevel": "1",
       "nID": "1",
       "nDestID": "1",
       "eQuestType": "1",
-      "sQuestName": "촌장과의 대화",
-      "sDiscription": "마을에 불청객이 왔다는데... 촌장을 찾아가보자.",
+      "sQuestName": "촌장의 걱정",
+      "sDiscription": "촌장에게 말을 걸어보자",
       "nGoalCnt": "10",
       "nRewardEXP": "100",
-      "nRewardGold": "100"
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "1",
+      "sQuestName": "촌장의 걱정",
+      "sDiscription": "몬스터를 퇴치하자",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "3",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "1",
+      "sQuestName": "촌장의 걱정",
+      "sDiscription": "촌장에게 돌아가자",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
+    },
+    {
+      "nQuestID": "2",
+      "nBranch": "1",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "2",
+      "sQuestName": "스킬 배우기",
+      "sDiscription": "스킬을 배워보자",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
     }
   ]
 }
