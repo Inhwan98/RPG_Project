@@ -123,6 +123,25 @@ public static class SaveSys
 
         return null;
     }
+
+    public static AllData LoadDialogData()
+    {
+        string path = Path.Combine(Application.dataPath, "DialogDB.Json");
+        string jsonData;
+        AllData datas;
+
+        if (File.Exists(path))
+        {
+            jsonData = File.ReadAllText(path);
+            datas = JsonUtility.FromJson<AllData>(jsonData);
+            return datas;
+        }
+        else
+        {
+            Debug.LogError("Save File Not Found");
+            return null;
+        }
+    }
 }
 
 

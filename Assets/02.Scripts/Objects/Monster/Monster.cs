@@ -134,14 +134,14 @@ public class Monster : ObjectBase
     void ChaseStart()
     {
         m_bisChase = true;
-        anim.SetBool(hashTrace, true);
+        _anim.SetBool(hashTrace, true);
         agent.enabled = true;
     }
 
     void ChaseEnd()
     {
         m_bisChase = false;
-        anim.SetBool(hashTrace, false);
+        _anim.SetBool(hashTrace, false);
         agent.enabled = false;
     }
     #endregion
@@ -152,7 +152,7 @@ public class Monster : ObjectBase
 
         m_bisAttack = true;
         transform.LookAt(destTr);
-        anim.SetBool(hashAttack, true);
+        _anim.SetBool(hashAttack, true);
 
         Debug.Assert(destTr, "destTr is NULL !!!");
 
@@ -192,7 +192,7 @@ public class Monster : ObjectBase
             {
                 case ObjectState.MOVE:
                     ChaseStart();
-                    anim.SetBool(hashAttack, false);
+                    _anim.SetBool(hashAttack, false);
                     break;
 
                 case ObjectState.ATK:
@@ -210,7 +210,7 @@ public class Monster : ObjectBase
 
                 case ObjectState.IDLE:
                     ChaseEnd();
-                    anim.SetBool(hashAttack, false);
+                    _anim.SetBool(hashAttack, false);
                     break;
             }
             yield return null;
@@ -290,7 +290,7 @@ public class Monster : ObjectBase
 
         this.gameObject.layer = 2; // Ignore Raycast
         StopAllCoroutines();
-        anim.SetTrigger(hashDead);
+        _anim.SetTrigger(hashDead);
         agent.enabled = false;
         m_bisDead = true;
         Destroy(this.gameObject, 2.0f);
@@ -304,8 +304,8 @@ public class Monster : ObjectBase
         agent.enabled = false;
         destTr = null;
 
-        anim.SetBool(hashTrace, false);
-        anim.SetBool(hashAttack, false);
+        _anim.SetBool(hashTrace, false);
+        _anim.SetBool(hashAttack, false);
     }
 
     private void OnDestroy()
@@ -319,7 +319,7 @@ public class Monster : ObjectBase
 
         if (objData == null)
         {
-            Debug.LogError("Player Data is NULL!!");
+            Debug.LogError("MonData is NULL!!");
             return;
         }
 
