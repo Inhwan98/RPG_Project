@@ -33,10 +33,12 @@ public class PlayerController : Character
     #region GetComponent 초기화 항목
     private Rigidbody _rigid;
     private Weapon _weaponCtr;
-    private ItemInventory _inven;
+    private ItemInventoryManager _inven;
     #endregion
 
     private CameraController _cameraCtr;
+
+    private PlayerLevelData[] playerLevelData;
 
     private float xInput;
     private float zInput;
@@ -50,15 +52,11 @@ public class PlayerController : Character
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
     //플레이어 UI (HPbar) Manager
 
-    
-    [SerializeField, Header("UI Controllers Contacts")]
-    private GameObject _UIManagerGo;
-
+    [SerializeField]
     private PlayerUIManager _playerUICtr;
-    private DialogUI _dialogUI;
-    private QuestUI _questUI;
 
-    private List<QuestData> _currentQuest;
+    private List<QuestData> _currentQuest = new List<QuestData>();
+   
     private QuestSystem _questSystem;
 
     protected override void Awake()
@@ -84,20 +82,19 @@ public class PlayerController : Character
         #region GetComponent
         _rigid = GetComponent<Rigidbody>();
         _weaponCtr = GetComponentInChildren<Weapon>();
-        _inven = GetComponent<ItemInventory>();
-        _skillMgr = GetComponent<SkillManager>();
         #endregion
 
-        _inven.SetPlayerCtr(this);
-        _skillMgr.SetPlayerCtr(this);
-        _skillMgr.SetSkillPower(m_nCurSTR);
-
-        //UI
-        _skInvenUI = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
-        _playerUICtr = _UIManagerGo.GetComponent<PlayerUIManager>();
+        //UI 
         _playerUICtr.SetPlayerCtrReference(this);
-        _dialogUI = _UIManagerGo.GetComponent<DialogUI>();
-        _questUI = _UIManagerGo.GetComponent<QuestUI>();
+
+        #region Manager스크립트는 GameManager에서 초기화 시킴
+        //_skillMgr = GetComponent<SkillManager>();
+        //_inven = GetComponent<ItemInventoryManager>();
+        //_inven.SetPlayerCtr(this);
+        //_skillMgr.SetPlayerCtr(this);
+        //_skillMgr.SetSkillPower(m_nCurSTR);
+        //_skInvenUI = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
+        #endregion
 
     }
 
@@ -108,7 +105,7 @@ public class PlayerController : Character
         _gameMgr.SetPlayerCtr(this); // 게임매니져에게 플레이어 스크립트 참조시킴
         _questSystem = _gameMgr.GetQuestSystem();            //모든 Quest 정보 받아오기
 
-        UpdateQuest();
+        UpdateQuest(); //퀘스트 정보 업데이트
 
         _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
 
@@ -121,12 +118,9 @@ public class PlayerController : Character
 
     /// <summary>
     /// 퀘스트 정보를 업데이트 해준다.
+    /// 게임 시작, 레벨업 할때마다 호출 해줘야 한다.
     /// </summary>
-    private void UpdateQuest()
-    {
-        _currentQuest = _questSystem.GetQuestList(m_nLevel); //플레이어 레벨에 따른 Quest 정보
-        _questUI.UpdateQuestUI(_currentQuest); //현재 진행 가능한 퀘스트 업데이트
-    }
+    private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
 
     private void FixedUpdate()
     {
@@ -150,10 +144,10 @@ public class PlayerController : Character
     public void SetPlayerSkill(SkillData[] skill_datas) => skill_Datas = skill_datas;
     /// <summary> 플레이어 스킬 데이터에 할당 </summary>
     public void SetPlayerSkill(int idx, SkillData skillData) => skill_Datas[idx] = skillData;
+    public void SetSkill_InvenUI(Skill_InvenUI skInvenUI) => _skInvenUI = skInvenUI;
     public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;
     public CameraController GetCameraCtr() => _cameraCtr;
 
-   
 
     /// <summary> Character dir, move, speed, rot, anim
     /// <para/> Current Use FixedUpdate()
@@ -269,14 +263,7 @@ public class PlayerController : Character
         attackInput = Input.GetButton("Fire1");
     }
 
-    /// <summary> Character LevelUp System </summary>
-    public override void LevelUP()
-    {
-        base.LevelUP();
-        PlayerUI_Init();
-
-    }
-
+ 
     protected override IEnumerator Attack()
     {
         if(m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
@@ -423,23 +410,78 @@ public class PlayerController : Character
     protected override void LoadData()
     {
         objData = SaveSys.LoadObject("PlayerData.Json");
+        playerLevelData = SaveSys.LoadAllData().PlayerLevelDB;
 
-        if(objData == null)
+        //저장된 데이터가 있다면 캐릭터 정보를 불러온다.
+        if (objData != null)
         {
-            Debug.LogError("Player Data is NULL!!");
+            m_nLevel = objData.GetLevel();
+            m_nMaxHP = objData.GetMaxHP();
+            m_nCurHP = objData.GetCurHP();
+
+            m_nMaxMP = objData.GetMaxMP();
+            m_nCurMP = objData.GetCurMP();
+
+            m_nCurSTR = objData.GetCurSTR();
+            m_nCurExp = objData.GetCurExp();
             return;
         }
+        else
+        {
+            // 저장된 데이터가 없다면, 1레벨 부터 시작
+            PlayerLevelUP(0);
+        }
 
-        m_nLevel = objData.GetLevel();
-        m_nMaxHP = objData.GetMaxHP();
-        m_nCurHP = objData.GetCurHP();
+        #region preSetting
+        //m_nLevel = objData.GetLevel();
+        //m_nMaxHP = objData.GetMaxHP();
+        //m_nCurHP = objData.GetCurHP();
 
-        m_nMaxMP = objData.GetMaxMP();
-        m_nCurMP = objData.GetCurMP();
+        //m_nMaxMP = objData.GetMaxMP();
+        //m_nCurMP = objData.GetCurMP();
 
-        m_nCurSTR = objData.GetCurSTR();
-        m_nCurExp = objData.GetCurExp();
+        //m_nCurSTR = objData.GetCurSTR();
+        //m_nCurExp = objData.GetCurExp();
+
+        //m_nLevel = objData.GetLevel();
+        //m_nMaxHP = objData.GetMaxHP();
+        //m_nCurHP = objData.GetCurHP();
+
+        //m_nMaxMP = objData.GetMaxMP();
+        //m_nCurMP = objData.GetCurMP();
+        #endregion
+
+        
     }
+
+    /// <summary> Character LevelUp System </summary>
+    public override void LevelUP()
+    {
+        PlayerLevelUP(m_nLevel);
+        PlayerUI_Init();
+        base.LevelUP();
+       
+    }
+
+    /// <summary> 플레이어의 레벨업 및 캐릭터 정보 초기화 함수 </summary>
+    /// <param name="value"> 현재 레벨을 넣으면 레벨업 후 정보를 불러 온다. </param>
+    private void PlayerLevelUP(int value)
+    {
+        var playerData = playerLevelData[value];
+
+        m_nLevel = playerData.nLevel;
+        m_nMaxHP = playerData.nMaxHP;
+        m_nCurHP = playerData.nMaxHP;
+
+        m_nMaxMP = playerData.nMaxMP;
+        m_nCurMP = playerData.nMaxMP;
+
+        m_nCurSTR = playerData.nSTR;
+
+        m_nMaxExp = playerData.ntotalExp;
+        m_nCurExp = 0;
+    }
+
 
 
 
@@ -449,14 +491,25 @@ public class PlayerController : Character
         {
             NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
             Debug.Assert(npcCtr != null, "npcCtr is NULL");
-          
-            //현재 퀘스트 목록 중
-            foreach(var quest in _currentQuest)
+
+            //현재가능한 퀘스트 목록 중
+            var poQuests = _questSystem.GetPossibleQuest();
+            //_gameMgr.GetPossibleQuest();
+
+            foreach (var quest in poQuests)
             {
                 //해당 NPC의 ID와 일치하는게 있다면
                 if (quest.nID == npcCtr.GetID())
                 {
-                    StartCoroutine(PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
+                    //해당 퀘스트가 진행 중일 경우
+                    if (_currentQuest.Contains(quest))
+                    {
+                        
+                        StartCoroutine(_gameMgr.UnsolvedQuestDialog(quest.nID));
+                        break;
+                    }
+                    
+                    StartCoroutine(_gameMgr.PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
 
                     break;
 
@@ -465,16 +518,15 @@ public class PlayerController : Character
         }
     }
 
-    private IEnumerator PlayDialog(QuestData questData)
+
+    public void AddPlayerQuest(QuestData questData) => _currentQuest.Add(questData);
+    public List<QuestData> GetPlayerQuest() => _currentQuest;
+
+    [ContextMenu("Clear Quest")]
+    public void ClearQuest()
     {
-        int id = questData.nID;
-        int branch = questData.nBranch;
 
-        _dialogUI.SetDialogList(id, branch);
-        yield return new WaitUntil(() => _dialogUI.UpdateDialog());
-
-        questData.bIsComplete = true;
-        UpdateQuest();
     }
 
+    
 }

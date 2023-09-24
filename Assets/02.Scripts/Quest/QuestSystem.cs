@@ -11,7 +11,7 @@ public class QuestSystem
 
     public QuestSystem()
     {
-        _questDatas = SaveSys.LoadDialogData().Quest;
+        _questDatas = SaveSys.LoadAllData().QuestDB;
     }
 
 
@@ -19,7 +19,7 @@ public class QuestSystem
     /// 플레이어의 레벨을 기준으로
     /// 가능한 퀘스트 목록을 업데이트한다.
     /// </summary>
-    public List<QuestData> GetQuestList(int playerLevel)
+    public void UpdateQuestList(int playerLevel)
     {
         _possibleToProceedQuest.Clear();
         _completeQuest.Clear();
@@ -43,7 +43,23 @@ public class QuestSystem
 
             }
         }
+    }
+
+    public List<QuestData> GetPossibleQuest()
+    {
         return _possibleToProceedQuest;
+    }
+
+    public void CompleteQuest(QuestData questData)
+    {
+        questData.bIsComplete = true;
+
+        _possibleToProceedQuest.Remove(questData);
+        //포함되어 있지 않다면
+        if (!_completeQuest.Contains(questData))
+        {
+            _completeQuest.Add(questData);
+        }
     }
 
 

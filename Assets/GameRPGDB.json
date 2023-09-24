@@ -1,0 +1,322 @@
+{
+  "DialogDB": [
+    {
+      "nQuestID": "1",
+      "nBranch": "0",
+      "sName": "Duck 촌장",
+      "sDialog": "아직 해결을 다 못한것 같네만?... <br> 너무 무서워..."
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "당신이 이번에 새로 온 모험자인가...?"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "플레이어",
+      "sDialog": "(긍정의 의미로 고개를 끄덕인다)"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "요즘 마을에 몬스터들의 행태가 심상치가 않아... <br> 매일 마을 주변에 어슬렁 거리는데"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "주민들도 그렇고 나도 벌벌 떨며 살아가고 있다네"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "우리를 좀 도와줄 수 있겠나...?"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "도와준다고? <br> 정말 고맙네!"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "몬스터 5마리만 해치워주고 오면 한결 살 것 같구만 그래"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "플레이어",
+      "sDialog": "(잡아온 몬스터의 조각을 내민다)"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "Duck 촌장",
+      "sDialog": "오오...  Duck분에 마을 주민들이 안심할 수 있겠어"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "Duck 촌장",
+      "sDialog": "다 자네 Duck 이네"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "플레이어",
+      "sDialog": "네?"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "Duck 촌장",
+      "sDialog": "정말 고맙네 <br> 여기 보상이네"
+    }
+  ],
+  "QuestDB": [
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "1",
+      "eObjectives": "2",
+      "sQuestName": "촌장의 걱정",
+      "sDiscription": "-몬스터를 퇴치하자",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "1",
+      "eObjectives": "1",
+      "sQuestName": null,
+      "sDiscription": "-촌장에게 돌아가자",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
+    },
+    {
+      "nQuestID": "2",
+      "nBranch": "1",
+      "nConditionLevel": "1",
+      "nID": "1",
+      "nDestID": "1",
+      "eQuestType": "2",
+      "eObjectives": "3",
+      "sQuestName": "스킬 배우기",
+      "sDiscription": "-스킬을 배워보자",
+      "nGoalCnt": "10",
+      "nRewardEXP": "100",
+      "nRewardGold": "100",
+      "bIsCompleted": "false"
+    }
+  ],
+  "MonsterDB": [
+    {
+      "nID": "100",
+      "sName": "베이비드래곤",
+      "nLevel": "1",
+      "nMaxHP": "100",
+      "nCurHP": "100",
+      "nMaxMP": "100",
+      "nCurMP": "100",
+      "nDropExp": "10"
+    }
+  ],
+  "PlayerLevelDB": [
+    {
+      "nLevel": "1",
+      "nMaxHP": "200",
+      "nMaxMP": "200",
+      "nSTR": "10",
+      "ntotalExp": "20"
+    },
+    {
+      "nLevel": "2",
+      "nMaxHP": "300",
+      "nMaxMP": "250",
+      "nSTR": "15",
+      "ntotalExp": "40"
+    },
+    {
+      "nLevel": "3",
+      "nMaxHP": "400",
+      "nMaxMP": "300",
+      "nSTR": "25",
+      "ntotalExp": "80"
+    },
+    {
+      "nLevel": "4",
+      "nMaxHP": "500",
+      "nMaxMP": "350",
+      "nSTR": "31",
+      "ntotalExp": "106"
+    },
+    {
+      "nLevel": "5",
+      "nMaxHP": "600",
+      "nMaxMP": "400",
+      "nSTR": "39",
+      "ntotalExp": "136"
+    },
+    {
+      "nLevel": "6",
+      "nMaxHP": "700",
+      "nMaxMP": "450",
+      "nSTR": "46",
+      "ntotalExp": "166"
+    },
+    {
+      "nLevel": "7",
+      "nMaxHP": "800",
+      "nMaxMP": "500",
+      "nSTR": "54",
+      "ntotalExp": "196"
+    },
+    {
+      "nLevel": "8",
+      "nMaxHP": "900",
+      "nMaxMP": "550",
+      "nSTR": "61",
+      "ntotalExp": "226"
+    },
+    {
+      "nLevel": "9",
+      "nMaxHP": "1000",
+      "nMaxMP": "600",
+      "nSTR": "69",
+      "ntotalExp": "256"
+    },
+    {
+      "nLevel": "10",
+      "nMaxHP": "1100",
+      "nMaxMP": "650",
+      "nSTR": "76",
+      "ntotalExp": "286"
+    },
+    {
+      "nLevel": "11",
+      "nMaxHP": "1200",
+      "nMaxMP": "700",
+      "nSTR": "84",
+      "ntotalExp": "316"
+    },
+    {
+      "nLevel": "12",
+      "nMaxHP": "1300",
+      "nMaxMP": "750",
+      "nSTR": "91",
+      "ntotalExp": "346"
+    },
+    {
+      "nLevel": "13",
+      "nMaxHP": "1400",
+      "nMaxMP": "800",
+      "nSTR": "99",
+      "ntotalExp": "376"
+    },
+    {
+      "nLevel": "14",
+      "nMaxHP": "1500",
+      "nMaxMP": "850",
+      "nSTR": "106",
+      "ntotalExp": "406"
+    },
+    {
+      "nLevel": "15",
+      "nMaxHP": "1600",
+      "nMaxMP": "900",
+      "nSTR": "114",
+      "ntotalExp": "436"
+    }
+  ],
+  "SkillDB": [
+    {
+      "m_sSkillName": "소드슬래쉬",
+      "m_nSkillLevel": "1",
+      "m_nUsedLevel": "1",
+      "m_sAnimParameterName": "DoSKILL_1",
+      "m_sToolTip": "5연속 공격",
+      "m_sSpritePath": "Skill_Icon/소드슬래쉬",
+      "m_nSkillDamagePer": "50",
+      "m_fCooldown": "12",
+      "m_nManaAmount": "10",
+      "m_bAcquired": "true"
+    },
+    {
+      "m_sSkillName": "열파참",
+      "m_nSkillLevel": "1",
+      "m_nUsedLevel": "1",
+      "m_sAnimParameterName": "DoSKILL_2",
+      "m_sToolTip": "던파 서유리",
+      "m_sSpritePath": "Skill_Icon/열파참",
+      "m_nSkillDamagePer": "100",
+      "m_fCooldown": "7",
+      "m_nManaAmount": "15",
+      "m_bAcquired": "false"
+    },
+    {
+      "m_sSkillName": "쇼크웨이브",
+      "m_nSkillLevel": "1",
+      "m_nUsedLevel": "1",
+      "m_sAnimParameterName": "DoSKILL_3",
+      "m_sToolTip": "전기 충격파",
+      "m_sSpritePath": "Skill_Icon/쇼크웨이브",
+      "m_nSkillDamagePer": "100",
+      "m_fCooldown": "7",
+      "m_nManaAmount": "15",
+      "m_bAcquired": "false"
+    },
+    {
+      "m_sSkillName": "차지웨이브",
+      "m_nSkillLevel": "1",
+      "m_nUsedLevel": "1",
+      "m_sAnimParameterName": "DoSKILL_4",
+      "m_sToolTip": "기를 모아 강력한 원거리 공격을 한다.",
+      "m_sSpritePath": "Skill_Icon/차지웨이브",
+      "m_nSkillDamagePer": "200",
+      "m_fCooldown": "15",
+      "m_nManaAmount": "20",
+      "m_bAcquired": "false"
+    },
+    {
+      "m_sSkillName": "폭풍참격",
+      "m_nSkillLevel": "1",
+      "m_nUsedLevel": "1",
+      "m_sAnimParameterName": "DoSKILL_5",
+      "m_sToolTip": "빠른 속도로 상대에게 연속적으로 참격을 가한다.",
+      "m_sSpritePath": "Skill_Icon/폭풍참격",
+      "m_nSkillDamagePer": "110",
+      "m_fCooldown": "10",
+      "m_nManaAmount": "20",
+      "m_bAcquired": "false"
+    },
+    {
+      "m_sSkillName": "천지개벽",
+      "m_nSkillLevel": "1",
+      "m_nUsedLevel": "1",
+      "m_sAnimParameterName": "DoSKILL_6",
+      "m_sToolTip": "주변의 넓은 범위에 폭발적인 힘을 가해 적들에게 엄청난 피해를 입힙니다.",
+      "m_sSpritePath": "Skill_Icon/천지개벽",
+      "m_nSkillDamagePer": "300",
+      "m_fCooldown": "10",
+      "m_nManaAmount": "20",
+      "m_bAcquired": "false"
+    }
+  ]
+}

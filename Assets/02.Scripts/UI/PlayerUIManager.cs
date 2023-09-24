@@ -36,10 +36,8 @@ public class PlayerUIManager : MonoBehaviour
 
     }
 
-    public void SetPlayerCtrReference(PlayerController playerCtr)
-    {
-        _playerCtr = playerCtr;
-    }
+    /// <summary> PlayerController Awake() 에서 참조 됌</summary>
+    public void SetPlayerCtrReference(PlayerController playerCtr) => _playerCtr = playerCtr;
 
     public void SetHPbar(float _playerHP, float _playerMaxHP)
     {

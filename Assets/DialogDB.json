@@ -2,6 +2,12 @@
   "Dialog": [
     {
       "nQuestID": "1",
+      "nBranch": "0",
+      "sName": "Duck 촌장",
+      "sDialog": "아직 해결을 다 못한것 같네만?... <br> 너무 무서워..."
+    },
+    {
+      "nQuestID": "1",
       "nBranch": "1",
       "sName": "Duck 촌장",
       "sDialog": "당신이 이번에 새로 온 모험자인가...?"
@@ -16,23 +22,59 @@
       "nQuestID": "1",
       "nBranch": "1",
       "sName": "Duck 촌장",
-      "sDialog": "몬스터를 잡아주게"
+      "sDialog": "요즘 마을에 몬스터들의 행태가 심상치가 않아... <br> 매일 마을 주변에 어슬렁 거리는데"
     },
     {
       "nQuestID": "1",
-      "nBranch": "3",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "주민들도 그렇고 나도 벌벌 떨며 살아가고 있다네"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "우리를 좀 도와줄 수 있겠나...?"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "도와준다고? <br> 정말 고맙네!"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "1",
+      "sName": "Duck 촌장",
+      "sDialog": "몬스터 5마리만 해치워주고 오면 한결 살 것 같구만 그래"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
       "sName": "플레이어",
       "sDialog": "(잡아온 몬스터의 조각을 내민다)"
     },
     {
       "nQuestID": "1",
-      "nBranch": "3",
+      "nBranch": "2",
       "sName": "Duck 촌장",
-      "sDialog": "오오... 이것은..."
+      "sDialog": "오오...  Duck분에 마을 주민들이 안심할 수 있겠어"
     },
     {
       "nQuestID": "1",
-      "nBranch": "3",
+      "nBranch": "2",
+      "sName": "Duck 촌장",
+      "sDialog": "다 자네 Duck 이네"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
+      "sName": "플레이어",
+      "sDialog": "네?"
+    },
+    {
+      "nQuestID": "1",
+      "nBranch": "2",
       "sName": "Duck 촌장",
       "sDialog": "정말 고맙네 <br> 여기 보상이네"
     }
@@ -45,8 +87,9 @@
       "nID": "1",
       "nDestID": "1",
       "eQuestType": "1",
+      "eObjectives": "2",
       "sQuestName": "촌장의 걱정",
-      "sDiscription": "촌장에게 말을 걸어보자",
+      "sDiscription": "-몬스터를 퇴치하자",
       "nGoalCnt": "10",
       "nRewardEXP": "100",
       "nRewardGold": "100",
@@ -59,22 +102,9 @@
       "nID": "1",
       "nDestID": "1",
       "eQuestType": "1",
-      "sQuestName": "촌장의 걱정",
-      "sDiscription": "몬스터를 퇴치하자",
-      "nGoalCnt": "10",
-      "nRewardEXP": "100",
-      "nRewardGold": "100",
-      "bIsCompleted": "false"
-    },
-    {
-      "nQuestID": "1",
-      "nBranch": "3",
-      "nConditionLevel": "1",
-      "nID": "1",
-      "nDestID": "1",
-      "eQuestType": "1",
-      "sQuestName": "촌장의 걱정",
-      "sDiscription": "촌장에게 돌아가자",
+      "eObjectives": "1",
+      "sQuestName": null,
+      "sDiscription": "-촌장에게 돌아가자",
       "nGoalCnt": "10",
       "nRewardEXP": "100",
       "nRewardGold": "100",
@@ -87,8 +117,9 @@
       "nID": "1",
       "nDestID": "1",
       "eQuestType": "2",
+      "eObjectives": "3",
       "sQuestName": "스킬 배우기",
-      "sDiscription": "스킬을 배워보자",
+      "sDiscription": "-스킬을 배워보자",
       "nGoalCnt": "10",
       "nRewardEXP": "100",
       "nRewardGold": "100",

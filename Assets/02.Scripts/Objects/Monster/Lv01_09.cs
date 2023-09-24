@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lv01_09 : Monster
+public abstract class Lv01_09 : Monster
 {
     protected override void Awake()
     {

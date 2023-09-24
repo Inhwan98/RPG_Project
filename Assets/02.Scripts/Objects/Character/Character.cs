@@ -48,23 +48,10 @@ public abstract class Character : ObjectBase
         }
     }
 
+    /// <summary> 레벨업 이펙트 및 스킬 데미지 세팅</summary>
     public virtual void LevelUP()
     {
-        //Status Set
-
         LevelUPEffect();
-
-        objData.LevelUP();
-
-        m_nLevel  = objData.GetLevel();
-        m_nCurExp = objData.GetCurExp();
-        m_nMaxHP  = objData.GetMaxHP();
-        m_nMaxMP  = objData.GetMaxMP();
-        m_nCurSTR = objData.GetCurSTR();
-
-        m_nCurHP  = m_nMaxHP;
-        m_nCurMP  = m_nMaxMP;
-        m_nMaxExp = m_nLevel * 20;
 
         _skillMgr.SetSkillPower(m_nCurSTR);
         _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.

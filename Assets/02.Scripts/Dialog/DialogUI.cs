@@ -117,12 +117,25 @@ public class DialogUI : MonoBehaviour
 
         _isTypingEffect = true;
 
+        bool isSkipOn = false;
         //텍스트를 한글자씩 타이핑치듯 재생
         while (index < _currentDialog[_currentDialogIndex].sDialog.Length)
         {
-            _textDialogue.text = _currentDialog[_currentDialogIndex].sDialog.Substring(0, index);
+            string dialog = _currentDialog[_currentDialogIndex].sDialog;
+            char letter = dialog[index];
 
-            index++;
+            //마크 다운은 출력x 스킵
+            if (letter == '<')
+                isSkipOn = true;
+            else if (letter == '>')
+                isSkipOn = false;
+
+            index++; // 다음 문자열 인덱스 탐색
+
+            if (isSkipOn)
+                continue;
+
+            _textDialogue.text = dialog.Substring(0, index);
 
             yield return new WaitForSeconds(_typingSpeed);
         }

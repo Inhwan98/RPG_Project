@@ -281,8 +281,10 @@ public class SkillManager : MonoBehaviour
 
     /// <summary> Load Data 없을시 초기화 </summary>
     public void Init_Skills()
-    { 
-        _skillArray = SaveSys.LoadSkillSet("AllSkillSetData.Json");
+    {
+        //_skillArray = SaveSys.LoadSkillSet("AllSkillSetData.Json");
+        _skillArray = SaveSys.LoadAllData().SkillDB;
+
         _playerSkillArray = new SkillData[_maxSkillSize];
 
         if (_skillArray == null)
@@ -334,6 +336,7 @@ public class SkillManager : MonoBehaviour
     /// <summary> 스킬의 데미지 설정 : 플레이어 비례 </summary>
     public void SetSkillDataDamage()
     {
+        power_STR = _playerCtr.GetCurStr();
         foreach (SkillData skill in _skillArray)
         {
             if (skill == null) continue;
