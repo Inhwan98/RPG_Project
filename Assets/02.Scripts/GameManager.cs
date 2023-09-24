@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct MonsterRecord
+{
+    public int[] monsterRecords;
+}
+
 public class GameManager : MonoBehaviour
 {
     //[SerializeField] private GameObject monObj;
@@ -16,6 +21,8 @@ public class GameManager : MonoBehaviour
     private int AllMonstersNum; //생성된 모든 몬스터의 수
     private bool m_bisPlayerDie; //플레이어가 죽었는가
 
+    private int[] monsterRecords = new int[100];
+
     [SerializeField]
     private PlayerController _playerCtr;
 
@@ -25,6 +32,12 @@ public class GameManager : MonoBehaviour
     private DialogSystem _dialogSystem;
     private QuestSystem _questSystem;
 
+
+    [SerializeField] private DialogUI _dialogUI;
+    [SerializeField] private QuestUI _questUI;
+
+    private SkillManager _skillMgr;
+    private ItemInventoryManager _itemIvenMgr;
 
     private void Awake()
     {
@@ -39,6 +52,16 @@ public class GameManager : MonoBehaviour
         _resourcesData = new ResourcesData();
         _dialogSystem = new DialogSystem();
         _questSystem = new QuestSystem();
+
+        _skillMgr = GetComponent<SkillManager>();
+        _itemIvenMgr = GetComponent<ItemInventoryManager>();
+
+        _skillMgr.SetPlayerCtr(_playerCtr);
+        _itemIvenMgr.SetPlayerCtr(_playerCtr);
+
+        //skillManager Awake() 전에 skinvenUI는 할당 되었다.(드로그 앤 드랍)
+        Skill_InvenUI skInvenUI = _skillMgr.GetSkInvenUI();
+        _playerCtr.SetSkill_InvenUI(skInvenUI);
 
     }
 
@@ -111,6 +134,76 @@ public class GameManager : MonoBehaviour
         m_bisPlayerDie = true;
         Debug.Log("다이");
     }
+
+    public IEnumerator CheckQuest(QuestData questData)
+    {
+        QuestObjectives questObjectives = (QuestObjectives)questData.eObjectives;
+
+
+        switch (questObjectives)
+        {
+            case QuestObjectives.CONVERSATION:
+                break;
+            case QuestObjectives.HUNT:
+                while (questData.nGoalCnt > 0)
+                {
+
+                    yield return null;
+                }
+                break;
+            case QuestObjectives.SKILL:
+                break;
+        }
+
+        yield return null;
+
+    }
+
+    public List<QuestData> GetPossibleQuest()
+    {
+        return _questSystem.GetPossibleQuest();
+    }
+
+    /// <summary>
+    /// NPC의 불평을 듣게 될 것이다.
+    /// </summary>
+    public IEnumerator UnsolvedQuestDialog(int id)
+    {
+        _dialogUI.SetDialogList(id, 0);
+        yield return new WaitUntil(() => _dialogUI.UpdateDialog());
+    }
+
+    public IEnumerator PlayDialog(QuestData questData)
+    {
+        int id = questData.nID;
+        int branch = questData.nBranch;
+
+        Debug.Log($"{id}, {branch}");
+
+        _dialogUI.SetDialogList(id, branch);
+        yield return new WaitUntil(() => _dialogUI.UpdateDialog());
+
+        _playerCtr.AddPlayerQuest(questData);
+
+        var currentQuest = _playerCtr.GetPlayerQuest();
+
+        _questUI.UpdateQuestUI(currentQuest);
+        //_questSystem.CompleteQuest(questData);
+
+        //UpdateQuest();
+    }
+
+    /// <summary> 몬스터의 아이템을 Inventory로 전달 </summary>
+    public void AddInven(Dictionary<ItemData, int> _itemDic)
+    {
+        foreach (var itemDic in _itemDic)
+        {
+            _itemIvenMgr.Add(itemDic.Key, itemDic.Value);
+        }
+
+    }
+
+    public void UpdateQuestList(int playerLevel) => _questSystem.UpdateQuestList(playerLevel);
 
     public DialogSystem GetDialogSystem() =>  _dialogSystem;
     public QuestSystem GetQuestSystem() => _questSystem;

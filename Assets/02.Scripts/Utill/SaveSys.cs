@@ -69,8 +69,7 @@ public static class SaveSys
             jsonData = File.ReadAllText(path);
             items = JsonConvert.DeserializeObject<Item[]>(jsonData, new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.All
-
+                TypeNameHandling = TypeNameHandling.All                
             });
       
             return items;
@@ -98,7 +97,7 @@ public static class SaveSys
         }
         else
         {
-            Debug.LogError($"Save File Not Found in {path}");
+            //Debug.LogError($"Save File Not Found in {path}");
         }
         return null;
     }
@@ -124,9 +123,9 @@ public static class SaveSys
         return null;
     }
 
-    public static AllData LoadDialogData()
+    public static AllData LoadAllData()
     {
-        string path = Path.Combine(Application.dataPath, "DialogDB.Json");
+        string path = Path.Combine(Application.dataPath, "GameRPGDB.Json");
         string jsonData;
         AllData datas;
 

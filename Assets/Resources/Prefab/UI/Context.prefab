@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "- \uC774\uC7A5\uB2D8\uC744 \uB9CC\uB098\uBCF4\uC790 </color> <br>\n\n"
+  m_text: "- \uC774\uC7A5\uB2D8\uC744 \uB9CC\uB098\uBCF4\uC790\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 51dbe203996b2d74384f40c164371865, type: 2}
   m_sharedMaterial: {fileID: -4597973044434489914, guid: 51dbe203996b2d74384f40c164371865, type: 2}
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 17.987228, y: 0.68377686, z: 0.070129395, w: 0}
+  m_margin: {x: 17.987228, y: 0.68377686, z: 0.070129395, w: 0.7973633}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

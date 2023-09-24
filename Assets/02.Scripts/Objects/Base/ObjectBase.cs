@@ -10,6 +10,7 @@ public abstract class ObjectBase : MonoBehaviour
     [Space(10)]
 
     [Header("Currnet Info")] // status의 정보에 맞게 초기화 할 것
+    [SerializeField] protected int   m_nID;
     [SerializeField] protected int   m_nLevel;
     [SerializeField] protected int   m_nMaxExp;
     [SerializeField] protected int   m_nCurExp;

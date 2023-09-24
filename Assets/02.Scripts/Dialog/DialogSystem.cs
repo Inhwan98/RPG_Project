@@ -10,7 +10,7 @@ public class DialogSystem
 
     public DialogSystem()
     {
-        dialogDatas = SaveSys.LoadDialogData().Dialog;
+        dialogDatas = SaveSys.LoadAllData().DialogDB;
     }
 
 

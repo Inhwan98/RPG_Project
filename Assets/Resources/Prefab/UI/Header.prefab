@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "[\uBA54\uC778] \uB9C8\uC744\uC758 \uC548\uC804"
+  m_text: "<color=orange>[\uBA54\uC778] \uB9C8\uC744\uC758 \uC548\uC804"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 51dbe203996b2d74384f40c164371865, type: 2}
   m_sharedMaterial: {fileID: -4597973044434489914, guid: 51dbe203996b2d74384f40c164371865, type: 2}

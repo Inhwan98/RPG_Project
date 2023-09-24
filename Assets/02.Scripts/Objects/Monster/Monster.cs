@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Monster : ObjectBase
+public abstract class Monster : ObjectBase
 {
 
     [SerializeField] private int exp;
     private int monidx; //몬스터 고유 번호
-    protected PlayerController playerCtr;
-    private Transform playerTr;
-
+    protected PlayerController _playerCtr;
+    private Transform _playerTr;
+    protected MonsterData _monsterData;
     private bool m_bisChase = false;
 
     [Header("Target")]
@@ -50,8 +50,6 @@ public class Monster : ObjectBase
 
     protected override void Awake()
     {
-        
-
         base.Awake();
         agent = GetComponent<NavMeshAgent>();
 
@@ -60,10 +58,11 @@ public class Monster : ObjectBase
 
     protected override void Start()
     {
-        playerCtr = PlayerController.instance;
-        playerTr = playerCtr.transform;
-        destTr = playerTr;
+        _playerCtr = PlayerController.instance;
+        _playerTr = _playerCtr.transform;
+        destTr = _playerTr;
 
+        // 손볼필요있음
         GameManager.instance.AddCurrentMonsters(out monidx);
         base.Start();
         //StartCoroutine(CheckObjState());
@@ -233,7 +232,7 @@ public class Monster : ObjectBase
         //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
         if (m_nCurHP <= 0)// 체력이 0 이하
         {
-            playerCtr.SetEXP(m_nCurExp);
+            _playerCtr.SetEXP(m_nCurExp);
                 
             this.objState = ObjectState.DEAD;
             return;
@@ -272,12 +271,12 @@ public class Monster : ObjectBase
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
         {
-            int playerStr = playerCtr.GetCurStr();
+            int playerStr = _playerCtr.GetCurStr();
             OnDamage(playerStr);
         }
         else if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerSkill"))
         {
-            int playerSkillPower = playerCtr.GetSkillDamage();
+            int playerSkillPower = _playerCtr.GetSkillDamage();
             OnDamage(playerSkillPower);
         }
     }
@@ -313,25 +312,6 @@ public class Monster : ObjectBase
         GameManager.instance.SubCurrentMonsters();    
     }
 
-    protected override void LoadData()
-    {
-        objData = SaveSys.LoadObject("MonData.Json");
-
-        if (objData == null)
-        {
-            Debug.LogError("MonData is NULL!!");
-            return;
-        }
-
-        m_nLevel = objData.GetLevel();
-        m_nMaxHP = objData.GetMaxHP();
-        m_nCurHP = objData.GetCurHP();
-
-        m_nMaxMP = objData.GetMaxMP();
-        m_nCurMP = objData.GetCurMP();
-
-        m_nCurSTR = objData.GetCurSTR();
-        m_nCurExp = objData.GetCurExp();
-    }
+    
 }
 

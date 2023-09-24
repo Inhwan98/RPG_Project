@@ -28,6 +28,7 @@ public class ObjectData
         Init();
     }
 
+
     public ObjectData(ObjectBase objBase)
     {
         nLevel  = objBase.GetLevel();

@@ -29,7 +29,7 @@ public class ItemInventoryUI : InvenUIBase
     [SerializeField] private Button _exitButton;
 
     /// <summary> 연결된 인벤토리 </summary>
-    private ItemInventory _itemInventory;
+    private ItemInventoryManager _itemInventory;
 
 
     protected override void Awake()
@@ -57,7 +57,7 @@ public class ItemInventoryUI : InvenUIBase
 
 
     /// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
-    public void SetInventoryReference(ItemInventory itemInventory)
+    public void SetInventoryReference(ItemInventoryManager itemInventory)
     {
         _itemInventory = itemInventory;
     }
