@@ -7,7 +7,7 @@ public abstract class Character : ObjectBase
 {
     [Header("SkILL Related")]
     [SerializeField] protected int skillMaxAmount = 3; //보유할 최대 스킬 개수
-    [SerializeField] protected SkillData[] skill_Datas = new SkillData[6];
+    [SerializeField] protected SkillData[] _skill_Datas = new SkillData[6];
 
     //스킬을 자동 실행할 원형 큐
     // protected CircularQueue<SkillStatus> circualrQueue;
@@ -53,6 +53,9 @@ public abstract class Character : ObjectBase
     {
         LevelUPEffect();
 
+        //09.24 스킬매니져 참조 필요해 보임.
+        //게임메니져로 전부 관리하면 가시성이 있을까?
+        //끝. 예비군 3일 후 복귀 예정
         _skillMgr.SetSkillPower(m_nCurSTR);
         _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
     }
@@ -71,7 +74,7 @@ public abstract class Character : ObjectBase
 
     public SkillData[] GetCharacterSillList()
     {
-        return skill_Datas;
+        return _skill_Datas;
     }
 
 

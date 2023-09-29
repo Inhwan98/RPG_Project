@@ -33,7 +33,6 @@ public class PlayerController : Character
     #region GetComponent 초기화 항목
     private Rigidbody _rigid;
     private Weapon _weaponCtr;
-    private ItemInventoryManager _inven;
     #endregion
 
     private CameraController _cameraCtr;
@@ -58,6 +57,8 @@ public class PlayerController : Character
     private List<QuestData> _currentQuest = new List<QuestData>();
    
     private QuestSystem _questSystem;
+
+    private ItemInventoryManager _itemInvenMgr;
 
     protected override void Awake()
     {
@@ -120,8 +121,7 @@ public class PlayerController : Character
     /// 퀘스트 정보를 업데이트 해준다.
     /// 게임 시작, 레벨업 할때마다 호출 해줘야 한다.
     /// </summary>
-    private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
-
+  
     private void FixedUpdate()
     {
         CharacterMovement();
@@ -140,13 +140,22 @@ public class PlayerController : Character
         PlayerAttack();
     }
 
-    /// <summary> 모든 스킬 덮어 씌우기 </summary>
-    public void SetPlayerSkill(SkillData[] skill_datas) => skill_Datas = skill_datas;
-    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
-    public void SetPlayerSkill(int idx, SkillData skillData) => skill_Datas[idx] = skillData;
-    public void SetSkill_InvenUI(Skill_InvenUI skInvenUI) => _skInvenUI = skInvenUI;
-    public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;
+    public bool GetUseInven() => _isUseInven;
     public CameraController GetCameraCtr() => _cameraCtr;
+
+    public void SetUseInven(bool value) { _isUseInven = value; }
+    /// <summary> 모든 스킬 덮어 씌우기 </summary>
+    public void SetPlayerSkill(SkillData[] skill_datas)                => _skill_Datas = skill_datas;
+    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
+    public void SetPlayerSkill(int idx, SkillData skillData)           => _skill_Datas[idx] = skillData;
+    public void SetSkill_InvenUI(Skill_InvenUI skInvenUI)              => _skInvenUI = skInvenUI;
+    public void SetQuestSystem(QuestSystem questSystem)                => _questSystem = questSystem;
+    public void SetGameManager(GameManager gameMgr)                    => _gameMgr = gameMgr;
+    public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr;
+    public void SetSkillMgr(SkillManager skillMgr)                     => _skillMgr = skillMgr;
+
+    private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
+
 
 
     /// <summary> Character dir, move, speed, rot, anim
@@ -235,14 +244,14 @@ public class PlayerController : Character
         {
             _isUseInven = !_isUseInven;
 
-            _inven.InventoryActive(_isUseInven);
+            _itemInvenMgr.SetInventoryActive(_isUseInven);
         }
 
         if (Input.GetKeyDown(KeyCode.K))
         {
             _isUseSkillWindow = !_isUseSkillWindow;
 
-            _skillMgr.SkillWindowActive(_isUseSkillWindow);
+            _skillMgr.SetSkillWindowActive(_isUseSkillWindow);
         }
     }
 
@@ -292,7 +301,7 @@ public class PlayerController : Character
     {
         //현재 사용할 스킬. 0번째 부터 시작함.
         int skill_Idx = skillNum - 1;
-        SkillData curSkill = skill_Datas[skill_Idx];
+        SkillData curSkill = _skill_Datas[skill_Idx];
 
         //획득하지 않은 상태면
         if (curSkill == null) yield break;
@@ -351,8 +360,7 @@ public class PlayerController : Character
         GameManager.instance.PlayerDie();
     }
 
-    public bool  GetUseInven() { return _isUseInven; }
-    public void  SetUseInven(bool value) { _isUseInven = value; }
+
 
     /// <summary> 체력 회복 작용 </summary>
     public void RecoveryHP(int value)
@@ -387,9 +395,8 @@ public class PlayerController : Character
     {
         foreach(var itemDic in _itemDic)
         {
-            _inven.Add(itemDic.Key, itemDic.Value);
+            _itemInvenMgr.Add(itemDic.Key, itemDic.Value);
         }
-
     }
 
     public void SetCameraCtr(CameraController value) => _cameraCtr = value;
@@ -403,7 +410,7 @@ public class PlayerController : Character
     [ContextMenu("SaveSkillSet")]
     public void SaveSkillSet()
     {
-        SaveSys.SavePlayerSkillSet(skill_Datas);
+        SaveSys.SavePlayerSkillSet(_skill_Datas);
     }
 
     [ContextMenu("LoadPlaeyr")]

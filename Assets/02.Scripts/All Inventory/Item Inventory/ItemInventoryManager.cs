@@ -461,7 +461,7 @@ public class ItemInventoryManager : MonoBehaviour
     }
 
     /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
-    public void InventoryActive(bool value)
+    public void SetInventoryActive(bool value)
     {
         _playerCtr.SetUseInven(value); //플레이어의 움직임 제어
         _itemInventoryUI.gameObject.SetActive(value);      

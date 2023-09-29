@@ -36,7 +36,7 @@ public class ItemInventoryUI : InvenUIBase
     {
         InitSlots();
         _sortButton.onClick.AddListener(() => _itemInventory.SortAll());
-        _exitButton.onClick.AddListener(() => _itemInventory.InventoryActive(false));
+        _exitButton.onClick.AddListener(() => _itemInventory.SetInventoryActive(false));
 
         base.Awake();
     }

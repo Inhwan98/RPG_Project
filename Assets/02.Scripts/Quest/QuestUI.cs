@@ -59,9 +59,13 @@ public class QuestUI : MonoBehaviour
 
     }
 
-    public void UpdateQuestUI(List<QuestData> currentQuest)
+    /// <summary>
+    /// 플레이어가 승인한 퀘스트들을 시각적으로 좌측에 표시할 목록 Update
+    /// </summary>
+    /// <param name="currentQuestList"> Player Controller이 지닌 현재 퀘스트 리스트 이다. </param>
+    public void UpdateQuestUI(List<QuestData> currentQuestList)
     {
-        int size = currentQuest.Count;
+        int size = currentQuestList.Count;
         int preID = 0;
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++)
@@ -69,29 +73,77 @@ public class QuestUI : MonoBehaviour
             //초기 퀘스트 슬롯 index 세팅
             if(_questSlotIDArray[i] == 0)
             {
-                _questSlotIDArray[i] = currentQuest[i].nQuestID;
+                _questSlotIDArray[i] = currentQuestList[i].nQuestID;
                 _questHeaders[i].gameObject.SetActive(true);
                 _disCriptions[i].gameObject.SetActive(true);
             }
 
-            int index = Array.IndexOf(_questSlotIDArray, currentQuest[i].nQuestID);
+            //오버로딩된 UpdateQuestUI 재호출
+            UpdateQuestUI(currentQuestList[i]);
+
+            #region 오버로딩 함수 삽입 전
+            //int index = Array.IndexOf(_questSlotIDArray, currentQuestList[i].nQuestID);
+            //Debug.Assert(index != -1, "Quest Slot index NULL");
+
+            //#region Title 설정
+            //if (currentQuestList[i].eQuestType == 1)
+            //    sb.Append($"<color=orange>[메인]");
+            //else
+            //    sb.Append($"[일반]");
+
+            //sb.Append($"{currentQuestList[i].sQuestName}");
+
+            ////사냥 퀘스트라면 진행도를 UI Text로 나타낸다.
+            //if (currentQuestList[i].eObjectives == (int)QuestObjectives.HUNT)
+            //{
+            //    sb.Append($"<color=white> {currentQuestList[i].nCurCnt}/{currentQuestList[i].nGoalCnt}");
+            //}
+            //_questHeaders[index].text = sb.ToString();
+
+            //sb.Clear();
+            //#endregion
 
 
-            Debug.Assert(index != -1, "Quest Slot index NULL");
-
-            if (currentQuest[i].eQuestType == 1)
-                sb.Append($"<color=orange>[메인]");
-            else
-                sb.Append($"[일반]");
-
-            sb.Append($"{currentQuest[i].sQuestName}");
-            _questHeaders[index].text = sb.ToString();
-
-            sb.Clear();
-
-
-            sb.Append($"{currentQuest[i].sDiscription}");
-            _disCriptions[index].text = sb.ToString();
+            //#region 퀘스트 내용 설정
+            //sb.Append($"{currentQuestList[i].sDiscription}");
+            //_disCriptions[index].text = sb.ToString();
+            //#endregion
+            #endregion 오버로딩 함수 삽입 후
         }
+    }
+
+    public void UpdateQuestUI(QuestData questData)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        int index = Array.IndexOf(_questSlotIDArray, questData.nQuestID);
+        Debug.Assert(index != -1, "Quest Slot index NULL");
+
+        #region Title 설정
+        if (questData.eQuestType == 1)
+            sb.Append($"<color=orange>[메인]");
+        else
+            sb.Append($"[일반]");
+
+        sb.Append($"{questData.sQuestName}");
+
+       
+        _questHeaders[index].text = sb.ToString();
+
+        sb.Clear();
+        #endregion
+
+
+        #region 퀘스트 내용 설정
+        sb.Append($"{questData.sDiscription}");
+
+        //사냥 퀘스트라면 진행도를 UI Text로 나타낸다.
+        if (questData.eObjectives == (int)QuestObjectives.HUNT)
+        {
+            sb.Append($" {questData.nCurCnt}/{questData.nGoalCnt}");
+        }
+
+        _disCriptions[index].text = sb.ToString();
+        #endregion
     }
 }
