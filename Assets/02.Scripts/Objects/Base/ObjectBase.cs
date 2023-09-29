@@ -46,7 +46,10 @@ public abstract class ObjectBase : MonoBehaviour
     protected virtual void Awake()
     {
         LoadData();
-        InitObj();
+        //09.24 수정
+        //InitObj();
+        objState = ObjectState.IDLE;
+        _anim = GetComponent<Animator>();
         //_resourcesData = new ResourcesData();
     }
 

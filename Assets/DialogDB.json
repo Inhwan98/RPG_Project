@@ -85,7 +85,7 @@
       "nBranch": "1",
       "nConditionLevel": "1",
       "nID": "1",
-      "nDestID": "1",
+      "nDestID": "100",
       "eQuestType": "1",
       "eObjectives": "2",
       "sQuestName": "촌장의 걱정",

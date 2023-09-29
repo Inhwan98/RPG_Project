@@ -133,6 +133,10 @@ public class SkillManager : MonoBehaviour
         return _skillArray[index].GetSKillName();
     }
 
+    /// <summary>
+    /// Drop and drop으로 플레이어가 습득할 스킬Slot으로 이동 시킨다.
+    /// SKILL Inven => Player SKILL Inven
+    /// </summary>
     public void FromInvenToPlayer(int indexA, int indexB)
     {
         if (!IsValidIndex(indexA)) return;
@@ -146,7 +150,10 @@ public class SkillManager : MonoBehaviour
         UpdatePlayerSlot(indexB);
     }
 
-
+    /// <summary>
+    /// swap은 skill Inven에서는 x
+    /// Player Skill Inven에서만 이루어진다.
+    /// </summary>
     public void Swap(int indexA, int indexB)
     {
         if (!IsValidIndex(indexA)) return;
@@ -189,6 +196,7 @@ public class SkillManager : MonoBehaviour
         }
     }
 
+    /// <summary> Player Skill Slot을 이미지 업데이트 한다. </summary>
     public void UpdatePlayerSlot(int index)
     {
         if (!IsValidIndex(index)) return;
@@ -254,18 +262,11 @@ public class SkillManager : MonoBehaviour
 
 
 
-    public void SetPlayerCtr(PlayerController player)
-    {
-        _playerCtr = player;
-    }
-
-    public void SetSkillPower(float value)
-    {
-        power_STR = value;
-    }
+    public void SetPlayerCtr(PlayerController player) => _playerCtr = player;
+    public void SetSkillPower(float value) => power_STR = value;
 
     /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
-    public void SkillWindowActive(bool value)
+    public void SetSkillWindowActive(bool value)
     {
         _playerCtr.SetUseInven(value); //플레이어의 움직임 제어
         _skInvenUI.gameObject.SetActive(value);
@@ -299,10 +300,11 @@ public class SkillManager : MonoBehaviour
                 if (_skillArray[i] == null) continue;
 
                 _skillArray[i].Init();                
-                //_skills[i].SetSkillDamage(power_STR);
             }
         }
     }
+
+
 
     public void UseSkill(SkillData _skilldata, ObjectBase _selfCtr, ref int _objectMP)
     {
@@ -355,4 +357,5 @@ public class SkillManager : MonoBehaviour
     {
         _playerCtr.SetPlayerSkill(_playerSkillArray);
     }
+
 }

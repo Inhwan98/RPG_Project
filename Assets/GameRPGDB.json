@@ -85,12 +85,13 @@
       "nBranch": "1",
       "nConditionLevel": "1",
       "nID": "1",
-      "nDestID": "1",
+      "nDestID": "100",
       "eQuestType": "1",
       "eObjectives": "2",
       "sQuestName": "촌장의 걱정",
       "sDiscription": "-몬스터를 퇴치하자",
-      "nGoalCnt": "10",
+      "nGoalCnt": "5",
+      "nCurCnt": 0,
       "nRewardEXP": "100",
       "nRewardGold": "100",
       "bIsCompleted": "false"
@@ -106,6 +107,7 @@
       "sQuestName": null,
       "sDiscription": "-촌장에게 돌아가자",
       "nGoalCnt": "10",
+      "nCurCnt": 0,
       "nRewardEXP": "100",
       "nRewardGold": "100",
       "bIsCompleted": "false"
@@ -121,6 +123,7 @@
       "sQuestName": "스킬 배우기",
       "sDiscription": "-스킬을 배워보자",
       "nGoalCnt": "10",
+      "nCurCnt": 0,
       "nRewardEXP": "100",
       "nRewardGold": "100",
       "bIsCompleted": "false"
@@ -135,6 +138,7 @@
       "nCurHP": "100",
       "nMaxMP": "100",
       "nCurMP": "100",
+      "nCurSTR": "10",
       "nDropExp": "10"
     }
   ],

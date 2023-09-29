@@ -21,6 +21,7 @@ public class QuestData
     public string sQuestName;
     public string sDiscription;
     public int nGoalCnt;
+    public int nCurCnt;
     public int nRewardEXP;
     public int nRewardGold;
     public bool bIsComplete;

@@ -9,22 +9,13 @@ public struct MonsterRecord
 
 public class GameManager : MonoBehaviour
 {
-    //[SerializeField] private GameObject monObj;
-
-    [Header("Monster Respawn Info")]
-    [SerializeField] private float respawnDistance;
-    //몬스터 생성 간격
-    [SerializeField, Header("몬스터의 생성 주기")] private float respawnTime;
-    // 생성할 몬스터의 최대 개수
-    [SerializeField, Header("몬스터의 동시 생성 가능한 최대 수")] private int maxMonsters = 5;
-    [SerializeField] private int currentMonsters;
-    private int AllMonstersNum; //생성된 모든 몬스터의 수
     private bool m_bisPlayerDie; //플레이어가 죽었는가
 
     private int[] monsterRecords = new int[100];
 
     [SerializeField]
     private PlayerController _playerCtr;
+    private List<QuestData> playerQuestList;
 
     private ResourcesData _resourcesData;
 
@@ -37,7 +28,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private QuestUI _questUI;
 
     private SkillManager _skillMgr;
-    private ItemInventoryManager _itemIvenMgr;
+    private ItemInventoryManager _itemInvenMgr;
 
     private void Awake()
     {
@@ -52,16 +43,21 @@ public class GameManager : MonoBehaviour
         _resourcesData = new ResourcesData();
         _dialogSystem = new DialogSystem();
         _questSystem = new QuestSystem();
+        
 
-        _skillMgr = GetComponent<SkillManager>();
-        _itemIvenMgr = GetComponent<ItemInventoryManager>();
+          _skillMgr = GetComponent<SkillManager>();
+        _itemInvenMgr = GetComponent<ItemInventoryManager>();
 
         _skillMgr.SetPlayerCtr(_playerCtr);
-        _itemIvenMgr.SetPlayerCtr(_playerCtr);
+        _itemInvenMgr.SetPlayerCtr(_playerCtr);
 
         //skillManager Awake() 전에 skinvenUI는 할당 되었다.(드로그 앤 드랍)
         Skill_InvenUI skInvenUI = _skillMgr.GetSkInvenUI();
+
         _playerCtr.SetSkill_InvenUI(skInvenUI);
+        _playerCtr.SetGameManager(this);
+        _playerCtr.SetItemInvenManager(_itemInvenMgr);
+        _playerCtr.SetSkillMgr(_skillMgr);
 
     }
 
@@ -73,23 +69,21 @@ public class GameManager : MonoBehaviour
         //StartCoroutine(UpdateMonster());
     }
 
+    #region Cursor Controll
     public void InvisibleCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-
     public void VisibleCursor()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
+    #endregion
 
 
-    public ResourcesData GetResourcesData()
-    {
-        return _resourcesData;
-    }
+
 
 
     ////몬스터 생성주기
@@ -111,23 +105,52 @@ public class GameManager : MonoBehaviour
     //    }
     //}
 
-    public void AddCurrentMonsters(out int _monidx)
+    //몬스터의 생성
+    public void AddCurrentMonsters(int nMonsterID)
     {
-        _monidx = AllMonstersNum;
-        ++AllMonstersNum;
-        ++currentMonsters;
-        
+         
     }
 
-    public void SubCurrentMonsters()
+
+    //몬스터를 잡았을 때
+    public void MonsterDead(int nMonsterID)
     {
-        --currentMonsters;
+        Debug.Log($"몬스터 Dead{nMonsterID}");
+        int monindex = nMonsterID - 100;
+        //몬스터를 잡은 갯수 기록(업적 이벤트에 사용)
+        monsterRecords[monindex]++;
+
+        playerQuestList = _playerCtr.GetPlayerQuest();
+
+        if (playerQuestList == null) return;
+
+        foreach (var x in playerQuestList)
+        {
+            Debug.Log($"몬스터 ID {x.nDestID}");
+            //퀘스트 목표 ID와 현재 몬스터의 ID가 같다면
+            if (x.nDestID == nMonsterID)
+            {
+               
+                x.nCurCnt++;
+                _questUI.UpdateQuestUI(x);
+
+            }
+        }
+
+    
     }
 
-    public void SetPlayerCtr(PlayerController playerCtr)
-    {
-        _playerCtr = playerCtr;
-    }
+    public List<QuestData> GetPossibleQuest() => _questSystem.GetPossibleQuest();
+    public DialogSystem GetDialogSystem() => _dialogSystem;
+    public QuestSystem GetQuestSystem() => _questSystem;
+    public ResourcesData GetResourcesData() => _resourcesData;
+
+    public void SetPlayerCtr(PlayerController playerCtr) => _playerCtr = playerCtr;
+
+    public void UpdateQuestList(int m_nLevel) => _questSystem.UpdateQuestList(m_nLevel);
+
+
+
 
     public void PlayerDie()
     {
@@ -135,6 +158,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("다이");
     }
 
+    //9.24 생성중
     public IEnumerator CheckQuest(QuestData questData)
     {
         QuestObjectives questObjectives = (QuestObjectives)questData.eObjectives;
@@ -145,8 +169,15 @@ public class GameManager : MonoBehaviour
             case QuestObjectives.CONVERSATION:
                 break;
             case QuestObjectives.HUNT:
-                while (questData.nGoalCnt > 0)
+                
+                int monindex = questData.nDestID - 100; // monster의 ID는 100대 부터 시작.
+
+                //퀘스트의 목표 개수와 해당ID 몬스터를 잡은 카운트가 다르다면 코루틴 계속 반복
+                //questData.nCurCnt는 몬스터 사망시
+                while (questData.nGoalCnt > questData.nCurCnt)
                 {
+
+
 
                     yield return null;
                 }
@@ -156,13 +187,8 @@ public class GameManager : MonoBehaviour
         }
 
         yield return null;
-
     }
 
-    public List<QuestData> GetPossibleQuest()
-    {
-        return _questSystem.GetPossibleQuest();
-    }
 
     /// <summary>
     /// NPC의 불평을 듣게 될 것이다.
@@ -173,6 +199,11 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => _dialogUI.UpdateDialog());
     }
 
+    /// <summary>
+    /// 퀘스트에 대한 NPC의 Dialog를 볼 수 있다.
+    /// 동시에 퀘스트를 수락하고 진행 퀘스트 UI를 업데이트 한다.
+    /// </summary>
+    /// <param name="questData"> 해당 퀘스트의 ID, Branch와 Dialog의 ID, Branch 비교</param>
     public IEnumerator PlayDialog(QuestData questData)
     {
         int id = questData.nID;
@@ -180,14 +211,18 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"{id}, {branch}");
 
+        //해당 ID, brach에 맞는 채팅 다이로그 시작
         _dialogUI.SetDialogList(id, branch);
         yield return new WaitUntil(() => _dialogUI.UpdateDialog());
 
+        //대화가 끝나면 플레이어가 진행하는 퀘스트 목록에 추가
+        // Yes, No 팝업을 띄워서 수락 / 거절 해도 된다.
         _playerCtr.AddPlayerQuest(questData);
 
-        var currentQuest = _playerCtr.GetPlayerQuest();
 
-        _questUI.UpdateQuestUI(currentQuest);
+        playerQuestList = _playerCtr.GetPlayerQuest();
+
+        _questUI.UpdateQuestUI(playerQuestList);
         //_questSystem.CompleteQuest(questData);
 
         //UpdateQuest();
@@ -198,13 +233,10 @@ public class GameManager : MonoBehaviour
     {
         foreach (var itemDic in _itemDic)
         {
-            _itemIvenMgr.Add(itemDic.Key, itemDic.Value);
+            _itemInvenMgr.Add(itemDic.Key, itemDic.Value);
         }
-
     }
 
-    public void UpdateQuestList(int playerLevel) => _questSystem.UpdateQuestList(playerLevel);
 
-    public DialogSystem GetDialogSystem() =>  _dialogSystem;
-    public QuestSystem GetQuestSystem() => _questSystem;
+
 }

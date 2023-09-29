@@ -147,6 +147,7 @@ public class Skill_InvenUI : InvenUIBase
         SlotUIBase endDragSlot = RaycastAndGetFirstComponent<SlotUIBase>();
         if (endDragSlot != null && endDragSlot.GetIsAccessible())
         {
+            //skill inven => player skill inven 이동 가능 (스왑 x)
             if (_beginDragSlot is InvenSkillSlotUI && endDragSlot is PlayerSkillSlotUI)
             {
                 TryMoveItems(_beginDragSlot, endDragSlot);
@@ -154,6 +155,7 @@ public class Skill_InvenUI : InvenUIBase
                 UpdateTooltipUI(endDragSlot);
                 return;
             }
+            //플레이어의 skill Inven에서만 스왑 가능
             else if(_beginDragSlot is PlayerSkillSlotUI && endDragSlot is PlayerSkillSlotUI)
             {
                 TrySwapItems(_beginDragSlot, endDragSlot);

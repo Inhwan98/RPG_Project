@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class Monster : ObjectBase
+public class Monster : ObjectBase
 {
 
     [SerializeField] private int exp;
-    private int monidx; //몬스터 고유 번호
+
     protected PlayerController _playerCtr;
     private Transform _playerTr;
     protected MonsterData _monsterData;
@@ -63,7 +63,7 @@ public abstract class Monster : ObjectBase
         destTr = _playerTr;
 
         // 손볼필요있음
-        GameManager.instance.AddCurrentMonsters(out monidx);
+        GameManager.instance.AddCurrentMonsters(m_nID);
         base.Start();
         //StartCoroutine(CheckObjState());
         StartCoroutine(ObjectAction());
@@ -219,21 +219,21 @@ public abstract class Monster : ObjectBase
     /// <summary> 데미지를 받았을 시 </summary>
     public override void OnDamage(int _str)
     {
+        //죽어있다면 데미지 이벤트 발생 x
         if (m_bisDead) return;
 
+        //방어력을 가졌다면 증감해서 대미지 입는다
         this.m_nCurHP -= _str;
 
-
+        //데미지 텍스트  발생. 오브젝트 풀링할 것
         GameObject damageText;
-        
         damageText = Instantiate(_damageTextObj, _damageTr.position, Quaternion.identity, transform);
         damageText.GetComponent<TextMesh>().text = $"{_str}";
     
         //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
         if (m_nCurHP <= 0)// 체력이 0 이하
         {
-            _playerCtr.SetEXP(m_nCurExp);
-                
+            
             this.objState = ObjectState.DEAD;
             return;
         }
@@ -284,15 +284,16 @@ public abstract class Monster : ObjectBase
     protected override void Die()
     {
         PlayerController.OnPlayerDie -= this.OnPlayerDie;
+        GameManager.instance.MonsterDead(m_nID);
+        StopAllCoroutines(); //FSM 중단
 
         //GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
-
-        this.gameObject.layer = 2; // Ignore Raycast
-        StopAllCoroutines();
-        _anim.SetTrigger(hashDead);
-        agent.enabled = false;
-        m_bisDead = true;
-        Destroy(this.gameObject, 2.0f);
+        _playerCtr.SetEXP(m_nCurExp); //플레이어에게 경험치 전달
+        this.gameObject.layer = 2;    // Ignore Raycast        
+        _anim.SetTrigger(hashDead);   // 쓰러지는 애니메이션
+        agent.enabled = false;        // Nav Mesh 중단
+        m_bisDead = true;             // 죽음 상태 true
+        Destroy(this.gameObject, 2.0f); // 쓰러진뒤 2초뒤에 오브젝트 삭제... 오브젝트 풀링시 수정
     }
 
     private void OnPlayerDie()
@@ -307,9 +308,45 @@ public abstract class Monster : ObjectBase
         _anim.SetBool(hashAttack, false);
     }
 
+    protected override void LoadData()
+    {
+        //몬스터는 100번대 부터 시작한다. 0번째 인덱스 부터 시작하려면 m_ID - 100 
+        //현재 몬스터에 해당하는 INDEX를 찾아간다.
+        _monsterData = SaveSys.LoadAllData().MonsterDB[m_nID - 100];
+
+        if (_monsterData == null)
+        {
+            Debug.LogError("MonData is NULL!!");
+            return;
+        }
+
+        m_nLevel = _monsterData.nLevel;
+        m_nMaxHP = _monsterData.nMaxHP;
+        m_nCurHP = _monsterData.nMaxHP;
+
+        m_nMaxMP = _monsterData.nMaxMP;
+        m_nCurMP = _monsterData.nMaxMP;
+
+
+        m_nCurSTR = _monsterData.nCurSTR;
+        m_nCurExp = _monsterData.nDropExp;
+    }
+
     private void OnDestroy()
     {
-        GameManager.instance.SubCurrentMonsters();    
+        
+    }
+
+    [ContextMenu("Item List")]
+    public void VisibleItemList()
+    {
+        foreach(var a in _itemDic)
+        {
+            Debug.Log($"{a.Key}");
+            Debug.Log($"{a.Value}");
+
+        }
+        
     }
 
     
