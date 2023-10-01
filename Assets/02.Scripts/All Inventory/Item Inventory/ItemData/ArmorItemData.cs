@@ -7,10 +7,10 @@ using UnityEngine;
 public class ArmorItemData : EquipmentItemData
 {
     [Newtonsoft.Json.JsonProperty]
-    private int _defence = 1;
+    private int _nDefence = 1;
 
     /// <summary> 방어력 </summary>
-    public int GetDefence() => _defence;
+    public int GetDefence() => _nDefence;
 
 
     public override Item CreateItem()

@@ -91,9 +91,10 @@
       "sQuestName": "촌장의 걱정",
       "sDiscription": "-몬스터를 퇴치하자",
       "nGoalCnt": "5",
-      "nCurCnt": 0,
+      "nCurCnt": "0",
       "nRewardEXP": "100",
       "nRewardGold": "100",
+      "nRewardItemList": null,
       "bIsCompleted": "false"
     },
     {
@@ -104,28 +105,34 @@
       "nDestID": "1",
       "eQuestType": "1",
       "eObjectives": "1",
-      "sQuestName": null,
+      "sQuestName": "촌장의 걱정",
       "sDiscription": "-촌장에게 돌아가자",
-      "nGoalCnt": "10",
-      "nCurCnt": 0,
+      "nGoalCnt": "0",
+      "nCurCnt": "0",
       "nRewardEXP": "100",
       "nRewardGold": "100",
+      "nRewardItemList": [
+        "1000",
+        "1001",
+        "2000"
+      ],
       "bIsCompleted": "false"
     },
     {
       "nQuestID": "2",
       "nBranch": "1",
       "nConditionLevel": "1",
-      "nID": "1",
-      "nDestID": "1",
+      "nID": "0",
+      "nDestID": "0",
       "eQuestType": "2",
       "eObjectives": "3",
       "sQuestName": "스킬 배우기",
       "sDiscription": "-스킬을 배워보자",
-      "nGoalCnt": "10",
-      "nCurCnt": 0,
+      "nGoalCnt": "0",
+      "nCurCnt": "0",
       "nRewardEXP": "100",
       "nRewardGold": "100",
+      "nRewardItemList": null,
       "bIsCompleted": "false"
     }
   ],
@@ -139,7 +146,12 @@
       "nMaxMP": "100",
       "nCurMP": "100",
       "nCurSTR": "10",
-      "nDropExp": "10"
+      "nDropExp": "10",
+      "nDropItemArray": [
+        "1000",
+        "1001",
+        "2000"
+      ]
     }
   ],
   "PlayerLevelDB": [
@@ -321,6 +333,39 @@
       "m_fCooldown": "10",
       "m_nManaAmount": "20",
       "m_bAcquired": "false"
+    }
+  ],
+  "ArmorItemDB": [
+    {
+      "_nId": "2000",
+      "_nUsedLevel": "1",
+      "_sName": "중장비 갑옷",
+      "_sTooltip": "멋있고 늠름한 갑옷이다.",
+      "_sIconPath": "ItemIcon/01_plate_chest",
+      "_nMaxDurability": "100",
+      "_nDefence": "10"
+    }
+  ],
+  "PortionItemDB": [
+    {
+      "_nId": "1000",
+      "_nUsedLevel": "1",
+      "_sName": "최하급 HP 포션",
+      "_sTooltip": "맛있는 포션",
+      "_sIconPath": "ItemIcon/Portion/hp",
+      "_nMaxAmount": "99",
+      "_nValue": "10",
+      "_ePortionState": "0"
+    },
+    {
+      "_nId": "1001",
+      "_nUsedLevel": "1",
+      "_sName": "MP 포션",
+      "_sTooltip": "맛있는 MP 포션",
+      "_sIconPath": "ItemIcon/Portion/mp",
+      "_nMaxAmount": "99",
+      "_nValue": "10",
+      "_ePortionState": "1"
     }
   ]
 }

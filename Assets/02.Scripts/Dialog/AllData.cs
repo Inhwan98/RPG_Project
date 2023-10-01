@@ -6,6 +6,8 @@ public class AllData
     public MonsterData[] MonsterDB;
     public PlayerLevelData[] PlayerLevelDB;
     public SkillData[] SkillDB;
+    public ArmorItemData[] ArmorItemDB;
+    public PortionItemData[] PortionItemDB;
 }
 
 [System.Serializable]
@@ -24,20 +26,8 @@ public class QuestData
     public int nCurCnt;
     public int nRewardEXP;
     public int nRewardGold;
+    public int[] nRewardItemList;
     public bool bIsComplete;
-}
-
-public enum QuestType
-{
-    메인 = 1,
-    일반 = 2
-}
-
-public enum QuestObjectives
-{
-    CONVERSATION = 1,
-    HUNT,
-    SKILL
 }
 
 
@@ -71,6 +61,7 @@ public class MonsterData
     public int nMaxMP;
     public int nCurSTR;
     public int nDropExp;
+    public int[] nDropItemArray;
 }
 
 

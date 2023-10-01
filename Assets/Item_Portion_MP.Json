@@ -1,10 +1,10 @@
 {
-  "_id": 9,
-  "_usedLevel": 1,
-  "_name": "MP 포션",
-  "_tooltip": "맛있는 MP 포션",
-  "_IconPath": "ItemIcon/Portion/mp",
-  "_maxAmount": 99,
-  "_value": 10,
-  "_portionState": 1
+  "_nId": 1001,
+  "_nUsedLevel": 1,
+  "_sName": "MP 포션",
+  "_sTooltip": "맛있는 MP 포션",
+  "_sIconPath": "ItemIcon/Portion/mp",
+  "_nMaxAmount": 99,
+  "_nValue": 10,
+  "_ePortionState": 1
 }

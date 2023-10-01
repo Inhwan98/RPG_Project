@@ -46,6 +46,7 @@ public class PlayerController : Character
 
     private bool _isUseInven;
     private bool _isUseSkillWindow;
+    private bool _isPlayDialog;
 
     //몬스터를 자동 추적할 몬스터 리스트
     private List<KeyValuePair<int, Transform>> monsterObjs_list = new List<KeyValuePair<int, Transform>>();
@@ -54,7 +55,7 @@ public class PlayerController : Character
     [SerializeField]
     private PlayerUIManager _playerUICtr;
 
-    private List<QuestData> _currentQuest = new List<QuestData>();
+    private List<QuestData> _currentQuestList = new List<QuestData>();
    
     private QuestSystem _questSystem;
 
@@ -102,9 +103,6 @@ public class PlayerController : Character
     protected override void Start()
     {
         //_cam           = Camera.main;
-        _gameMgr = GameManager.instance;
-        _gameMgr.SetPlayerCtr(this); // 게임매니져에게 플레이어 스크립트 참조시킴
-        _questSystem = _gameMgr.GetQuestSystem();            //모든 Quest 정보 받아오기
 
         UpdateQuest(); //퀘스트 정보 업데이트
 
@@ -142,8 +140,11 @@ public class PlayerController : Character
 
     public bool GetUseInven() => _isUseInven;
     public CameraController GetCameraCtr() => _cameraCtr;
+    public List<QuestData> GetPlayerQuestList() => _currentQuestList;
 
-    public void SetUseInven(bool value) { _isUseInven = value; }
+    public void SetUseItemInven(bool value) { _isUseInven = value; }
+    public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }
+    public void SetUsePlayDialog(bool value) { _isPlayDialog = value; }
     /// <summary> 모든 스킬 덮어 씌우기 </summary>
     public void SetPlayerSkill(SkillData[] skill_datas)                => _skill_Datas = skill_datas;
     /// <summary> 플레이어 스킬 데이터에 할당 </summary>
@@ -154,6 +155,7 @@ public class PlayerController : Character
     public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr;
     public void SetSkillMgr(SkillManager skillMgr)                     => _skillMgr = skillMgr;
 
+    public void AddPlayerQuest(QuestData questData) => _currentQuestList.Add(questData);
     private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
 
 
@@ -163,7 +165,7 @@ public class PlayerController : Character
     /// </summary>
     private void CharacterMovement()
     {
-        if (_isUseInven || _isUseSkillWindow || m_bisAttack) return;
+        if (_isUseInven || _isUseSkillWindow || _isPlayDialog || m_bisAttack) return;
 
         Vector3 direction = new Vector3(xInput, 0, zInput);
 
@@ -200,7 +202,7 @@ public class PlayerController : Character
     /// <summary> Player의 기본/스킬 공격 구성 </summary>
     private void PlayerAttack()
     {
-        if (m_bisAttack || _isUseInven || _isUseSkillWindow) return;
+        if (m_bisAttack || _isUseInven || _isUseSkillWindow || _isPlayDialog) return;
 
         if (attackInput) StartCoroutine(Attack());
         else Skill_Attack();
@@ -395,7 +397,7 @@ public class PlayerController : Character
     {
         foreach(var itemDic in _itemDic)
         {
-            _itemInvenMgr.Add(itemDic.Key, itemDic.Value);
+            _itemInvenMgr.AddItem(itemDic.Key, itemDic.Value);
         }
     }
 
@@ -499,9 +501,19 @@ public class PlayerController : Character
             NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
             Debug.Assert(npcCtr != null, "npcCtr is NULL");
 
+            for(int i = 0; i < _currentQuestList.Count; i++)
+            {
+                var curQuest = _currentQuestList[i];
+
+                if (curQuest.nDestID == npcCtr.GetID())
+                {
+                    StartCoroutine(_gameMgr.CompleteDialog(curQuest, i)); // 해당 퀘스트의 Dialog를 띄운다.
+                    return;
+                }
+            }
+        
             //현재가능한 퀘스트 목록 중
             var poQuests = _questSystem.GetPossibleQuest();
-            //_gameMgr.GetPossibleQuest();
 
             foreach (var quest in poQuests)
             {
@@ -509,25 +521,21 @@ public class PlayerController : Character
                 if (quest.nID == npcCtr.GetID())
                 {
                     //해당 퀘스트가 진행 중일 경우
-                    if (_currentQuest.Contains(quest))
+                    if (_currentQuestList.Contains(quest))
                     {
-                        
                         StartCoroutine(_gameMgr.UnsolvedQuestDialog(quest.nID));
                         break;
                     }
-                    
+
                     StartCoroutine(_gameMgr.PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
-
                     break;
-
                 }
             }
         }
     }
 
 
-    public void AddPlayerQuest(QuestData questData) => _currentQuest.Add(questData);
-    public List<QuestData> GetPlayerQuest() => _currentQuest;
+
 
     [ContextMenu("Clear Quest")]
     public void ClearQuest()

@@ -8,7 +8,7 @@ public class ItemInventoryManager : MonoBehaviour
     private int _capacity;     //아이템 수용 한도
 
     [SerializeField, Range(8, 64)]
-    private int _maxCapacity = 64;     // 최대 수용 한도(아이템 배열 크기)
+    private int _maxCapacity = 30;     // 최대 수용 한도(아이템 배열 크기)
 
     [SerializeField]
     private ItemInventoryUI _itemInventoryUI;
@@ -235,7 +235,7 @@ public class ItemInventoryManager : MonoBehaviour
     /// <para/> 넣는 데 실패한 아이템 개수 리턴
     /// <para/> 리턴이 0이면 넣는데 모두 성공했다는 의미
     /// </summary>
-    public int Add(ItemData itemData, int amount = 1)
+    public int AddItem(ItemData itemData, int amount = 1)
     {
         if (itemData == null) return 0;
 
@@ -463,7 +463,7 @@ public class ItemInventoryManager : MonoBehaviour
     /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
     public void SetInventoryActive(bool value)
     {
-        _playerCtr.SetUseInven(value); //플레이어의 움직임 제어
+        _playerCtr.SetUseItemInven(value); //플레이어의 움직임 제어
         _itemInventoryUI.gameObject.SetActive(value);      
         _playerCtr.GetCameraCtr().UseWindow(value); //카메라의 회전 제어
 

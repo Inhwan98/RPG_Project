@@ -5,8 +5,8 @@ using UnityEngine;
 public abstract class CountableItemData : ItemData
 {
     [Newtonsoft.Json.JsonProperty]
-    private int _maxAmount = 99;
+    private int _nMaxAmount = 99;
 
-    public int GetMaxAmount() { return _maxAmount; }
+    public int GetMaxAmount() { return _nMaxAmount; }
 
 }
