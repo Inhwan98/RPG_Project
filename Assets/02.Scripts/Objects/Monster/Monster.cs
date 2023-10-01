@@ -5,9 +5,6 @@ using UnityEngine.AI;
 
 public class Monster : ObjectBase
 {
-
-    [SerializeField] private int exp;
-
     protected PlayerController _playerCtr;
     private Transform _playerTr;
     protected MonsterData _monsterData;
@@ -30,6 +27,8 @@ public class Monster : ObjectBase
     //Drop Item
     protected List<ItemData> _itemDatas = new List<ItemData>();
     protected Dictionary<ItemData, int> _itemDic = new Dictionary<ItemData, int>();
+
+    protected int[] m_nDropItemArray;
 
     protected int m_nPortionDrop_MinAmount;
     protected int m_nPortionDrop_MaxAmount;
@@ -288,6 +287,7 @@ public class Monster : ObjectBase
         StopAllCoroutines(); //FSM 중단
 
         //GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
+        _playerCtr.AddInven(_itemDic);//플레이어에게 아이테 전달
         _playerCtr.SetEXP(m_nCurExp); //플레이어에게 경험치 전달
         this.gameObject.layer = 2;    // Ignore Raycast        
         _anim.SetTrigger(hashDead);   // 쓰러지는 애니메이션
@@ -330,6 +330,9 @@ public class Monster : ObjectBase
 
         m_nCurSTR = _monsterData.nCurSTR;
         m_nCurExp = _monsterData.nDropExp;
+
+        //아이템 ID가 담긴 Array
+        m_nDropItemArray = _monsterData.nDropItemArray;
     }
 
     private void OnDestroy()

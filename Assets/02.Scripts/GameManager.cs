@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private PlayerController _playerCtr;
-    private List<QuestData> playerQuestList;
+    private List<QuestData> _playerQuestList;
 
     private ResourcesData _resourcesData;
 
@@ -24,8 +24,8 @@ public class GameManager : MonoBehaviour
     private QuestSystem _questSystem;
 
 
-    [SerializeField] private DialogUI _dialogUI;
-    [SerializeField] private QuestUI _questUI;
+    [SerializeField] private DialogUI _dialogUICtr;
+    [SerializeField] private QuestUI _questUICtr;
 
     private SkillManager _skillMgr;
     private ItemInventoryManager _itemInvenMgr;
@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
         _playerCtr.SetGameManager(this);
         _playerCtr.SetItemInvenManager(_itemInvenMgr);
         _playerCtr.SetSkillMgr(_skillMgr);
+        _playerCtr.SetQuestSystem(_questSystem);
 
     }
 
@@ -81,10 +82,6 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
     }
     #endregion
-
-
-
-
 
     ////몬스터 생성주기
     //IEnumerator UpdateMonster()
@@ -112,35 +109,6 @@ public class GameManager : MonoBehaviour
     }
 
 
-    //몬스터를 잡았을 때
-    public void MonsterDead(int nMonsterID)
-    {
-        Debug.Log($"몬스터 Dead{nMonsterID}");
-        int monindex = nMonsterID - 100;
-        //몬스터를 잡은 갯수 기록(업적 이벤트에 사용)
-        monsterRecords[monindex]++;
-
-        playerQuestList = _playerCtr.GetPlayerQuest();
-
-        if (playerQuestList == null) return;
-
-        foreach (var x in playerQuestList)
-        {
-            Debug.Log($"몬스터 ID {x.nDestID}");
-            //퀘스트 목표 ID와 현재 몬스터의 ID가 같다면
-            if (x.nDestID == nMonsterID)
-            {
-               
-                x.nCurCnt++;
-                _questUI.UpdateQuestUI(x);
-
-            }
-        }
-
-    
-    }
-
-    public List<QuestData> GetPossibleQuest() => _questSystem.GetPossibleQuest();
     public DialogSystem GetDialogSystem() => _dialogSystem;
     public QuestSystem GetQuestSystem() => _questSystem;
     public ResourcesData GetResourcesData() => _resourcesData;
@@ -149,7 +117,33 @@ public class GameManager : MonoBehaviour
 
     public void UpdateQuestList(int m_nLevel) => _questSystem.UpdateQuestList(m_nLevel);
 
+    //몬스터를 잡았을 때
+    public void MonsterDead(int nMonsterID)
+    {
+        int monindex = nMonsterID - 100;
+        //몬스터를 잡은 갯수 기록(업적 이벤트에 사용)
+        monsterRecords[monindex]++;
 
+        if (_playerQuestList == null) return;
+
+        for (int i = 0; i < _playerQuestList.Count; i++)
+        {
+            if (_playerQuestList[i].nDestID == nMonsterID)
+            {
+                _playerQuestList[i].nCurCnt++;
+
+
+                //목표 개수에 도달했을 시,
+                if (_playerQuestList[i].nCurCnt >= _playerQuestList[i].nGoalCnt)
+                {
+                    CompleteQuest(_playerQuestList[i], i);
+                    break;
+                }
+                else
+                    _questUICtr.UpdateQuestUI(_playerQuestList[i]);
+            }
+        }
+    }
 
 
     public void PlayerDie()
@@ -195,8 +189,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public IEnumerator UnsolvedQuestDialog(int id)
     {
-        _dialogUI.SetDialogList(id, 0);
-        yield return new WaitUntil(() => _dialogUI.UpdateDialog());
+        _dialogUICtr.SetDialogList(id, 0);
+        _playerCtr.SetUsePlayDialog(true); // 플레이어 동작 관리
+        yield return new WaitUntil(() => _dialogUICtr.UpdateDialog());
+        _playerCtr.SetUsePlayDialog(false); // 플레이어 동작 관리
     }
 
     /// <summary>
@@ -206,34 +202,77 @@ public class GameManager : MonoBehaviour
     /// <param name="questData"> 해당 퀘스트의 ID, Branch와 Dialog의 ID, Branch 비교</param>
     public IEnumerator PlayDialog(QuestData questData)
     {
-        int id = questData.nID;
+        _playerCtr.SetUsePlayDialog(true); // 플레이어 동작 관리
+
+        int questId = questData.nQuestID;
         int branch = questData.nBranch;
 
-        Debug.Log($"{id}, {branch}");
+        //해당 QuestID, brach에 맞는 채팅 다이로그 시작
+        _dialogUICtr.SetDialogList(questId, branch);
+        yield return new WaitUntil(() => _dialogUICtr.UpdateDialog());
 
-        //해당 ID, brach에 맞는 채팅 다이로그 시작
-        _dialogUI.SetDialogList(id, branch);
-        yield return new WaitUntil(() => _dialogUI.UpdateDialog());
+        _playerCtr.SetUsePlayDialog(false); // 플레이어 동작 관리
 
         //대화가 끝나면 플레이어가 진행하는 퀘스트 목록에 추가
         // Yes, No 팝업을 띄워서 수락 / 거절 해도 된다.
-        _playerCtr.AddPlayerQuest(questData);
+        _playerCtr.AddPlayerQuest(questData); 
 
+        _playerQuestList = _playerCtr.GetPlayerQuestList();
 
-        playerQuestList = _playerCtr.GetPlayerQuest();
-
-        _questUI.UpdateQuestUI(playerQuestList);
-        //_questSystem.CompleteQuest(questData);
-
-        //UpdateQuest();
+        _questUICtr.UpdateQuestUI(_playerQuestList);
     }
+
+    /// <summary>
+    /// 현재 퀘스트 완료 다이어로그 활성화 및 퀘스트 완료 진행 처리
+    /// </summary>
+    public IEnumerator CompleteDialog(QuestData questData, int index)
+    {
+        _playerCtr.SetUsePlayDialog(true); // 플레이어 동작 관리
+
+        int questId = questData.nQuestID;
+        int branch = questData.nBranch;
+
+        //해당 QuestID, brach에 맞는 채팅 다이로그 시작
+        _dialogUICtr.SetDialogList(questId, branch);
+        yield return new WaitUntil(() => _dialogUICtr.UpdateDialog());
+
+        _playerCtr.SetUsePlayDialog(false); // 플레이어 동작 관리
+        CompleteQuest(questData, index);
+    }
+
+    /// <summary>
+    /// 퀘스트 완료 처리
+    /// </summary>
+    public void CompleteQuest(QuestData currentQuestData, int index)
+    {
+        var nextQuest = _questSystem.NextQuest(currentQuestData);
+
+        //null이라면 다음 퀘스트가 없는 완료된 퀘스트이기 때문에, 현재 진행 퀘스트에서 제거
+        if (nextQuest == null)
+        {
+            Debug.Log("보상을 주는 내용");
+            _playerCtr.SetEXP(currentQuestData.nRewardEXP); //경험치 전달
+
+
+            _questUICtr.UpdateQuestUI(_playerQuestList);
+            _playerQuestList.Remove(currentQuestData);
+        }
+        else
+        {
+            //바뀐 데이터를 PlayerController QuestList 데이터에도 영향을 주기 위해
+            //새로 생긴 객체(다음 퀘스트)를 참조 주소에 직접 넣어준다.
+            _playerQuestList[index] = nextQuest;
+            _questUICtr.UpdateQuestUI(_playerQuestList);
+        }
+    }
+
 
     /// <summary> 몬스터의 아이템을 Inventory로 전달 </summary>
     public void AddInven(Dictionary<ItemData, int> _itemDic)
     {
         foreach (var itemDic in _itemDic)
         {
-            _itemInvenMgr.Add(itemDic.Key, itemDic.Value);
+            _itemInvenMgr.AddItem(itemDic.Key, itemDic.Value);
         }
     }
 

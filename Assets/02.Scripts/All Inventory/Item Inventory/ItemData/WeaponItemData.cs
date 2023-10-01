@@ -6,10 +6,10 @@ using UnityEngine;
 public class WeaponItemData : EquipmentItemData
 {
     [Newtonsoft.Json.JsonProperty]
-    private int _damage = 1;
+    private int _nDamage = 1;
 
     /// <summary> 공격력 </summary>
-    public int GetDamage() => _damage;
+    public int GetDamage() => _nDamage;
 
     public override Item CreateItem()
     {

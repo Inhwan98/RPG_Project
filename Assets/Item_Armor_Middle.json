@@ -1,9 +1,9 @@
 {
-  "_id": 11,
-  "_usedLevel": 1,
-  "_name": "중장비 갑옷",
-  "_tooltip": "멋있고 늠름한 갑옷이다.",
-  "_IconPath": "ItemIcon/01_plate_chest",
-  "_maxDurability": 100,
-  "_defence": 10
+  "_nId": 2000,
+  "_nUsedLevel": 1,
+  "_sName": "중장비 갑옷",
+  "_sTooltip": "멋있고 늠름한 갑옷이다.",
+  "_sIconPath": "ItemIcon/01_plate_chest",
+  "_nMaxDurability": 100,
+  "_nDefence": 10
 }

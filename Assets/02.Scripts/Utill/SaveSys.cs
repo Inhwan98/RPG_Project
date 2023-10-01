@@ -132,7 +132,10 @@ public static class SaveSys
         if (File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            datas = JsonUtility.FromJson<AllData>(jsonData);
+            datas = JsonConvert.DeserializeObject<AllData>(jsonData, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All                
+            });
             return datas;
         }
         else

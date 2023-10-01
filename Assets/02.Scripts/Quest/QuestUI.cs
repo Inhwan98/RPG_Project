@@ -119,6 +119,16 @@ public class QuestUI : MonoBehaviour
         int index = Array.IndexOf(_questSlotIDArray, questData.nQuestID);
         Debug.Assert(index != -1, "Quest Slot index NULL");
 
+        //퀘스트 데이터가 완료 처리라면 해당 퀘스트 UI 초기화
+        if(questData.bIsComplete == true)
+        {
+            _questSlotIDArray[index] = 0;
+            _questHeaders[index].gameObject.SetActive(false);
+            _disCriptions[index].gameObject.SetActive(false);
+            return;
+        }
+
+
         #region Title 설정
         if (questData.eQuestType == 1)
             sb.Append($"<color=orange>[메인]");

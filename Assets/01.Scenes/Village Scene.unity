@@ -5697,6 +5697,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4719809999312442, guid: 7be6312967053e94692000c19fd00461, type: 3}
   m_PrefabInstance: {fileID: 163625312}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &164551106 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7346097547662171065, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+  m_PrefabInstance: {fileID: 7346097546320237928}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e225362f09b24c41b98a4d5fb82d5f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &164551107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7346097547662171064, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+  m_PrefabInstance: {fileID: 7346097546320237928}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edfb3ad5bb3aed4418818f3482e3c8e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &167178724
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88816,10 +88838,30 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 758355774, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+      propertyPath: _verticalSlotCount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 758355774, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+      propertyPath: _horizontalSlotCount
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5670912821715832411, guid: 899119066fd885649b9803dfc08452c3, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7346097547892152474, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+      propertyPath: _maxCapacity
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7346097547892152478, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+      propertyPath: _questUICtr
+      value: 
+      objectReference: {fileID: 164551106}
+    - target: {fileID: 7346097547892152478, guid: 899119066fd885649b9803dfc08452c3, type: 3}
+      propertyPath: _dialogUICtr
+      value: 
+      objectReference: {fileID: 164551107}
     - target: {fileID: 8712346462291393608, guid: 899119066fd885649b9803dfc08452c3, type: 3}
       propertyPath: m_RootOrder
       value: 9

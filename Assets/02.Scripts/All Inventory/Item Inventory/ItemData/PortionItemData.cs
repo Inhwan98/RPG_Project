@@ -13,13 +13,15 @@ public class PortionItemData : CountableItemData
 {
     ///</summary> 효과랑(회복량 등) </summary>
     [Newtonsoft.Json.JsonProperty]
-    private int _value;
+    [SerializeField]
+    private int _nValue;
 
     [Newtonsoft.Json.JsonProperty]
-    private IPortionState _portionState;
+    [SerializeField]
+    private IPortionState _ePortionState;
 
-    public int GetValue() { return _value; }
-    public IPortionState GetPortionState() { return _portionState; }
+    public int GetValue() { return _nValue; }
+    public IPortionState GetPortionState() { return _ePortionState; }
 
     public override Item CreateItem()
     {
