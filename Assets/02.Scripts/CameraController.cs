@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    PlayerController playerCtr;
+    [SerializeField] PlayerController playerCtr;
     Transform playertr;
 
     [SerializeField] private float distance;
@@ -23,12 +23,14 @@ public class CameraController : MonoBehaviour
 
     Vector3 velocity;
 
+    private void Awake()
+    {
+        playerCtr.SetCameraCtr(this);
+        playertr = playerCtr.transform;
+    }
+
     void Start()
     {
-        playerCtr = PlayerController.instance;
-        playertr = playerCtr.transform;
-
-        playerCtr.SetCameraCtr(this);
 
         StartCoroutine(CheckCam());
     }

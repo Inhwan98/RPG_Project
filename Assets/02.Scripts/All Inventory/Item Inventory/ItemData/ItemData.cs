@@ -30,6 +30,7 @@ public abstract class ItemData
     public string GetToolTip() { return _sTooltip; }
     public Sprite GetIconSprite() { return _iconSprite; }
 
+    /// <summary> _sIconPathø° ¥Î«— Resources Load </summary>
     public void SetIcon()
     {
         _iconSprite = Resources.Load<Sprite>(_sIconPath);

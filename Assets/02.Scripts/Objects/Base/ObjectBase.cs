@@ -12,18 +12,23 @@ public abstract class ObjectBase : MonoBehaviour
     [Header("Currnet Info")] // status의 정보에 맞게 초기화 할 것
     [SerializeField] protected int   m_nID;
     [SerializeField] protected int   m_nLevel;
-    [SerializeField] protected int   m_nMaxExp;
+
     [SerializeField] protected int   m_nCurExp;
-    [SerializeField] protected int   m_nMaxHP;
+    
     [SerializeField] protected int   m_nCurHP;
+    [SerializeField] protected int   m_nCurMP;
     [SerializeField] protected int   m_nCurSTR;
     [SerializeField] protected int   m_nSkillDamage;
-    [SerializeField] protected int   m_nMaxMP;
-    [SerializeField] protected int   m_nCurMP;
-    [SerializeField] protected bool  m_bisAttack;
-    [SerializeField] protected bool  m_bisDead;
-    [SerializeField] protected ObjectState objState; // 상태에 따른 액션
+
+    protected int   m_nMaxHP;
+    protected int   m_nMaxMP;
+    protected bool  m_bisAttack;
+    protected bool  m_bisDead;
     
+
+
+    protected ResourcesData _resourcesData;
+
     #region Animation Setting
     protected Animator _anim;
     protected readonly int hashDead = Animator.StringToHash("DoDead");
@@ -46,16 +51,12 @@ public abstract class ObjectBase : MonoBehaviour
     protected virtual void Awake()
     {
         LoadData();
-        //09.24 수정
-        //InitObj();
-        objState = ObjectState.IDLE;
-        _anim = GetComponent<Animator>();
-        //_resourcesData = new ResourcesData();
+        InitObj();
     }
 
     protected virtual void Start()
     {
-        
+        _resourcesData = GameManager.instance.GetResourcesData();
     }
 
     protected virtual void Getinfo()
@@ -64,25 +65,9 @@ public abstract class ObjectBase : MonoBehaviour
         Debug.Log($"STR : {m_nCurSTR}");
     }
 
-    //protected abstract void OnAttack1Trigger();
-
     //Init Object Setting
     private void InitObj()
     {
-        //Status Set
-        m_nLevel       = objData.GetLevel();
-        m_nCurExp      = objData.GetCurExp();
-        m_nMaxHP       = objData.GetMaxHP();
-        m_nMaxMP       = objData.GetMaxMP();
-        m_nCurSTR      = objData.GetCurSTR();
-
-        m_nCurHP       = m_nMaxHP;
-        m_nCurMP       = m_nMaxMP;
-        //State Set
-        objState = ObjectState.IDLE;
-
-        //Component Set
- 
         _anim = GetComponent<Animator>();
     }
 
@@ -92,24 +77,9 @@ public abstract class ObjectBase : MonoBehaviour
     /// <summary> 스킬데미지 값 수정 </summary>
     public void  SetSkillDamage(int _skillDamage) => m_nSkillDamage = _skillDamage;
 
-
-    /// <summary> State값 반환 </summary>
-    public ObjectState GetObjState() => objState;
     /// <summary> Object Die 상태 반환 </summary>
     public bool GetIsDie() => m_bisDead;
 
-    /// <summary> 대미지를 입었을 때 함수 </summary>
-    public virtual void OnDamage(int _str)
-    {
-        this.m_nCurHP -= _str;
-        //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
-        if (m_nCurHP <= 0)// 체력이 0 이하
-        {
-            this.objState = ObjectState.DEAD;
-        }
-    }
-
-    
     public virtual void Buff(int _str) { }
 
     /// <summary> 공격 관련 </summary>
@@ -118,6 +88,10 @@ public abstract class ObjectBase : MonoBehaviour
     /// <summary> 체력이 0 이하일 때 Die Event </summary>
     protected abstract void Die();
 
+    /// <summary> 대미지를 입었을 때 함수 </summary>
+    public abstract void OnDamage(int _str);
+
+    /// <summary> 각 객체에 맞게 Data Load </summary>
     protected abstract void LoadData();
 
 

@@ -8,6 +8,7 @@ public class DialogSystem
     List<DialogData> currentDialog = new List<DialogData>();
 
 
+    /// <summary>  생성과 동시에 데이터를 불러 온다. </summary>
     public DialogSystem()
     {
         dialogDatas = SaveSys.LoadAllData().DialogDB;
@@ -35,9 +36,6 @@ public class DialogSystem
                 }
             }
         }
-
         return currentDialog;
     }
-
-
 }

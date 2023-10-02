@@ -1,4 +1,6 @@
-﻿[System.Serializable]
+﻿using System.Collections.Generic;
+
+[System.Serializable]
 public class AllData
 {
     public DialogData[] DialogDB;
@@ -26,7 +28,8 @@ public class QuestData
     public int nCurCnt;
     public int nRewardEXP;
     public int nRewardGold;
-    public int[] nRewardItemList;
+    public int[] nRewardItem;
+    public int[] nItemAmount;
     public bool bIsComplete;
 }
 

@@ -229,11 +229,12 @@ public class ItemInventoryManager : MonoBehaviour
         }
     }
 
-    
 
-    ///<summary> 인벤토리에 아이템 추가
-    /// <para/> 넣는 데 실패한 아이템 개수 리턴
-    /// <para/> 리턴이 0이면 넣는데 모두 성공했다는 의미
+
+    ///<summary>
+    /// 인벤토리에 아이템 추가<br></br>
+    /// 넣는 데 실패한 아이템 개수 리턴<br></br>
+    /// 리턴이 0이면 넣는데 모두 성공했다는 의미
     /// </summary>
     public int AddItem(ItemData itemData, int amount = 1)
     {
@@ -472,7 +473,6 @@ public class ItemInventoryManager : MonoBehaviour
             GameManager.instance.InvisibleCursor();
     }
 
-    [ContextMenu("SaveInven")]
     public void SaveInven()
     {
         SaveSys.SaveInvenItem(_items);

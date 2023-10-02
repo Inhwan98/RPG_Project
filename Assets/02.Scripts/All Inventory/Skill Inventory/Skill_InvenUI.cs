@@ -12,7 +12,7 @@ public class Skill_InvenUI : InvenUIBase
     private GraphicRaycaster _playerGr;
 
     [SerializeField]
-    private List<PlayerSkillSlotUI> _playerSlotUIList = new List<PlayerSkillSlotUI>(); // 아이템 슬롯 리스트
+    private List<PlayerSkillSlotUI> _playerSlotUIList = new List<PlayerSkillSlotUI>(); // 플레이어 스킬 슬롯 리스트
 
     private Button[] plusButton;
 
@@ -61,6 +61,7 @@ public class Skill_InvenUI : InvenUIBase
         _playerSlotUIList[index].RemoveItem();
     }
 
+    /// <summary> 마우스 레이와 충돌한 첫번째 원소 /summary>
     protected override T RaycastAndGetFirstComponent<T>()
     {
         _rrList.Clear();
@@ -93,9 +94,9 @@ public class Skill_InvenUI : InvenUIBase
         _itemTooltip.SetRectPosition(slot.GetSlotRect());
     }
 
+    /// <summary> 스킬데이터들을 조회하며 습득하지 않은 스킬은 비활성화 처리 </summary>
     public void SetItemAccessibleState(SkillData[] datas)
     {
-        
         for(int i = 0; i < _slotUIList.Count; i++)
         {
             bool isAcquired = datas[i].GetIsAcquired();

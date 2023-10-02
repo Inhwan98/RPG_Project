@@ -5,11 +5,13 @@ using TMPro;
 
 public class ResourcesData
 {
-    private ItemData[] _portionDatas;
-    private ItemData[] _aromorDatas;
+    private ItemData[] _portionDatas; //포션데이터
+    private ItemData[] _aromorDatas;  //방어구데이터
 
-    private TMP_Text _questHeader;
-    private TMP_Text _questContext;
+    private TMP_Text _questHeader;  //퀘스트의 제목
+    private TMP_Text _questContext; //퀘스트의 내용
+
+    private GameObject[] _levelUPEffect; //레벨업 이펙트
 
     public ResourcesData()
     {
@@ -18,19 +20,13 @@ public class ResourcesData
 
     public void Init()
     {
-        //_HPportion = SaveSys.LoadItem<PortionItemData>("Item_Portion_HP.Json");
-        //_MPportion = SaveSys.LoadItem<PortionItemData>("Item_Portion_MP.Json");
-        //_MidleAromor = SaveSys.LoadItem<ArmorItemData>("Item_Armor_Middle.Json");
         _portionDatas = SaveSys.LoadAllData().PortionItemDB;
         _aromorDatas = SaveSys.LoadAllData().ArmorItemDB;
 
         _questHeader = Resources.Load<TMP_Text>("Prefab/UI/Header");
         _questContext = Resources.Load<TMP_Text>("Prefab/UI/Context");
+        _levelUPEffect = Resources.LoadAll<GameObject>("Prefab/LevelUP");
     }
-
-    //public ItemData GetHPportion()   { return _HPportion; }
-    //public ItemData GetMPportion()   { return _MPportion; }
-    //public ItemData GetMidleAromor() { return _MidleAromor; }
 
     public List<ItemData> GetItemList(int[] _nIDArray)
     {
@@ -77,4 +73,5 @@ public class ResourcesData
 
     public TMP_Text GetQuestHeader() => _questHeader;
     public TMP_Text GetQuestConText() => _questContext;
+    public GameObject[] GetLevelUPEffect() => _levelUPEffect;
 }

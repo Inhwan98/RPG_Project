@@ -84,7 +84,7 @@ public class SkillManager : MonoBehaviour
         _skInvenUI.SetItemAccessibleState(_skillArray);
     }
 
-    /// <summary> 해당 인덱스 습득 여부 확인후 활성화 </summary>
+    /// <summary> 스킬인벤 "+" 버튼 작용 - 해당 인덱스 습득 여부 확인후 활성화 </summary>
     public void UpdateAccessibleAcquiredState(int index)
     {
         //스킬 제한 레벨이 더 높다면 스킬을 습득할 수 없다.
