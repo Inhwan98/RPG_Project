@@ -24,11 +24,12 @@ public class Monster : ObjectBase
     [SerializeField] private Transform _damageTr;
     private GameObject _damageTextObj;
 
+    [SerializeField] protected ObjectState objState; // 상태에 따른 액션
     //Drop Item
     protected List<ItemData> _itemDatas = new List<ItemData>();
     protected Dictionary<ItemData, int> _itemDic = new Dictionary<ItemData, int>();
 
-    protected int[] m_nDropItemArray;
+    protected int[] m_nDropItemArray; //Data Load
 
     protected int m_nPortionDrop_MinAmount;
     protected int m_nPortionDrop_MaxAmount;
@@ -51,8 +52,14 @@ public class Monster : ObjectBase
     {
         base.Awake();
         agent = GetComponent<NavMeshAgent>();
+        objState = ObjectState.IDLE;
 
         _damageTextObj = Resources.Load<GameObject>("Prefab/DamageText");
+    }
+
+    protected virtual void OnEnable()
+    {
+        PlayerController.OnPlayerDie += this.OnPlayerDie;
     }
 
     protected override void Start()
@@ -68,10 +75,7 @@ public class Monster : ObjectBase
         StartCoroutine(ObjectAction());
     }
 
-    protected virtual void OnEnable()
-    {
-        PlayerController.OnPlayerDie += this.OnPlayerDie;
-    }
+
 
     private void FixedUpdate()
     {
@@ -83,41 +87,7 @@ public class Monster : ObjectBase
             StopCoroutine(Targetting());
     }
 
-    IEnumerator Targetting()
-    {
-        RaycastHit[] rayHits =
-           Physics.SphereCastAll(transform.position,
-                                 m_fSensorRadius,
-                                 transform.forward,
-                                 m_fSensorRange,
-                                 targetLayer);
-
-        RaycastHit[] attackHits =
-            Physics.SphereCastAll(transform.position,
-                                  m_fTargetRadius,
-                                  transform.forward,
-                                  m_fTargetRange,
-                                  targetLayer);
-        //Physics.SphereCastAll:
-        //위치, (구체)반지름, 방향, 구체범위, 구체의 들어온 레이어판별
-
-        if(rayHits.Length == 0) objState = ObjectState.IDLE;
-
-        if (rayHits.Length > 0 && !m_bisAttack)
-        {
-            if(attackHits.Length == 0 && !m_bisAttack)
-            {
-                objState = ObjectState.MOVE;
-            }
-            else if (attackHits.Length > 0 && !m_bisAttack)
-            {
-                objState = ObjectState.ATK;
-
-            }
-        }
-
-        yield return null;
-    }
+    
 
     private void Update()
     {
@@ -144,6 +114,44 @@ public class Monster : ObjectBase
     }
     #endregion
 
+    /// <summary> ray를 통해 상태 변환 </summary>
+    IEnumerator Targetting()
+    {
+        RaycastHit[] rayHits =
+           Physics.SphereCastAll(transform.position,
+                                 m_fSensorRadius,
+                                 transform.forward,
+                                 m_fSensorRange,
+                                 targetLayer);
+
+        RaycastHit[] attackHits =
+            Physics.SphereCastAll(transform.position,
+                                  m_fTargetRadius,
+                                  transform.forward,
+                                  m_fTargetRange,
+                                  targetLayer);
+        //Physics.SphereCastAll:
+        //위치, (구체)반지름, 방향, 구체범위, 구체의 들어온 레이어판별
+
+        if (rayHits.Length == 0) objState = ObjectState.IDLE;
+
+        if (rayHits.Length > 0 && !m_bisAttack)
+        {
+            if (attackHits.Length == 0 && !m_bisAttack)
+            {
+                objState = ObjectState.MOVE;
+            }
+            else if (attackHits.Length > 0 && !m_bisAttack)
+            {
+                objState = ObjectState.ATK;
+
+            }
+        }
+
+        yield return null;
+    }
+
+    /// <summary> Monster의 공격 코루틴 함수 </summary>
     protected override IEnumerator Attack()
     {
         ChaseEnd();
@@ -161,19 +169,7 @@ public class Monster : ObjectBase
         m_bisAttack = false;
     }
 
-    #region Coroutine State
-    //IEnumerator CheckObjState()
-    //{
-    //    while (!m_bisDead)
-    //    {
-    //        yield return null;
-
-    //        if (objState == ObjectState.DEAD) yield break;
-    //    }
-    //}
-    #endregion
-
-    //목적지 설정
+    /// <summary Nav의 목적지 설정 </summary>
     protected void SetDestination(Transform _destTr)
     {
         destTr = _destTr;
@@ -215,29 +211,6 @@ public class Monster : ObjectBase
         }
     }
 
-    /// <summary> 데미지를 받았을 시 </summary>
-    public override void OnDamage(int _str)
-    {
-        //죽어있다면 데미지 이벤트 발생 x
-        if (m_bisDead) return;
-
-        //방어력을 가졌다면 증감해서 대미지 입는다
-        this.m_nCurHP -= _str;
-
-        //데미지 텍스트  발생. 오브젝트 풀링할 것
-        GameObject damageText;
-        damageText = Instantiate(_damageTextObj, _damageTr.position, Quaternion.identity, transform);
-        damageText.GetComponent<TextMesh>().text = $"{_str}";
-    
-        //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
-        if (m_nCurHP <= 0)// 체력이 0 이하
-        {
-            
-            this.objState = ObjectState.DEAD;
-            return;
-        }
-    }
-
     /// <summary> 몬스터의 드롭아이템 추가 </summary>
     public void AddDropItem(ItemData _itemData, int _amount = 1, int _percentage = 100)
     {
@@ -253,6 +226,7 @@ public class Monster : ObjectBase
     }
 
 
+    /// <summary>  탐지, 센서 범위 가시화 </summary>
     private void OnDrawGizmos()
     {
         //추격탐지
@@ -265,7 +239,7 @@ public class Monster : ObjectBase
         Gizmos.DrawWireSphere(transform.position + transform.forward * m_fTargetRange, m_fTargetRadius);
     }
 
-
+    /// <summary> 플레이어의 무기, 스킬과 충돌이 있을때 </summary>
     private void OnTriggerEnter(Collider coll)
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
@@ -280,6 +254,31 @@ public class Monster : ObjectBase
         }
     }
 
+    /// <summary> 데미지를 받았을 시 </summary>
+    public override void OnDamage(int _str)
+    {
+        //죽어있다면 데미지 이벤트 발생 x
+        if (m_bisDead) return;
+
+        //방어력을 가졌다면 증감해서 대미지 입는다
+        this.m_nCurHP -= _str;
+
+        //데미지 텍스트  발생. 오브젝트 풀링할 것
+        GameObject damageText;
+        damageText = Instantiate(_damageTextObj, _damageTr.position, Quaternion.identity, transform);
+        damageText.GetComponent<TextMesh>().text = $"{_str}";
+
+        if (m_nCurHP <= 0)// 체력이 0 이하
+        {
+            this.objState = ObjectState.DEAD;
+        }
+    }
+
+    /// <summary>
+    /// 몬스터가 사망했을 시 이벤트
+    /// <br>플레이어에게 아이템, 경험치 전달</br>
+    /// <br>게임매니져에게 몬스터 ID 전달 (업적, 퀘스트에 활용)</br>
+    /// </summary>
     protected override void Die()
     {
         PlayerController.OnPlayerDie -= this.OnPlayerDie;
@@ -296,6 +295,10 @@ public class Monster : ObjectBase
         Destroy(this.gameObject, 2.0f); // 쓰러진뒤 2초뒤에 오브젝트 삭제... 오브젝트 풀링시 수정
     }
 
+    /// <summary>
+    /// 플레이어가 사망했을시 이벤트
+    /// <br></br>Player의 델리게이트에 추가
+    /// </summary>
     private void OnPlayerDie()
     {
         StopAllCoroutines();
@@ -308,6 +311,9 @@ public class Monster : ObjectBase
         _anim.SetBool(hashAttack, false);
     }
 
+    /// <summary>
+    /// 몬스터의 데이터를 불러온뒤, 본인 정보에 적용
+    /// </summary>
     protected override void LoadData()
     {
         //몬스터는 100번대 부터 시작한다. 0번째 인덱스 부터 시작하려면 m_ID - 100 
@@ -339,19 +345,5 @@ public class Monster : ObjectBase
     {
         
     }
-
-    [ContextMenu("Item List")]
-    public void VisibleItemList()
-    {
-        foreach(var a in _itemDic)
-        {
-            Debug.Log($"{a.Key}");
-            Debug.Log($"{a.Value}");
-
-        }
-        
-    }
-
-    
 }
 

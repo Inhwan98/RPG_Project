@@ -43,9 +43,8 @@ public class GameManager : MonoBehaviour
         _resourcesData = new ResourcesData();
         _dialogSystem = new DialogSystem();
         _questSystem = new QuestSystem();
-        
 
-          _skillMgr = GetComponent<SkillManager>();
+        _skillMgr = GetComponent<SkillManager>();
         _itemInvenMgr = GetComponent<ItemInventoryManager>();
 
         _skillMgr.SetPlayerCtr(_playerCtr);
@@ -252,6 +251,14 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("보상을 주는 내용");
             _playerCtr.SetEXP(currentQuestData.nRewardEXP); //경험치 전달
+
+            //아이템의 개수만큼 아이템과 수량 전달
+            for(int i = 0; i < currentQuestData.nRewardItem.Length; i++)
+            {
+                int nID = currentQuestData.nRewardItem[i];
+                int nAmount = currentQuestData.nItemAmount[i];
+                _playerCtr.AddInven(_resourcesData.GetItem(nID), nAmount);
+            }
 
 
             _questUICtr.UpdateQuestUI(_playerQuestList);

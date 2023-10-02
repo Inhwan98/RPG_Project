@@ -124,6 +124,10 @@ public class QuestSystem
         return playerLevel >= questLevel;
     }
 
+    public QuestData[] GetQuestDataArray()
+    {
+        return _questDatas;
+    }
 
 
 

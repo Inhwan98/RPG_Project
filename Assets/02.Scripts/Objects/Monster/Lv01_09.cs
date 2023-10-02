@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Lv01_09 : Monster
+public class Lv01_09 : Monster
 {
     protected override void Awake()
     {
@@ -24,28 +24,27 @@ public abstract class Lv01_09 : Monster
         return a;
     }
 
+    /// <summary> 몬스터의 드롭아이템 세팅 </summary>
     public void SettingDropItem()
     {
-        var _resourcesData = GameManager.instance.GetResourcesData();
-
-        foreach(var a in m_nDropItemArray)
+        //아이템 ID가 담긴 배열을 반복하며
+        //해당 ID의 아이템들을 드롭아이템으로 가진다.
+        foreach(int itemID in m_nDropItemArray)
         {
-            var item = _resourcesData.GetItem(a);
+            ItemData itemdata = _resourcesData.GetItem(itemID);
 
-            if(item is PortionItemData portionItem)
+            if(itemdata is PortionItemData portionItemData)
             {
+                //포션의 양 랜덤하게 설정
                 int nPortionAmount = RandNum(m_nPortionDrop_MinAmount, m_nPortionDrop_MaxAmount);
-
-                AddDropItem(item, nPortionAmount);
+                
+                AddDropItem(itemdata, nPortionAmount);
             }
             else
             {
-                AddDropItem(item, 1, m_nItemDrop_percentage);
+                //아이템의 드랍확률에 따라 드랍시킨다.
+                AddDropItem(itemdata, 1, m_nItemDrop_percentage);
             }
         }
-
-        //AddDropItem(_resourcesData.GetHPportion(), hpPortionAmount);
-        //AddDropItem(_resourcesData.GetMPportion(), mpPortionAmount);
-        //AddDropItem(_resourcesData.GetMidleAromor(), 1, m_nItemDrop_percentage);
     }
 }

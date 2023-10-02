@@ -61,6 +61,28 @@ public class PlayerController : Character
 
     private ItemInventoryManager _itemInvenMgr;
 
+
+    public bool GetUseInven() => _isUseInven;
+    public CameraController GetCameraCtr() => _cameraCtr;
+    public List<QuestData> GetPlayerQuestList() => _currentQuestList;
+
+    public void SetUseItemInven(bool value) { _isUseInven = value; }
+    public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }
+    public void SetUsePlayDialog(bool value) { _isPlayDialog = value; }
+    /// <summary> 모든 스킬 덮어 씌우기 </summary>
+    public void SetPlayerSkill(SkillData[] skill_datas) => _skill_Datas = skill_datas;
+    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
+    public void SetPlayerSkill(int idx, SkillData skillData) => _skill_Datas[idx] = skillData;
+    public void SetSkill_InvenUI(Skill_InvenUI skInvenUI) => _skInvenUI = skInvenUI;
+    public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;
+    public void SetGameManager(GameManager gameMgr) => _gameMgr = gameMgr;
+    public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr;
+    public void SetSkillMgr(SkillManager skillMgr) => _skillMgr = skillMgr;
+
+    public void AddPlayerQuest(QuestData questData) => _currentQuestList.Add(questData);
+    private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
+
+
     protected override void Awake()
     {
         #region SingTone
@@ -130,35 +152,13 @@ public class PlayerController : Character
     {
         Input_init();
 
-        if(m_fAttackDelay > m_fAttackRunTime) m_fAttackRunTime += Time.deltaTime;
+        if(m_fAttackInitTime > m_fAttackRunTime) m_fAttackRunTime += Time.deltaTime;
 
         //if (attackInput && !m_bisAttack) StartCoroutine(Attack());
         //Skill_Attack();
         StatusWindowActiveButton();
         PlayerAttack();
     }
-
-    public bool GetUseInven() => _isUseInven;
-    public CameraController GetCameraCtr() => _cameraCtr;
-    public List<QuestData> GetPlayerQuestList() => _currentQuestList;
-
-    public void SetUseItemInven(bool value) { _isUseInven = value; }
-    public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }
-    public void SetUsePlayDialog(bool value) { _isPlayDialog = value; }
-    /// <summary> 모든 스킬 덮어 씌우기 </summary>
-    public void SetPlayerSkill(SkillData[] skill_datas)                => _skill_Datas = skill_datas;
-    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
-    public void SetPlayerSkill(int idx, SkillData skillData)           => _skill_Datas[idx] = skillData;
-    public void SetSkill_InvenUI(Skill_InvenUI skInvenUI)              => _skInvenUI = skInvenUI;
-    public void SetQuestSystem(QuestSystem questSystem)                => _questSystem = questSystem;
-    public void SetGameManager(GameManager gameMgr)                    => _gameMgr = gameMgr;
-    public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr;
-    public void SetSkillMgr(SkillManager skillMgr)                     => _skillMgr = skillMgr;
-
-    public void AddPlayerQuest(QuestData questData) => _currentQuestList.Add(questData);
-    private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
-
-
 
     /// <summary> Character dir, move, speed, rot, anim
     /// <para/> Current Use FixedUpdate()
@@ -180,22 +180,21 @@ public class PlayerController : Character
 
         _anim.SetFloat(hashMoveSpeed, movementSpeed);
 
-        Quaternion destRot = _cameraCtr.transform.localRotation;
-        destRot.x = 0;
-        destRot.z = 0;
 
-        _rigid.transform.rotation = destRot;
+        if (movement != Vector3.zero)
+        {
+            Quaternion destRot = _cameraCtr.transform.localRotation;
 
+            destRot.x = 0;
+            destRot.z = 0;
 
-        //if (zInput >= 0.1)
-        //{
-        //    Quaternion destRot = cam.transform.localRotation;
-        //    destRot.x = 0;
-        //    destRot.z = 0;
+            _rigid.transform.rotation = destRot;
+        }
+        //Quaternion destRot = _cameraCtr.transform.localRotation;
+        //destRot.x = 0;
+        //destRot.z = 0;
 
-        //    rigid.rotation = destRot;
-        //}
-
+        //_rigid.transform.rotation = destRot;
         _rigid.transform.Translate(movement);
     }
 
@@ -239,6 +238,76 @@ public class PlayerController : Character
         #endregion
     }
 
+    protected override IEnumerator Attack()
+    {
+        if (m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
+        {
+            _weaponCtr.Use();
+            //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
+            if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
+            _anim.SetTrigger(hashAttack[m_nAttackCount]);
+
+            m_nAttackCount++;
+            if (m_nAttackCount >= 3) m_nAttackCount = 0;
+
+            m_bisAttack = true;
+            m_fAttackRunTime = 0;
+            //마지막 공격 후, 더 길게 대기
+            if(m_nAttackCount == 0)
+                yield return new WaitForSeconds(m_fAttackDelay + 1.0f);
+            else
+                yield return new WaitForSeconds(m_fAttackDelay);
+
+            m_bisAttack = false;
+        }
+    }
+
+    public IEnumerator AttackTimer()
+    {
+        
+        return null;
+    }
+
+    /// <summary> Player의 스킬 공격 
+    /// <para/> SKill Manager의 플레이어 스킬Index 를 지닌
+    /// <para/> skill_Datas[] 배열 이용
+    /// </summary>
+    protected override IEnumerator SkillAttack(int skillNum)
+    {
+        //현재 사용할 스킬. 0번째 부터 시작함.
+        int skill_Idx = skillNum - 1;
+        SkillData curSkill = _skill_Datas[skill_Idx];
+
+        //획득하지 않은 상태면
+        if (curSkill == null) yield break;
+
+        //사용 가능 상태가 아니면
+        if (curSkill.GetInUse())
+        {
+            //빨간색 이미지가 깜빡거림
+            StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
+            yield break;
+        }
+
+        //보유 마나보다 스킬 마나가 크다면 공격 중단.
+        //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
+
+        m_bisAttack = true;
+
+        _anim.SetTrigger(curSkill.GetAnimHash());
+
+        _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
+        _playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
+
+        StartCoroutine(_skInvenUI.StartSkillCoolTime(skill_Idx, curSkill));
+
+
+        yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+        m_bisAttack = false;
+        //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
+    }
+
+
     /// <summary> Invnetory Active</summary>
     public void StatusWindowActiveButton()
     {
@@ -275,64 +344,7 @@ public class PlayerController : Character
     }
 
  
-    protected override IEnumerator Attack()
-    {
-        if(m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
-        {
-            _weaponCtr.Use();
-            //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
-            if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
-            _anim.SetTrigger(hashAttack[m_nAttackCount]);
-
-            m_nAttackCount++;
-            if (m_nAttackCount >= 3) m_nAttackCount = 0;
-
-            m_bisAttack = true;
-            m_fAttackRunTime = 0;
-            yield return new WaitForSeconds(m_fAttackDelay);
-
-            m_bisAttack = false;
-        }
-    }
-
-    /// <summary> Player의 스킬 공격 
-    /// <para/> SKill Manager의 플레이어 스킬Index 를 지닌
-    /// <para/> skill_Datas[] 배열 이용
-    /// </summary>
-    protected override IEnumerator SkillAttack(int skillNum)
-    {
-        //현재 사용할 스킬. 0번째 부터 시작함.
-        int skill_Idx = skillNum - 1;
-        SkillData curSkill = _skill_Datas[skill_Idx];
-
-        //획득하지 않은 상태면
-        if (curSkill == null) yield break;
-
-        //사용 가능 상태가 아니면
-        if (curSkill.GetInUse())
-        {
-            //빨간색 이미지가 깜빡거림
-            StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
-            yield break;
-        }
-
-        //보유 마나보다 스킬 마나가 크다면 공격 중단.
-        //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
-
-        m_bisAttack = true;
-
-        _anim.SetTrigger(curSkill.GetAnimHash());
-        
-        _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
-        _playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
-
-        StartCoroutine(_skInvenUI.StartSkillCoolTime(skill_Idx, curSkill));
-        
-
-        yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
-        m_bisAttack = false;
-        //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
-    }
+ 
 
     public override void Buff(int _str)
     {
@@ -401,15 +413,19 @@ public class PlayerController : Character
         }
     }
 
+    /// <summary> AddInven 오버로딩 </summary>
+    public void AddInven(ItemData itemData, int amount)
+    {
+        _itemInvenMgr.AddItem(itemData, amount);
+    }
+
     public void SetCameraCtr(CameraController value) => _cameraCtr = value;
 
-    [ContextMenu("SavePlayer")]
     public void SavePlayer()
     {
         SaveSys.SavePlayer(this);
     }
 
-    [ContextMenu("SaveSkillSet")]
     public void SaveSkillSet()
     {
         SaveSys.SavePlayerSkillSet(_skill_Datas);
@@ -533,15 +549,4 @@ public class PlayerController : Character
             }
         }
     }
-
-
-
-
-    [ContextMenu("Clear Quest")]
-    public void ClearQuest()
-    {
-
-    }
-
-    
 }

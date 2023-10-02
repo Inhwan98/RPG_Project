@@ -19,6 +19,7 @@ public class BabyDragon : Lv01_09
 
     protected override void Die()
     {
+
         base.Die();
     }
 

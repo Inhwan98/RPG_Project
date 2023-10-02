@@ -11,36 +11,17 @@ public static class SaveSys
         ObjectData playerData = new ObjectData(playerCtr);
         string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
 
-        string path = Path.Combine(Application.dataPath, "PlayerData.json");
+        string path = Path.Combine(Application.persistentDataPath, "PlayerData.json");
 
         File.WriteAllText(path, jsonData);
     }
 
-    public static SkillData[] LoadSkillSet(string filename)
-    {
-        string path = Path.Combine(Application.dataPath, filename);
-        string jsonData;
-        if (File.Exists(path))
-        {
-            jsonData = File.ReadAllText(path);
-            SkillData[] SkillSet = JsonConvert.DeserializeObject<SkillData[]>(jsonData); 
-            return SkillSet;
-        }
-        else
-        {
-            Debug.LogError("LoadSkillSet Path is NULL!!");
-            return null;
-        }
-    }
-
+ 
     public static void SavePlayerSkillSet(SkillData[] skillset)
     {
-
-        //string jsonData = JsonUtility.ToJson(skillset, true);
-
         string jsonData = JsonConvert.SerializeObject(skillset, Formatting.Indented);
 
-        string path = Path.Combine(Application.dataPath, "PlayerSkillSetData.Json");
+        string path = Path.Combine(Application.persistentDataPath, "PlayerSkillSetData.Json");
 
         File.WriteAllText(path, jsonData);
     }
@@ -53,14 +34,14 @@ public static class SaveSys
             TypeNameHandling = TypeNameHandling.All
         });
 
-        string path = Path.Combine(Application.dataPath, "Item.Json");
+        string path = Path.Combine(Application.persistentDataPath, "Item.Json");
 
         File.WriteAllText(path, jsonData);
     }
 
     public static Item[] LoadInvenitem()
     {
-        string path = Path.Combine(Application.dataPath, "Item.Json");
+        string path = Path.Combine(Application.persistentDataPath, "Item.Json");
         string jsonData;
         Item[] items;
 
@@ -84,7 +65,7 @@ public static class SaveSys
     /// <summary> Json => Object Data 반환 </summary>
     public static ObjectData LoadObject(string fileName)
     {
-        string path = Path.Combine(Application.dataPath, fileName);
+        string path = Path.Combine(Application.persistentDataPath, fileName);
         string jsonData;
         ObjectData playerData;
 
@@ -104,7 +85,7 @@ public static class SaveSys
 
     public static T LoadItem<T>(string fileName) where T : ItemData
     {
-        string path = Path.Combine(Application.dataPath, fileName);
+        string path = Path.Combine(Application.persistentDataPath, fileName);
         string jsonData;
         T data;
 
@@ -125,7 +106,7 @@ public static class SaveSys
 
     public static AllData LoadAllData()
     {
-        string path = Path.Combine(Application.dataPath, "GameRPGDB.Json");
+        string path = Path.Combine(Application.persistentDataPath, "GameRPGDB.Json");
         string jsonData;
         AllData datas;
 

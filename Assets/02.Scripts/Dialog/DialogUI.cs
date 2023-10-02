@@ -68,18 +68,9 @@ public class DialogUI : MonoBehaviour
                 //타이핑 효과를 중지하고, 현재 대사 전체를 출력한다
                 StopCoroutine("OnTypingText");
 
-
                 _textDialogue.text = _currentDialog[_currentDialogIndex].sDialog;
-                //대사가 완료되었을 때 출력되는 커서 활성화
-
                 return false;
             }
-
-            //if (dialogDatas[currentDialogIndex + 1].nBranch != branch)
-            //{
-            //    dialogPanel.SetActive(false);
-            //    return true;
-            //}
 
             //대사가 남아있을 경우 대사 진행
             if (_currentDialog.Count > _currentDialogIndex + 1)
@@ -141,9 +132,5 @@ public class DialogUI : MonoBehaviour
         }
 
         _isTypingEffect = false;
-
-        // 대사가 완료되었을 때 출력되는 커서 활성화
     }
-
-
 }
