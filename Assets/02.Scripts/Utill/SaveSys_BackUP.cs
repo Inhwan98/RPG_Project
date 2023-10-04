@@ -7,15 +7,15 @@ using System.IO;
 
 public static class SaveSys_BackUP
 {
-    public static void SavePlayer(PlayerController playerCtr)
-    {
-        ObjectData playerData = new ObjectData(playerCtr);
-        string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
+    //public static void SavePlayer(PlayerController playerCtr)
+    //{
+    //    ObjectData playerData = new ObjectData(playerCtr);
+    //    string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
 
-        string path = Path.Combine(Application.dataPath, "PlayerData.json");
+    //    string path = Path.Combine(Application.dataPath, "PlayerData.json");
 
-        File.WriteAllText(path, jsonData);
-    }
+    //    File.WriteAllText(path, jsonData);
+    //}
 
     /// <summary> Inventory Data 저장 </summary>
     public static void SaveInvenItem(Item[] items)
@@ -103,25 +103,25 @@ public static class SaveSys_BackUP
     }
 
     /// <summary> Json => Object Data 반환 </summary>
-    public static ObjectData LoadObject(string fileName)
-    {
-        string path = Path.Combine(Application.dataPath, fileName);
-        string jsonData;
-        ObjectData playerData;
+    //public static ObjectData LoadObject(string fileName)
+    //{
+    //    string path = Path.Combine(Application.dataPath, fileName);
+    //    string jsonData;
+    //    ObjectData playerData;
 
-        if (File.Exists(path))
-        {
-            jsonData = File.ReadAllText(path);
-            playerData = JsonConvert.DeserializeObject<ObjectData>(jsonData);
-            //playerData = JsonUtility.FromJson<ObjectData>(jsonData);
-            return playerData;
-        }
-        else
-        {
-            Debug.LogError($"Save File Not Found in {path}");
-        }
-        return null;
-    }
+    //    if (File.Exists(path))
+    //    {
+    //        jsonData = File.ReadAllText(path);
+    //        playerData = JsonConvert.DeserializeObject<ObjectData>(jsonData);
+    //        //playerData = JsonUtility.FromJson<ObjectData>(jsonData);
+    //        return playerData;
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError($"Save File Not Found in {path}");
+    //    }
+    //    return null;
+    //}
 
     public static T LoadItem<T>(string fileName) where T : ItemData
     {

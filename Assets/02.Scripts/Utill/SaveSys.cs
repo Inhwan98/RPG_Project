@@ -8,7 +8,7 @@ public static class SaveSys
 {
     public static void SavePlayer(PlayerController playerCtr)
     {
-        ObjectData playerData = new ObjectData(playerCtr);
+        PlayerData playerData = new PlayerData(playerCtr);
         string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
 
         string path = Path.Combine(Application.persistentDataPath, "PlayerData.json");
@@ -16,15 +16,6 @@ public static class SaveSys
         File.WriteAllText(path, jsonData);
     }
 
- 
-    public static void SavePlayerSkillSet(SkillData[] skillset)
-    {
-        string jsonData = JsonConvert.SerializeObject(skillset, Formatting.Indented);
-
-        string path = Path.Combine(Application.persistentDataPath, "PlayerSkillSetData.Json");
-
-        File.WriteAllText(path, jsonData);
-    }
 
     /// <summary> Inventory Data 저장 </summary>
     public static void SaveInvenItem(Item[] items)
@@ -57,22 +48,22 @@ public static class SaveSys
         }
         else
         {
-            
+            Debug.LogError($"Save File Not Found in {path}");
         }
         return null;
     }
 
     /// <summary> Json => Object Data 반환 </summary>
-    public static ObjectData LoadObject(string fileName)
+    public static PlayerData LoadObject(string fileName)
     {
         string path = Path.Combine(Application.persistentDataPath, fileName);
         string jsonData;
-        ObjectData playerData;
+        PlayerData playerData;
 
         if (File.Exists(path))
         {
             jsonData = File.ReadAllText(path);
-            playerData = JsonConvert.DeserializeObject<ObjectData>(jsonData);
+            playerData = JsonConvert.DeserializeObject<PlayerData>(jsonData);
             //playerData = JsonUtility.FromJson<ObjectData>(jsonData);
             return playerData;
         }
@@ -102,6 +93,15 @@ public static class SaveSys
         }
 
         return null;
+    }
+
+    public static void SaveAllData(AllData datas)
+    {
+        string jsonData = JsonConvert.SerializeObject(datas, Formatting.Indented);
+
+        string path = Path.Combine(Application.persistentDataPath, "GameRPGDB.json");
+
+        File.WriteAllText(path, jsonData);
     }
 
     public static AllData LoadAllData()

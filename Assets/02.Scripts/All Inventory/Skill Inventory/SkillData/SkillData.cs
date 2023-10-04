@@ -17,16 +17,17 @@ public enum SkillType
 [System.Serializable]
 public class SkillData
 {
-    [JsonProperty, SerializeField] private string m_sSkillName;
-    [JsonProperty, SerializeField] private int    m_nSkillLevel;
-    [JsonProperty, SerializeField] private int    m_nUsedLevel; // 습득 조건 레벨
-    [JsonProperty, SerializeField] private string m_sAnimParameterName; // 동작할 애니메이션 이름
-    [JsonProperty, SerializeField] private string m_sToolTip; //스킬 설명
-    [JsonProperty, SerializeField] private string m_sSpritePath;
-    [JsonProperty, SerializeField] private int    m_nSkillDamagePer; // 스킬 % 데미지
-    [JsonProperty, SerializeField] private float  m_fCooldown;
-    [JsonProperty, SerializeField] private int    m_nManaAmount; // 요구 마나
-    [JsonProperty, SerializeField] private bool   m_bAcquired;  // 스킬 습득 체크
+    [JsonProperty] private int    m_nID;
+    [JsonProperty] private string m_sSkillName;
+    [JsonProperty] private int    m_nSkillLevel;
+    [JsonProperty] private int    m_nUsedLevel; // 습득 조건 레벨
+    [JsonProperty] private string m_sAnimParameterName; // 동작할 애니메이션 이름
+    [JsonProperty] private string m_sToolTip; //스킬 설명
+    [JsonProperty] private string m_sSpritePath;
+    [JsonProperty] private int    m_nSkillDamagePer; // 스킬 % 데미지
+    [JsonProperty] private float  m_fCooldown;
+    [JsonProperty] private int    m_nManaAmount; // 요구 마나
+    [JsonProperty] private bool   m_bAcquired;  // 스킬 습득 체크
 
 
     private Sprite m_iSprite;
@@ -67,7 +68,9 @@ public class SkillData
         Debug.Log(m_nManaAmount);
     }
 
-    
+
+
+    public int GetID() => m_nID;
 
     /// <summary> 스킬 이름 반환 </summary>
     public string GetSKillName() => m_sSkillName;

@@ -13,15 +13,15 @@ public class ResourcesData
 
     private GameObject[] _levelUPEffect; //레벨업 이펙트
 
-    public ResourcesData()
+    public ResourcesData(AllData allData)
     {
-        Init();
+        Init(allData);
     }
 
-    public void Init()
+    public void Init(AllData allData)
     {
-        _portionDatas = SaveSys.LoadAllData().PortionItemDB;
-        _aromorDatas = SaveSys.LoadAllData().ArmorItemDB;
+        _portionDatas = allData.PortionItemDB;
+        _aromorDatas = allData.ArmorItemDB;
 
         _questHeader = Resources.Load<TMP_Text>("Prefab/UI/Header");
         _questContext = Resources.Load<TMP_Text>("Prefab/UI/Context");

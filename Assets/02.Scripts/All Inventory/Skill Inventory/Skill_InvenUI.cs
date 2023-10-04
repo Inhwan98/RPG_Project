@@ -19,7 +19,6 @@ public class Skill_InvenUI : InvenUIBase
     /// <summary> 연결된 인벤토리 </summary>
     private SkillManager _skillManager;
 
-
     protected override void Awake()
     {
         base.Awake();
@@ -38,7 +37,7 @@ public class Skill_InvenUI : InvenUIBase
 
             //스킬슬롯의 버튼 변수 할당 (같은 고유 인덱스를 가진다)
             plusButton[i] = skillSlot.GetPlusButton();
-            plusButton[i].onClick.AddListener(() => _skillManager.SkillLevelUP(index, skillSlot));
+            plusButton[i].onClick.AddListener(() => _skillManager.SkillLevelUP(index));
             plusButton[i].onClick.AddListener(() => _skillManager.UpdateAccessibleAcquiredState(index));
         }
     }
@@ -46,6 +45,21 @@ public class Skill_InvenUI : InvenUIBase
     protected override void Start()
     {
         base.Start();
+    }
+
+    public void SetLevelText(SkillData[] skillDatas)
+    {
+        for(int i = 0; i < skillDatas.Length; i++)
+        {
+            var skillSlot = _slotUIList[i] as InvenSkillSlotUI;
+            skillSlot.SetLevelText(skillDatas[i].GetSkillLevel());
+        }
+    }
+
+    public void SetLevelText(SkillData skillData, int index)
+    {
+        var skillSlot = _slotUIList[index] as InvenSkillSlotUI;
+        skillSlot.SetLevelText(skillData.GetSkillLevel());
     }
 
     protected override void Init()
@@ -86,9 +100,9 @@ public class Skill_InvenUI : InvenUIBase
 
         // 툴팁 정보 갱신
         if (slot is InvenSkillSlotUI) //스킬인벤에 있는 데이터라면
-            _itemTooltip.SetItemInfo(_skillManager.GetInvenSKillData(slot.GetIndex()));
+            _itemTooltip.SetItemInfo(_skillManager.GetInvenSkillData(slot.GetIndex()));
         else ////플레이어 스킬인벤에 있는 데이터라면
-            _itemTooltip.SetItemInfo(_skillManager.GetPlayerSKillData(slot.GetIndex()));
+            _itemTooltip.SetItemInfo(_skillManager.GetPlayerSkillData(slot.GetIndex()));
 
         // 툴팁 위치 조정
         _itemTooltip.SetRectPosition(slot.GetSlotRect());
@@ -101,9 +115,9 @@ public class Skill_InvenUI : InvenUIBase
         {
             bool isAcquired = datas[i].GetIsAcquired();
 
-            if (_slotUIList[i] is SKillSlotUI skSlotUIk)
+            if (_slotUIList[i] is SKillSlotUI skSlotUI)
             {
-                skSlotUIk.SetItemAccessibleState(isAcquired);
+                skSlotUI.SetItemAccessibleState(isAcquired);
             }
         }
     }

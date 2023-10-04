@@ -18,17 +18,25 @@ public class SkillManager : MonoBehaviour
     private PlayerController _playerCtr; //Player의 Awake()에서 참조시킴
 
 
+    /// <summary> PlayerController Awake()에서 호출 </summary>
+    public Skill_InvenUI GetSkInvenUI() => _skInvenUI;
+
+    public void SetPlayerCtr(PlayerController player) => _playerCtr = player;
+    public void SetSkillPower(float value) => power_STR = value;
+    
     private void Awake()
     {
+        _skInvenUI = FindObjectOfType<Skill_InvenUI>();
         _skInvenUI.SetSkillTreeReference(this);
 
-        Init_Skills();
+        //Init_Skills(); //GameManager에서 실행
         
     }
 
     private void Start()
     {
         SetSkillDataDamage();
+        SetLevelText();
         HandOverPlayerSkills();
 
         UpdateAllSlot();
@@ -36,14 +44,8 @@ public class SkillManager : MonoBehaviour
         UpdateAccessibleAcquiredState();
     }
 
-    private void OnDestroy()
-    {
-        //SaveInven();
-    }
-
-
     /// <summary> 스킬 인벤의 데이터</summary>
-    public SkillData GetInvenSKillData(int idx)
+    public SkillData GetInvenSkillData(int idx)
     {
         if (!IsValidIndex(idx)) return null;
         if (_skillArray[idx] == null) return null;
@@ -51,8 +53,18 @@ public class SkillManager : MonoBehaviour
         return _skillArray[idx];
     }
 
+    /// <summary> 플레이어가 습득한 스킬 데이터</summary>
+    public SkillData GetPlayerSkillData(int idx)
+    {
+        if (!IsValidIndex(idx)) return null;
+        if (_playerSkillArray[idx] == null) return null;
+
+        return _playerSkillArray[idx];
+    }
+
+
     /// <summary> 스킬 인벤의 모든 데이터</summary>
-    public SkillData[] GetInvenAllSKillData()
+    public SkillData[] GetInvenAllSkillData()
     {
         if (_skillArray == null)
         {
@@ -63,13 +75,12 @@ public class SkillManager : MonoBehaviour
     }
 
 
-    /// <summary> 플레이어가 습득한 스킬 데이터</summary>
-    public SkillData GetPlayerSKillData(int idx)
+    /// <summary> 플레이어가 습득한 모든 스킬 데이터</summary>
+    public SkillData[] GetPlayerAllSkillData()
     {
-        if (!IsValidIndex(idx)) return null;
-        if (_playerSkillArray[idx] == null) return null;
+        if (_playerSkillArray == null) return null;
 
-        return _playerSkillArray[idx];
+        return _playerSkillArray;
     }
 
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
@@ -93,7 +104,7 @@ public class SkillManager : MonoBehaviour
         _skInvenUI.SetItemAccessibleState(_skillArray[index], index);
     }
 
-    public void SkillLevelUP(int index, InvenSkillSlotUI skillSlotUI)
+    public void SkillLevelUP(int index)
     {
         //스킬 제한 레벨이 더 높다면 스킬 레벨업 x
         if (!ComparePlayerLevelToSkillLevel(index)) return;
@@ -102,7 +113,17 @@ public class SkillManager : MonoBehaviour
         
         _skillArray[index].LevelUP();
         _skillArray[index].SetSkillDamage(power_STR);
-        skillSlotUI.SetLevelText(_skillArray[index].GetSkillLevel());
+        SetLevelText(index);
+    }
+
+    public void SetLevelText(int index)
+    {
+        _skInvenUI.SetLevelText(_skillArray[index], index);
+    }
+
+    public void SetLevelText()
+    {
+        _skInvenUI.SetLevelText(_skillArray);
     }
 
     /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
@@ -175,6 +196,7 @@ public class SkillManager : MonoBehaviour
         for (int i = 0; i < _maxSkillSize; i++)
         {
             UpdateSlot(i);
+            UpdatePlayerSlot(i);
         }
     }
 
@@ -200,7 +222,6 @@ public class SkillManager : MonoBehaviour
     public void UpdatePlayerSlot(int index)
     {
         if (!IsValidIndex(index)) return;
-
         SkillData skData = _playerSkillArray[index];
 
         // 1. 아이템이 슬롯에 존재하는 경우
@@ -262,8 +283,7 @@ public class SkillManager : MonoBehaviour
 
 
 
-    public void SetPlayerCtr(PlayerController player) => _playerCtr = player;
-    public void SetSkillPower(float value) => power_STR = value;
+
 
     /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
     public void SetSkillWindowActive(bool value)
@@ -281,27 +301,42 @@ public class SkillManager : MonoBehaviour
 
 
     /// <summary> Load Data 없을시 초기화 </summary>
-    public void Init_Skills()
+    public void Init_Skills(SkillData[] skillArray, SkillData[] playerSkillArray)
     {
-        //_skillArray = SaveSys.LoadSkillSet("AllSkillSetData.Json");
-        _skillArray = SaveSys.LoadAllData().SkillDB;
+        _skillArray = skillArray;
 
-        _playerSkillArray = new SkillData[_maxSkillSize];
 
-        if (_skillArray == null)
+        _playerSkillArray = playerSkillArray;
+
+
+        for (int i = 0; i < _skillArray.Length; i++)
         {
-            _skillArray = new SkillData[_maxSkillSize];
-            return;
+            if (_skillArray[i] == null) continue;
+            _skillArray[i].Init();
+        }
+        
+        //플레이어 스킬 슬롯에 아무것도 없다면 새로 초기화
+        if(_playerSkillArray.Length == 0)
+        {
+            _playerSkillArray = new SkillData[_maxSkillSize];
         }
         else
         {
+            //플레이어 스킬 슬롯에 스킬이 존재한다면
             for (int i = 0; i < _skillArray.Length; i++)
             {
-                if (_skillArray[i] == null) continue;
+                for (int j = 0; j < _playerSkillArray.Length; j++)
+                {
+                    if (_playerSkillArray[j] == null) continue;
 
-                _skillArray[i].Init();                
+                    if (_skillArray[i].GetID() == _playerSkillArray[j].GetID())
+                    {
+                        _playerSkillArray[j] = _skillArray[i];
+                    }
+                }
             }
         }
+
     }
 
 
@@ -339,23 +374,39 @@ public class SkillManager : MonoBehaviour
     public void SetSkillDataDamage()
     {
         power_STR = _playerCtr.GetCurStr();
-        foreach (SkillData skill in _skillArray)
+        for(int i = 0; i < _maxSkillSize; i++)
         {
-            if (skill == null) continue;
-            skill.SetSkillDamage(power_STR);
+            _skillArray[i].SetSkillDamage(power_STR);
+
+            if (_playerSkillArray[i] == null) continue;
+            _playerSkillArray[i].SetSkillDamage(power_STR);
         }
+        
+        //foreach (SkillData skill in _skillArray)
+        //{
+        //    if (skill == null) continue;
+        //    skill.SetSkillDamage(power_STR);
+        //}
     }
 
-    /// <summary> PlayerController Awake()에서 호출 </summary>
-    public Skill_InvenUI GetSkInvenUI()
+    public void StartSkillCoolTime(int skill_Idx, SkillData curSkill)
     {
-        return _skInvenUI;
+        StartCoroutine(_skInvenUI.StartSkillCoolTime(skill_Idx, curSkill));
     }
+
+    public void SkillUsedWarring(int skill_Idx)
+    {
+        StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
+    }
+
+
 
     /// <summary> 플레이어에게 스킬 초기화 해서 전달. </summary>
     private void HandOverPlayerSkills()
     {
         _playerCtr.SetPlayerSkill(_playerSkillArray);
     }
+
+
 
 }

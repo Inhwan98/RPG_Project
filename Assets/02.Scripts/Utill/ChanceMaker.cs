@@ -1,5 +1,5 @@
 ﻿
-public static class Dods_ChanceMaker
+public static class ChanceMaker
 {
     public static bool GetThisChanceResult(float Chance)
     {

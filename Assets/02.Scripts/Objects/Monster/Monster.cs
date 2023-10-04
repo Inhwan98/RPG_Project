@@ -23,12 +23,13 @@ public class Monster : ObjectBase
     [Header("Damage UI")]
     [SerializeField] private Transform _damageTr;
     private GameObject _damageTextObj;
-
+    
     [SerializeField] protected ObjectState objState; // 상태에 따른 액션
     //Drop Item
     protected List<ItemData> _itemDatas = new List<ItemData>();
     protected Dictionary<ItemData, int> _itemDic = new Dictionary<ItemData, int>();
 
+    protected int m_nDromExp; //Data Load
     protected int[] m_nDropItemArray; //Data Load
 
     protected int m_nPortionDrop_MinAmount;
@@ -43,7 +44,7 @@ public class Monster : ObjectBase
 
     #region NavMesh Setting
     protected NavMeshAgent agent;
-    protected Transform destTr;
+    protected Transform _destTr;
     #endregion
 
 
@@ -64,13 +65,15 @@ public class Monster : ObjectBase
 
     protected override void Start()
     {
+        base.Start();
         _playerCtr = PlayerController.instance;
         _playerTr = _playerCtr.transform;
-        destTr = _playerTr;
+        _destTr = _playerTr;
+
+        SettingDropItem();
 
         // 손볼필요있음
         GameManager.instance.AddCurrentMonsters(m_nID);
-        base.Start();
         //StartCoroutine(CheckObjState());
         StartCoroutine(ObjectAction());
     }
@@ -93,7 +96,7 @@ public class Monster : ObjectBase
     {
         if (agent.enabled)
         {
-            agent.SetDestination(destTr.position);
+            agent.SetDestination(_destTr.position);
             agent.isStopped = !m_bisChase; //isChase가 false면 iStopped은 true...
         }
     }
@@ -157,12 +160,12 @@ public class Monster : ObjectBase
         ChaseEnd();
 
         m_bisAttack = true;
-        transform.LookAt(destTr);
+        transform.LookAt(_destTr);
         _anim.SetBool(hashAttack, true);
 
-        Debug.Assert(destTr, "destTr is NULL !!!");
+        Debug.Assert(_destTr, "destTr is NULL !!!");
 
-        ObjectBase _objCtr = destTr.GetComponent<ObjectBase>();
+        ObjectBase _objCtr = _destTr.GetComponent<ObjectBase>();
 
         _objCtr.OnDamage(m_nCurSTR);
         yield return new WaitForSeconds(1);
@@ -172,7 +175,7 @@ public class Monster : ObjectBase
     /// <summary Nav의 목적지 설정 </summary>
     protected void SetDestination(Transform _destTr)
     {
-        destTr = _destTr;
+        this._destTr = _destTr;
         agent.isStopped = false;
         agent.SetDestination(_destTr.position);
     }
@@ -214,7 +217,7 @@ public class Monster : ObjectBase
     /// <summary> 몬스터의 드롭아이템 추가 </summary>
     public void AddDropItem(ItemData _itemData, int _amount = 1, int _percentage = 100)
     {
-        bool chance = Dods_ChanceMaker.GetThisChanceResult_Percentage(_percentage);
+        bool chance = ChanceMaker.GetThisChanceResult_Percentage(_percentage);
         if (chance == false) return;
 
         if(_itemData == null)
@@ -287,7 +290,7 @@ public class Monster : ObjectBase
 
         //GameObject _chestObj = Instantiate<GameObject>(chestPrefab, transform.position + (Vector3.up * 0.22f), Quaternion.identity);
         _playerCtr.AddInven(_itemDic);//플레이어에게 아이테 전달
-        _playerCtr.SetEXP(m_nCurExp); //플레이어에게 경험치 전달
+        _playerCtr.SetEXP(m_nDromExp); //플레이어에게 경험치 전달
         this.gameObject.layer = 2;    // Ignore Raycast        
         _anim.SetTrigger(hashDead);   // 쓰러지는 애니메이션
         agent.enabled = false;        // Nav Mesh 중단
@@ -305,10 +308,40 @@ public class Monster : ObjectBase
 
         //추적 중지
         agent.enabled = false;
-        destTr = null;
+        _destTr = null;
 
         _anim.SetBool(hashTrace, false);
         _anim.SetBool(hashAttack, false);
+    }
+
+    /// <summary> 몬스터의 Die 이후 드롭 할 아이템 세팅 </summary>
+    public void SettingDropItem()
+    {
+        //아이템 ID가 담긴 배열을 반복하며
+        //해당 ID의 아이템들을 드롭아이템으로 가진다.
+        foreach (int itemID in m_nDropItemArray)
+        {
+            ItemData itemdata = _resourcesData.GetItem(itemID);
+
+            if (itemdata is PortionItemData portionItemData)
+            {
+                //포션의 양 랜덤하게 설정
+                int nPortionAmount = RandNum(m_nPortionDrop_MinAmount, m_nPortionDrop_MaxAmount);
+
+                AddDropItem(itemdata, nPortionAmount);
+            }
+            else
+            {
+                //아이템의 드랍확률에 따라 드랍시킨다.
+                AddDropItem(itemdata, 1, m_nItemDrop_percentage);
+            }
+        }
+
+        int RandNum(int minAmount, int maxAmount)
+        {
+            int randNum = Random.Range(minAmount, maxAmount);
+            return randNum;
+        }
     }
 
     /// <summary>
@@ -335,7 +368,7 @@ public class Monster : ObjectBase
 
 
         m_nCurSTR = _monsterData.nCurSTR;
-        m_nCurExp = _monsterData.nDropExp;
+        m_nDromExp = _monsterData.nDropExp;
 
         //아이템 ID가 담긴 Array
         m_nDropItemArray = _monsterData.nDropItemArray;
