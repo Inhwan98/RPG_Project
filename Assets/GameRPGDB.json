@@ -159,6 +159,21 @@
         1001,
         2000
       ]
+    },
+    {
+      "nID": 101,
+      "sName": "드래곤",
+      "nLevel": 5,
+      "nMaxHP": 200,
+      "nCurHP": 200,
+      "nMaxMP": 200,
+      "nCurMP": 200,
+      "nCurSTR": 25,
+      "nDropExp": 50,
+      "nDropItemArray": [
+        1000,
+        2000
+      ]
     }
   ],
   "PlayerLevelDB": [
@@ -342,6 +357,7 @@
       "m_bAcquired": false
     }
   ],
+  "PlayerSkillDB": [],
   "ArmorItemDB": [
     {
       "_nId": 2000,

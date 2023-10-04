@@ -32,7 +32,6 @@ public class PlayerUIManager : MonoBehaviour
             Destroy(this.gameObject);
         }
         instance = this;
-        DontDestroyOnLoad(this.gameObject);
 
     }
 

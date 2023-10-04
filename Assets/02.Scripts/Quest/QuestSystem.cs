@@ -22,12 +22,15 @@ public class QuestSystem
     private List<QuestData> _possibleToProceedQuest = new List<QuestData>();
     private List<QuestData> _completeQuest = new List<QuestData>();
 
-    public QuestSystem()
+    public List<QuestData> GetPossibleQuest() => _possibleToProceedQuest;
+    public QuestData[] GetQuestDataArray() => _questDatas;
+
+    public QuestSystem(QuestData[] questDatas)
     {
-        _questDatas = SaveSys.LoadAllData().QuestDB;
+        this._questDatas = questDatas;
     }
 
-
+   
     /// <summary>
     /// 플레이어의 레벨을 기준으로
     /// 가능한 퀘스트 목록을 업데이트한다.
@@ -96,10 +99,7 @@ public class QuestSystem
 
 
 
-    public List<QuestData> GetPossibleQuest()
-    {
-        return _possibleToProceedQuest;
-    }
+
 
     public void CompleteQuest(QuestData questData)
     {
@@ -124,11 +124,7 @@ public class QuestSystem
         return playerLevel >= questLevel;
     }
 
-    public QuestData[] GetQuestDataArray()
-    {
-        return _questDatas;
-    }
-
+ 
 
 
 

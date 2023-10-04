@@ -16,30 +16,32 @@ public class QuestUI : MonoBehaviour
     [SerializeField] private TMP_Text[] _disCriptions;
     private int[] _questSlotIDArray;
 
-    private int _playerLevel;
-
     private TMP_Text _questHeader;
     private TMP_Text _disCription;
 
-    private QuestSystem _questSystem;
-    private List<QuestData> _currentQuest;
-
     ResourcesData _resourcesData;
     GameManager _gameMgr;
+
+    //내용을 담기위한 StringBuilder. 수정이 잦기 때문에 String은 쓰지 않았다.
+    StringBuilder sb = new StringBuilder();
 
     private void Awake()
     {
         _questHeaders = new TMP_Text[n_maxManageableQuest];
         _disCriptions = new TMP_Text[n_maxManageableQuest];
         _questSlotIDArray = new int[n_maxManageableQuest];
+    }
 
-        _resourcesData = new ResourcesData();
+    /// <summary> GameManager Awake()에서 초기화 </summary>
+    public void QuestUI_Init(ResourcesData resourcesData)
+    {
+        this._resourcesData = resourcesData;
 
         _questHeader = _resourcesData.GetQuestHeader();
         _disCription = _resourcesData.GetQuestConText();
 
         //제목, 내용 생성과 할당.
-        for(int i = 0; i < n_maxManageableQuest; i++)
+        for (int i = 0; i < n_maxManageableQuest; i++)
         {
             //퀘스트 패널의 자식으로 생성한다.
             _questHeaders[i] = Instantiate<TMP_Text>(_questHeader, _QuestPanel.transform);
@@ -49,7 +51,6 @@ public class QuestUI : MonoBehaviour
             _questHeaders[i].gameObject.SetActive(false);
             _disCriptions[i].gameObject.SetActive(false);
         }
-
     }
 
 
@@ -65,9 +66,10 @@ public class QuestUI : MonoBehaviour
     /// <param name="currentQuestList"> Player Controller이 지닌 현재 퀘스트 리스트 이다. </param>
     public void UpdateQuestUI(List<QuestData> currentQuestList)
     {
+        if (currentQuestList == null) return;
+
         int size = currentQuestList.Count;
-        int preID = 0;
-        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < size; i++)
         {
             //초기 퀘스트 슬롯 index 세팅
@@ -114,8 +116,6 @@ public class QuestUI : MonoBehaviour
 
     public void UpdateQuestUI(QuestData questData)
     {
-        StringBuilder sb = new StringBuilder();
-
         int index = Array.IndexOf(_questSlotIDArray, questData.nQuestID);
         Debug.Assert(index != -1, "Quest Slot index NULL");
 
@@ -154,6 +154,7 @@ public class QuestUI : MonoBehaviour
         }
 
         _disCriptions[index].text = sb.ToString();
+        sb.Clear();
         #endregion
     }
 }

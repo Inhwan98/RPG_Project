@@ -61,25 +61,25 @@ public class PlayerController : Character
 
     private ItemInventoryManager _itemInvenMgr;
 
+    private PlayerData _playerData;
+
 
     public bool GetUseInven() => _isUseInven;
     public CameraController GetCameraCtr() => _cameraCtr;
     public List<QuestData> GetPlayerQuestList() => _currentQuestList;
 
-    public void SetUseItemInven(bool value) { _isUseInven = value; }
-    public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }
-    public void SetUsePlayDialog(bool value) { _isPlayDialog = value; }
-    /// <summary> 모든 스킬 덮어 씌우기 </summary>
-    public void SetPlayerSkill(SkillData[] skill_datas) => _skill_Datas = skill_datas;
-    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
-    public void SetPlayerSkill(int idx, SkillData skillData) => _skill_Datas[idx] = skillData;
-    public void SetSkill_InvenUI(Skill_InvenUI skInvenUI) => _skInvenUI = skInvenUI;
-    public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;
-    public void SetGameManager(GameManager gameMgr) => _gameMgr = gameMgr;
-    public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr;
-    public void SetSkillMgr(SkillManager skillMgr) => _skillMgr = skillMgr;
+    public void SetUseItemInven(bool value) { _isUseInven = value; }                                    // 인벤토리창이 켜져 있는가
+    public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }                            // 스킬창이 켜져있는가
+    public void SetUsePlayDialog(bool value) { _isPlayDialog = value; }                                 // 다이얼로그 사용중인가  
+    public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;                  // 퀘스트 시스템
+    public void SetGameManager(GameManager gameMgr) => _gameMgr = gameMgr;                              // 게임 매니져
+    public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr; // 아이템 인벤토리 매니져
+    public void SetSkillMgr(SkillManager skillMgr) => _skillMgr = skillMgr;                             // 스킬 매니져
+    public void SetCameraCtr(CameraController value) => _cameraCtr = value;                             // 카메라
 
     public void AddPlayerQuest(QuestData questData) => _currentQuestList.Add(questData);
+
+    /// <summary> 플레이어 레벨에 비례해서 퀘스트 목록들 갱신 </summary>
     private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
 
 
@@ -91,7 +91,7 @@ public class PlayerController : Character
             Destroy(this.gameObject);
         }
         instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
         #endregion
 
         base.Awake();
@@ -108,8 +108,14 @@ public class PlayerController : Character
         _weaponCtr = GetComponentInChildren<Weapon>();
         #endregion
 
-        //UI 
+        _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
+
+        //UI
+        _playerUICtr = FindObjectOfType<PlayerUIManager>();
         _playerUICtr.SetPlayerCtrReference(this);
+
+        //공격속도
+        _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
 
         #region Manager스크립트는 GameManager에서 초기화 시킴
         //_skillMgr = GetComponent<SkillManager>();
@@ -127,15 +133,13 @@ public class PlayerController : Character
         //_cam           = Camera.main;
 
         UpdateQuest(); //퀘스트 정보 업데이트
-
-        _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
+        CurrentQuestInit(_currentQuestList);
 
         PlayerUI_Init();
        
-
         base.Start(); //skill_List 가 부모에서 초기화 됌
-
     }
+
 
     /// <summary>
     /// 퀘스트 정보를 업데이트 해준다.
@@ -285,7 +289,8 @@ public class PlayerController : Character
         if (curSkill.GetInUse())
         {
             //빨간색 이미지가 깜빡거림
-            StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
+            _skillMgr.SkillUsedWarring(skill_Idx);
+            //StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
             yield break;
         }
 
@@ -299,8 +304,7 @@ public class PlayerController : Character
         _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
         _playerUICtr.SetMPbar(m_nCurMP, m_nMaxMP);
 
-        StartCoroutine(_skInvenUI.StartSkillCoolTime(skill_Idx, curSkill));
-
+        _skillMgr.StartSkillCoolTime(skill_Idx, curSkill);
 
         yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
         m_bisAttack = false;
@@ -326,6 +330,7 @@ public class PlayerController : Character
         }
     }
 
+    #region Init
     /// <summary> Player Info UI Set </summary>
     private void PlayerUI_Init()
     {
@@ -343,8 +348,15 @@ public class PlayerController : Character
         attackInput = Input.GetButton("Fire1");
     }
 
- 
- 
+
+    public void CurrentQuestInit(List<QuestData> currentQuestList)
+    {
+        _gameMgr.UpdateQuestUI(currentQuestList);
+        _gameMgr.SetPlayerQuestList(currentQuestList);
+    }
+
+    #endregion
+
 
     public override void Buff(int _str)
     {
@@ -352,10 +364,10 @@ public class PlayerController : Character
         _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
     }
 
+    /// <summary> 플레이어 대미지 발생 이벤트 </summary>
     public override void OnDamage(int _str)
     {
         this.m_nCurHP -= _str;
-        //Debug.Log($"{this.name} 가 {_str} 대미지를 입었다. 현재 체력 {m_nCurHP}");
 
         //if (m_fCurHP <= 0) this.objState = ObjectState.DEAD; //사망 없음
 
@@ -363,6 +375,7 @@ public class PlayerController : Character
         _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
     }
 
+    /// <summary> 플레이어의 사망 처리 </summary>
     protected override void Die()
     {
         Debug.Log("Player Die");
@@ -373,7 +386,6 @@ public class PlayerController : Character
         OnPlayerDie(); //delegate event Play
         GameManager.instance.PlayerDie();
     }
-
 
 
     /// <summary> 체력 회복 작용 </summary>
@@ -394,11 +406,14 @@ public class PlayerController : Character
         _playerUICtr.SetMPbar(m_nCurMP, m_nMaxHP);
     }
 
+    /// <summary> 경험치 획득 처리 및 레벨업 함수 호출 (사냥, 퀘스트 등등)</summary>
     public void SetEXP(int _exp)
     {
         this.m_nCurExp += _exp;
-        if(m_nCurExp >= m_nMaxExp)
+        while(m_nCurExp >= m_nMaxExp)
         {
+            //초과분 만큼 빼준다.
+            m_nCurExp -= m_nMaxExp;
             LevelUP();
         }
         _playerUICtr.SetEXPbar(m_nCurExp, m_nMaxExp);
@@ -419,36 +434,33 @@ public class PlayerController : Character
         _itemInvenMgr.AddItem(itemData, amount);
     }
 
-    public void SetCameraCtr(CameraController value) => _cameraCtr = value;
 
-    public void SavePlayer()
-    {
-        SaveSys.SavePlayer(this);
-    }
+    /// <summary> 플레이어의 정보 저장하기 </summary>
+    public void SavePlayer() => SaveSys.SavePlayer(this);
 
-    public void SaveSkillSet()
-    {
-        SaveSys.SavePlayerSkillSet(_skill_Datas);
-    }
-
-    [ContextMenu("LoadPlaeyr")]
+    /// <summary> 플레이어의 정보 로드 </summary>
     protected override void LoadData()
     {
-        objData = SaveSys.LoadObject("PlayerData.Json");
+        _playerData = SaveSys.LoadObject("PlayerData.Json");
+
         playerLevelData = SaveSys.LoadAllData().PlayerLevelDB;
 
         //저장된 데이터가 있다면 캐릭터 정보를 불러온다.
-        if (objData != null)
+        if (_playerData != null)
         {
-            m_nLevel = objData.GetLevel();
-            m_nMaxHP = objData.GetMaxHP();
-            m_nCurHP = objData.GetCurHP();
+            
+            m_nLevel = _playerData.nLevel;
+            m_nMaxHP = _playerData.nMaxHP;
+            m_nCurHP = _playerData.nCurHP;
 
-            m_nMaxMP = objData.GetMaxMP();
-            m_nCurMP = objData.GetCurMP();
+            m_nMaxMP = _playerData.nMaxMP;
+            m_nCurMP = _playerData.nCurMP;
 
-            m_nCurSTR = objData.GetCurSTR();
-            m_nCurExp = objData.GetCurExp();
+            m_nCurSTR = _playerData.nCurSTR;
+            m_nCurExp = _playerData.nCurExp;
+            m_nMaxExp = _playerData.ntotalExp;
+
+            _currentQuestList = _playerData.currentQuestList;
             return;
         }
         else
@@ -476,7 +488,6 @@ public class PlayerController : Character
         //m_nCurMP = objData.GetCurMP();
         #endregion
 
-        
     }
 
     /// <summary> Character LevelUp System </summary>
@@ -485,7 +496,6 @@ public class PlayerController : Character
         PlayerLevelUP(m_nLevel);
         PlayerUI_Init();
         base.LevelUP();
-       
     }
 
     /// <summary> 플레이어의 레벨업 및 캐릭터 정보 초기화 함수 </summary>
@@ -504,11 +514,7 @@ public class PlayerController : Character
         m_nCurSTR = playerData.nSTR;
 
         m_nMaxExp = playerData.ntotalExp;
-        m_nCurExp = 0;
     }
-
-
-
 
     private void OnTriggerEnter(Collider coll)
     {
@@ -517,7 +523,9 @@ public class PlayerController : Character
             NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
             Debug.Assert(npcCtr != null, "npcCtr is NULL");
 
-            for(int i = 0; i < _currentQuestList.Count; i++)
+            int questAmount = _currentQuestList.Count;
+
+            for(int i = 0; i < questAmount; i++)
             {
                 var curQuest = _currentQuestList[i];
 
@@ -529,18 +537,20 @@ public class PlayerController : Character
             }
         
             //현재가능한 퀘스트 목록 중
-            var poQuests = _questSystem.GetPossibleQuest();
+            var poQuestList = _questSystem.GetPossibleQuest();
 
-            foreach (var quest in poQuests)
+            foreach (var quest in poQuestList)
             {
                 //해당 NPC의 ID와 일치하는게 있다면
                 if (quest.nID == npcCtr.GetID())
                 {
-                    //해당 퀘스트가 진행 중일 경우
-                    if (_currentQuestList.Contains(quest))
+                    foreach(var curQuest in _currentQuestList)
                     {
-                        StartCoroutine(_gameMgr.UnsolvedQuestDialog(quest.nID));
-                        break;
+                        if(curQuest.nQuestID == quest.nQuestID)
+                        {
+                            StartCoroutine(_gameMgr.UnsolvedQuestDialog(quest.nQuestID));
+                            return;
+                        }
                     }
 
                     StartCoroutine(_gameMgr.PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
@@ -548,5 +558,10 @@ public class PlayerController : Character
                 }
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        SavePlayer();
     }
 }

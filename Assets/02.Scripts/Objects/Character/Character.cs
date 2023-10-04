@@ -7,8 +7,17 @@ public abstract class Character : ObjectBase
 {
     [Header("SkILL Related")]
     [SerializeField] protected SkillData[] _skill_Datas = new SkillData[6];
-
+    
     [SerializeField] protected int m_nMaxExp;
+    [SerializeField] protected int m_nCurExp;
+
+    public int GetMaxExp() => m_nMaxExp;
+    public int GetCurExp() => m_nCurExp;
+
+    /// <summary> 모든 스킬 덮어 씌우기 </summary>
+    public void SetPlayerSkill(SkillData[] skill_datas) => _skill_Datas = skill_datas;
+    /// <summary> 플레이어 스킬 데이터에 할당 </summary>
+    public void SetPlayerSkill(int idx, SkillData skillData) => _skill_Datas[idx] = skillData;
 
     //스킬을 자동 실행할 원형 큐
     // protected CircularQueue<SkillStatus> circualrQueue;

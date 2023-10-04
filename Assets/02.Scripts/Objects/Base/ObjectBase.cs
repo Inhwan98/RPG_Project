@@ -4,17 +4,9 @@ using UnityEngine;
 
 public abstract class ObjectBase : MonoBehaviour
 {
-    //Objectinfo : Serializable
-    protected ObjectData objData;
-
-    [Space(10)]
-
     [Header("Currnet Info")] // status의 정보에 맞게 초기화 할 것
     [SerializeField] protected int   m_nID;
     [SerializeField] protected int   m_nLevel;
-
-    [SerializeField] protected int   m_nCurExp;
-    
     [SerializeField] protected int   m_nCurHP;
     [SerializeField] protected int   m_nCurMP;
     [SerializeField] protected int   m_nCurSTR;
@@ -43,7 +35,7 @@ public abstract class ObjectBase : MonoBehaviour
     public int GetCurMP() => m_nCurMP;
 
     public int GetCurStr() => m_nCurSTR;
-    public int GetCurExp() => m_nCurExp;
+    
 
     /// <summary> Resource Data 클래스 </summary>
     //protected ResourcesData _resourcesData;

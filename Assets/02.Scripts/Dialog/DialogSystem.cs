@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class DialogSystem
 {
-    DialogData[] dialogDatas;
+    DialogData[] _dialogDatas;
     List<DialogData> currentDialog = new List<DialogData>();
 
 
     /// <summary>  생성과 동시에 데이터를 불러 온다. </summary>
-    public DialogSystem()
+    public DialogSystem(DialogData[] dialogDatas)
     {
-        dialogDatas = SaveSys.LoadAllData().DialogDB;
+        this._dialogDatas = dialogDatas;
     }
 
 
@@ -23,16 +23,16 @@ public class DialogSystem
     {
         currentDialog.Clear();
 
-        int size = dialogDatas.Length;
+        int size = _dialogDatas.Length;
 
         for (int i = 0; i < size; i++)
         {
             //퀘스트의 ID와 브랜치가 같은 다이얼로그만 출력하게 한다.
-            if(dialogDatas[i].nQuestID == questID)
+            if(_dialogDatas[i].nQuestID == questID)
             {
-                if(dialogDatas[i].nBranch == brach)
+                if(_dialogDatas[i].nBranch == brach)
                 {
-                    currentDialog.Add(dialogDatas[i]);
+                    currentDialog.Add(_dialogDatas[i]);
                 }
             }
         }

@@ -8,6 +8,7 @@ public class AllData
     public MonsterData[] MonsterDB;
     public PlayerLevelData[] PlayerLevelDB;
     public SkillData[] SkillDB;
+    public SkillData[] PlayerSkillDB;
     public ArmorItemData[] ArmorItemDB;
     public PortionItemData[] PortionItemDB;
 }
@@ -42,6 +43,45 @@ public class DialogData
     public string sName;
     public string sDialog;
 }
+
+[System.Serializable]
+public class PlayerData
+{
+    public int nLevel;
+    public int nMaxHP;
+    public int nCurHP;
+    public int nMaxMP;
+    public int nCurMP;
+    public int nCurSTR;
+    public int ntotalExp;
+    public int nCurExp;
+
+    public List<QuestData> currentQuestList;
+
+    public PlayerData()
+    {
+
+    }
+
+    public PlayerData(PlayerController objBase)
+    {
+        nLevel = objBase.GetLevel();
+
+        nMaxHP = objBase.GetMaxHP();
+        nCurHP = objBase.GetCurHP();
+
+        nMaxMP = objBase.GetMaxHP();
+        nCurMP = objBase.GetCurMP();
+
+        nCurSTR = objBase.GetCurStr();
+
+        ntotalExp = objBase.GetMaxExp();
+        nCurExp = objBase.GetCurExp();
+
+        currentQuestList = objBase.GetPlayerQuestList();
+    }
+}
+
 
 [System.Serializable]
 public class PlayerLevelData

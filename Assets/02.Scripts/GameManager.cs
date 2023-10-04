@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
 
     private int[] monsterRecords = new int[100];
 
-    [SerializeField]
     private PlayerController _playerCtr;
     private List<QuestData> _playerQuestList;
 
@@ -24,11 +23,18 @@ public class GameManager : MonoBehaviour
     private QuestSystem _questSystem;
 
 
-    [SerializeField] private DialogUI _dialogUICtr;
-    [SerializeField] private QuestUI _questUICtr;
+    private DialogUI _dialogUICtr;
+    private QuestUI _questUICtr;
 
     private SkillManager _skillMgr;
     private ItemInventoryManager _itemInvenMgr;
+
+    private AllData _allData;
+
+    /// <summary> 플레이어 퀘스트 리스트 할당 </summary>
+    public void SetPlayerQuestList(List<QuestData> playerQuestList) => _playerQuestList = playerQuestList;
+    public void UpdateQuestUI(List<QuestData> playerQuestList) => _questUICtr.UpdateQuestUI(playerQuestList);
+    public void UpdateQuestUI(QuestData playerQuestData) => _questUICtr.UpdateQuestUI(playerQuestData);
 
     private void Awake()
     {
@@ -38,22 +44,29 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
         instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
         #endregion
-        _resourcesData = new ResourcesData();
-        _dialogSystem = new DialogSystem();
-        _questSystem = new QuestSystem();
+
+        _playerCtr = FindObjectOfType<PlayerController>();
+        _dialogUICtr = FindObjectOfType<DialogUI>();
+        _questUICtr = FindObjectOfType<QuestUI>();
+
+        _allData = SaveSys.LoadAllData();
+        _resourcesData = new ResourcesData(_allData);
+        _dialogSystem = new DialogSystem(_allData.DialogDB);
+        _questSystem = new QuestSystem(_allData.QuestDB);
 
         _skillMgr = GetComponent<SkillManager>();
         _itemInvenMgr = GetComponent<ItemInventoryManager>();
 
+        _questUICtr.QuestUI_Init(_resourcesData);
+
         _skillMgr.SetPlayerCtr(_playerCtr);
+        _skillMgr.Init_Skills(_allData.SkillDB, _allData.PlayerSkillDB); //스킬 세팅
         _itemInvenMgr.SetPlayerCtr(_playerCtr);
 
         //skillManager Awake() 전에 skinvenUI는 할당 되었다.(드로그 앤 드랍)
-        Skill_InvenUI skInvenUI = _skillMgr.GetSkInvenUI();
 
-        _playerCtr.SetSkill_InvenUI(skInvenUI);
         _playerCtr.SetGameManager(this);
         _playerCtr.SetItemInvenManager(_itemInvenMgr);
         _playerCtr.SetSkillMgr(_skillMgr);
@@ -139,11 +152,12 @@ public class GameManager : MonoBehaviour
                     break;
                 }
                 else
-                    _questUICtr.UpdateQuestUI(_playerQuestList[i]);
+                    UpdateQuestUI(_playerQuestList[i]);
             }
         }
     }
 
+ 
 
     public void PlayerDie()
     {
@@ -186,9 +200,9 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// NPC의 불평을 듣게 될 것이다.
     /// </summary>
-    public IEnumerator UnsolvedQuestDialog(int id)
+    public IEnumerator UnsolvedQuestDialog(int nQuestID)
     {
-        _dialogUICtr.SetDialogList(id, 0);
+        _dialogUICtr.SetDialogList(nQuestID, 0);
         _playerCtr.SetUsePlayDialog(true); // 플레이어 동작 관리
         yield return new WaitUntil(() => _dialogUICtr.UpdateDialog());
         _playerCtr.SetUsePlayDialog(false); // 플레이어 동작 관리
@@ -218,7 +232,7 @@ public class GameManager : MonoBehaviour
 
         _playerQuestList = _playerCtr.GetPlayerQuestList();
 
-        _questUICtr.UpdateQuestUI(_playerQuestList);
+        UpdateQuestUI(_playerQuestList);
     }
 
     /// <summary>
@@ -260,8 +274,7 @@ public class GameManager : MonoBehaviour
                 _playerCtr.AddInven(_resourcesData.GetItem(nID), nAmount);
             }
 
-
-            _questUICtr.UpdateQuestUI(_playerQuestList);
+            UpdateQuestUI(_playerQuestList);
             _playerQuestList.Remove(currentQuestData);
         }
         else
@@ -269,7 +282,7 @@ public class GameManager : MonoBehaviour
             //바뀐 데이터를 PlayerController QuestList 데이터에도 영향을 주기 위해
             //새로 생긴 객체(다음 퀘스트)를 참조 주소에 직접 넣어준다.
             _playerQuestList[index] = nextQuest;
-            _questUICtr.UpdateQuestUI(_playerQuestList);
+            UpdateQuestUI(_playerQuestList);
         }
     }
 
@@ -284,5 +297,24 @@ public class GameManager : MonoBehaviour
     }
 
 
+    public void CharacterStart(Transform tr)
+    {
+        _playerCtr.transform.position = tr.position;
+        _playerCtr.transform.rotation = tr.rotation;
+    }
+
+    public void SaveAllData()
+    {
+        _allData.QuestDB = _questSystem.GetQuestDataArray();
+        _allData.SkillDB = _skillMgr.GetInvenAllSkillData();
+        _allData.PlayerSkillDB = _skillMgr.GetPlayerAllSkillData();
+
+        SaveSys.SaveAllData(_allData);
+    }
+
+    private void OnDestroy()
+    {
+        SaveAllData();
+    }
 
 }

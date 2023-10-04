@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class ItemInventoryManager : MonoBehaviour
 {
+    [SerializeField]
+    private ItemInventoryUI _itemInventoryUI;
+
     private int _capacity;     //아이템 수용 한도
 
     [SerializeField, Range(8, 64)]
     private int _maxCapacity = 30;     // 최대 수용 한도(아이템 배열 크기)
-
-    [SerializeField]
-    private ItemInventoryUI _itemInventoryUI;
 
     /// <summary> 아이템 목록 </summary>
     private Item[] _items;
@@ -41,6 +41,8 @@ public class ItemInventoryManager : MonoBehaviour
 
     private void Awake()
     {
+        _itemInventoryUI = FindObjectOfType<ItemInventoryUI>();
+
         _capacity = _maxCapacity;
         _itemInventoryUI.SetInventoryReference(this);
         Init_InvenItems();

@@ -1217,7 +1217,7 @@ GameObject:
   - component: {fileID: 6923244857261920873}
   - component: {fileID: 6923244857261920877}
   - component: {fileID: 6923244857261920876}
-  - component: {fileID: 6923244857261920872}
+  - component: {fileID: 2906481560574609277}
   m_Layer: 6
   m_Name: Dragon Fire
   m_TagString: Untagged
@@ -1234,7 +1234,7 @@ Transform:
   m_GameObject: {fileID: 8378837324141898485}
   m_LocalRotation: {x: 0, y: 0.6874679, z: 0, w: 0.7262149}
   m_LocalPosition: {x: 21.479168, y: -0.08333087, z: -0.27239245}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_Children:
   - {fileID: 8378837324141999829}
   - {fileID: 8378837324141999855}
@@ -1340,7 +1340,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6923244857261920872
+--- !u!114 &2906481560574609277
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1349,23 +1349,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 8378837324141898485}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ffe021160a43c47ba50d5d19ea623d, type: 3}
+  m_Script: {fileID: 11500000, guid: db14487fb8b43ff438d508ba4a167a6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_nID: 100
+  m_nID: 101
   m_nLevel: 0
-  m_nMaxExp: 0
   m_nCurExp: 0
-  m_nMaxHP: 0
   m_nCurHP: 0
+  m_nCurMP: 0
   m_nCurSTR: 0
   m_nSkillDamage: 0
-  m_nMaxMP: 0
-  m_nCurMP: 0
-  m_bisAttack: 0
-  m_bisDead: 0
-  objState: 0
-  exp: 10
   targetLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1374,6 +1367,7 @@ MonoBehaviour:
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
   _damageTr: {fileID: 1359316832}
+  objState: 0
 --- !u!1 &8378837324141898487
 GameObject:
   m_ObjectHideFlags: 0

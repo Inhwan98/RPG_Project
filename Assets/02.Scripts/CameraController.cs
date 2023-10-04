@@ -17,7 +17,8 @@ public class CameraController : MonoBehaviour
 
     private Vector3 offset;
 
-    private float angle;
+    private float xAngle;
+    private float yAngle = 10.0f;
 
     private bool _isUseWindow;
 
@@ -25,6 +26,7 @@ public class CameraController : MonoBehaviour
 
     private void Awake()
     {
+        playerCtr = FindObjectOfType<PlayerController>();
         playerCtr.SetCameraCtr(this);
         playertr = playerCtr.transform;
     }
@@ -38,7 +40,7 @@ public class CameraController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        RotateCam();
+        
     }
 
     /// <summary> 플레이어의 위치,회전에 비례하여 카메라 위치 선정 </summary>
@@ -46,11 +48,11 @@ public class CameraController : MonoBehaviour
     {
         while(true)
         {
-            
             yield return new WaitForFixedUpdate();
+            RotateCam();
 
             // 
-            offset = playertr.position + (Quaternion.Inverse(playertr.rotation) * Quaternion.AngleAxis(angle, Vector3.up))
+            offset = playertr.position + (Quaternion.Inverse(playertr.rotation) * Quaternion.AngleAxis(xAngle, Vector3.up))
                       * ((-playertr.forward * distance) + (playertr.up * height));
 
             transform.position = Vector3.SmoothDamp(transform.position,
@@ -70,8 +72,10 @@ public class CameraController : MonoBehaviour
         if (_isUseWindow) return;
 
         float yRot = Input.GetAxis("Mouse X");
+        float xRot = Input.GetAxis("Mouse Y");
 
-        angle += yRot * yRotSpeed * Time.fixedDeltaTime;
+
+        xAngle += yRot * yRotSpeed * Time.fixedDeltaTime;
     }
 
     /// <summary> 플레이어 Inven의 상태 반영 </summary>

@@ -1,0 +1,71 @@
+Mono path[0] = 'F:/Unity/01_RPG_Project/UnityBuild/RPG_Project_Data/Managed'
+Mono config path = 'F:/Unity/01_RPG_Project/UnityBuild/MonoBleedingEdge/etc'
+Loading player data from F:/Unity/01_RPG_Project/UnityBuild/RPG_Project_Data/data.unity3d
+Initialize engine version: 2021.1.16f1 (f9476d1470a6)
+[Subsystems] Discovering subsystems at path F:/Unity/01_RPG_Project/UnityBuild/RPG_Project_Data/UnitySubsystems
+GfxDevice: creating device client; threaded=1; jobified=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: Radeon RX 580 Series (ID=0x67df)
+    Vendor:   ATI
+    VRAM:     8172 MB
+    Driver:   26.20.11015.5009
+Begin MonoManager ReloadAssembly
+- Completed reload, in  2.708 seconds
+D3D11 device created for Microsoft Media Foundation video decoding.
+<RI> Initializing input.
+New input system (experimental) initialized
+<RI> Input initialized.
+<RI> Initialized touch support.
+Couldn't create a Convex Mesh from source mesh "SM_Rock_Cluster_Large_02" within the maximum polygons limit (256). The partial hull will be used. Consider simplifying your mesh.
+
+Direct3D: detected that using refresh rate causes time drift. Will stop trusting refresh rate until the game window is moved.
+UnloadTime: 0.771800 ms
+Save File Not Found
+
+NullReferenceException: Object reference not set to an instance of an object
+  at PlayerController.LoadData () [0x00016] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at ObjectBase.Awake () [0x00000] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at Character.Awake () [0x00000] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at PlayerController.Awake () [0x00029] in <3305b5405f4e477eab886a31b25e309b>:0 
+
+Save File Not Found
+
+NullReferenceException: Object reference not set to an instance of an object
+  at ResourcesData.Init () [0x00006] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at ResourcesData..ctor () [0x00006] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at QuestUI.Awake () [0x00033] in <3305b5405f4e477eab886a31b25e309b>:0 
+
+Save File Not Found
+
+NullReferenceException: Object reference not set to an instance of an object
+  at SkillManager.Init_Skills () [0x00006] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at SkillManager.Awake () [0x0000c] in <3305b5405f4e477eab886a31b25e309b>:0 
+
+Save File Not Found
+
+NullReferenceException: Object reference not set to an instance of an object
+  at ResourcesData.Init () [0x00006] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at ResourcesData..ctor () [0x00006] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at GameManager.Awake () [0x00029] in <3305b5405f4e477eab886a31b25e309b>:0 
+
+Save File Not Found
+
+NullReferenceException: Object reference not set to an instance of an object
+  at Monster.LoadData () [0x00006] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at ObjectBase.Awake () [0x00000] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at Monster.Awake () [0x00000] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at Lv01_09.Awake () [0x00017] in <3305b5405f4e477eab886a31b25e309b>:0 
+  at BabyDragon.Awake () [0x00000] in <3305b5405f4e477eab886a31b25e309b>:0 
+
+InitSlots
+
+Init_Inven
+
+Setting up 6 worker threads for Enlighten.
+  Thread -> id: 35b4 -> priority: 1 
+  Thread -> id: 47d8 -> priority: 1 
+  Thread -> id: 79cc -> priority: 1 
+  Thread -> id: ab98 -> priority: 1 
+  Thread -> id: 8f34 -> priority: 1 
+  Thread -> id: 3f6c -> priority: 1 
