@@ -24,16 +24,11 @@ public class CameraController : MonoBehaviour
 
     Vector3 velocity;
 
-    private void Awake()
-    {
-        playerCtr = FindObjectOfType<PlayerController>();
-        playerCtr.SetCameraCtr(this);
-        playertr = playerCtr.transform;
-    }
-
     void Start()
     {
-
+        playerCtr = PlayerController.instance;
+        playerCtr.SetCameraCtr(this);
+        playertr = playerCtr.transform;
         StartCoroutine(CheckCam());
     }
 

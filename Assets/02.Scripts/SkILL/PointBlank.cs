@@ -7,7 +7,7 @@ public class PointBlank : MonoBehaviour
     [SerializeField] private Collider coll;
     [SerializeField] private float attackPerSecond;
 
-    void Start()
+    private void OnEnable()
     {
         StartCoroutine(AttacksPerSecond());
     }
@@ -19,5 +19,10 @@ public class PointBlank : MonoBehaviour
             yield return new WaitForSeconds(attackPerSecond);
             coll.enabled = !(coll.enabled);
         }
+    }
+
+    private void OnDisable()
+    {
+        StopCoroutine("AttacksPerSecond");
     }
 }

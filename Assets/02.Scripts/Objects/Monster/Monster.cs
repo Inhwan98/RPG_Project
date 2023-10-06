@@ -29,6 +29,7 @@ public class Monster : ObjectBase
     protected List<ItemData> _itemDatas = new List<ItemData>();
     protected Dictionary<ItemData, int> _itemDic = new Dictionary<ItemData, int>();
 
+    protected string m_sName; //Data Load
     protected int m_nDromExp; //Data Load
     protected int[] m_nDropItemArray; //Data Load
 
@@ -360,6 +361,8 @@ public class Monster : ObjectBase
         }
 
         m_nLevel = _monsterData.nLevel;
+        m_sName  = _monsterData.sName;
+
         m_nMaxHP = _monsterData.nMaxHP;
         m_nCurHP = _monsterData.nMaxHP;
 

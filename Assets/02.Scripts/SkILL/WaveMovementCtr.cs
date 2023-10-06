@@ -10,7 +10,10 @@ public class WaveMovementCtr : MonoBehaviour
     [SerializeField] private float destTime;
 
 
-    private Transform startTr;
+    //[SerializeField] private Transform startTr;
+    private Vector3 startPos;
+
+    private Collider coll;
 
     private float time;
     private float t;
@@ -19,10 +22,17 @@ public class WaveMovementCtr : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        startTr = waveTr;
+        coll = waveTr.gameObject.GetComponent<Collider>();
+        coll.enabled = false;
+    }
 
+    
+
+    private void OnEnable()
+    {
+        startPos = waveTr.position;
         StartCoroutine(WaitingWave(waitTime));
     }
 
@@ -36,12 +46,8 @@ public class WaveMovementCtr : MonoBehaviour
                 time += Time.deltaTime;
                 t = time / destTime;
             }
-            else
-            {
-                Destroy(this.gameObject);
-            }
 
-            waveTr.transform.position = Vector3.Lerp(startTr.position, destTr.position, t);
+            waveTr.position = Vector3.Lerp(startPos, destTr.position, t);
         }
     }
 
@@ -49,5 +55,17 @@ public class WaveMovementCtr : MonoBehaviour
     {
         yield return new WaitForSeconds(time);
         isStart = true;
+        coll.enabled = true;
     }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        isStart = false;
+        time = 0;
+        t = 0;
+        waveTr.position = startPos;
+    }
+
+
 }

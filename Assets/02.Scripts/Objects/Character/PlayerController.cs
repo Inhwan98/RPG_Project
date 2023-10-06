@@ -516,52 +516,57 @@ public class PlayerController : Character
         m_nMaxExp = playerData.ntotalExp;
     }
 
-    private void OnTriggerEnter(Collider coll)
+    private void OnTriggerStay(Collider coll)
     {
-        if(coll.gameObject.layer == LayerMask.NameToLayer("NPC"))
+        if(Input.GetKeyDown(KeyCode.F) && !_isPlayDialog)
         {
-            NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
-            Debug.Assert(npcCtr != null, "npcCtr is NULL");
-
-            int questAmount = _currentQuestList.Count;
-
-            for(int i = 0; i < questAmount; i++)
+            if (coll.gameObject.layer == LayerMask.NameToLayer("NPC"))
             {
-                var curQuest = _currentQuestList[i];
+                NPC npcCtr = coll.gameObject?.GetComponent<NPC>();
+                Debug.Assert(npcCtr != null, "npcCtr is NULL");
 
-                if (curQuest.nDestID == npcCtr.GetID())
-                {
-                    StartCoroutine(_gameMgr.CompleteDialog(curQuest, i)); // 해당 퀘스트의 Dialog를 띄운다.
-                    return;
-                }
-            }
-        
-            //현재가능한 퀘스트 목록 중
-            var poQuestList = _questSystem.GetPossibleQuest();
+                int questAmount = _currentQuestList.Count;
 
-            foreach (var quest in poQuestList)
-            {
-                //해당 NPC의 ID와 일치하는게 있다면
-                if (quest.nID == npcCtr.GetID())
+                for (int i = 0; i < questAmount; i++)
                 {
-                    foreach(var curQuest in _currentQuestList)
+                    var curQuest = _currentQuestList[i];
+
+                    if (curQuest.nDestID == npcCtr.GetID())
                     {
-                        if(curQuest.nQuestID == quest.nQuestID)
-                        {
-                            StartCoroutine(_gameMgr.UnsolvedQuestDialog(quest.nQuestID));
-                            return;
-                        }
+                        StartCoroutine(_gameMgr.CompleteDialog(curQuest, i)); // 해당 퀘스트의 Dialog를 띄운다.
+                        return;
                     }
+                }
 
-                    StartCoroutine(_gameMgr.PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
-                    break;
+                //현재가능한 퀘스트 목록 중
+                var poQuestList = _questSystem.GetPossibleQuest();
+
+                foreach (var quest in poQuestList)
+                {
+                    //해당 NPC의 ID와 일치하는게 있다면
+                    if (quest.nID == npcCtr.GetID())
+                    {
+                        foreach (var curQuest in _currentQuestList)
+                        {
+                            if (curQuest.nQuestID == quest.nQuestID)
+                            {
+                                StartCoroutine(_gameMgr.UnsolvedQuestDialog(quest.nQuestID));
+                                return;
+                            }
+                        }
+
+                        StartCoroutine(_gameMgr.PlayDialog(quest));//해당 퀘스트의 Dialog를 띄운다.
+                        break;
+                    }
                 }
             }
         }
+        
     }
 
     private void OnDestroy()
     {
+        instance = null;
         SavePlayer();
     }
 }

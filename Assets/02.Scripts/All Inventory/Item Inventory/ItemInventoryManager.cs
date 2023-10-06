@@ -483,8 +483,6 @@ public class ItemInventoryManager : MonoBehaviour
     /// <summary> Load Data 없을시 초기화 </summary>
     public void Init_InvenItems()
     {
-        Debug.Log("Init_Inven");
-
         _items = SaveSys.LoadInvenitem();
 
         if (_items == null)

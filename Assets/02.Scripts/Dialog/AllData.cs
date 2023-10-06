@@ -9,6 +9,7 @@ public class AllData
     public PlayerLevelData[] PlayerLevelDB;
     public SkillData[] SkillDB;
     public SkillData[] PlayerSkillDB;
+    public EffectData[] SkillEffectDB;
     public ArmorItemData[] ArmorItemDB;
     public PortionItemData[] PortionItemDB;
 }
