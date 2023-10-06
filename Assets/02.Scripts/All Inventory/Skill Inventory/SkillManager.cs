@@ -305,7 +305,7 @@ public class SkillManager : MonoBehaviour
     {
         _skillArray = skillArray;
 
-
+ 
         _playerSkillArray = playerSkillArray;
 
 

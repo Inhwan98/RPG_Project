@@ -210,7 +210,6 @@ public class ItemInventoryUI : InvenUIBase
     /// </summary>
     private void InitSlots()
     {
-        Debug.Log("InitSlots");
         // ½½·Ô ÇÁ¸®ÆÕ ¼³Á¤
         _slotUiPrefab.TryGetComponent(out RectTransform slotRect);
         slotRect.sizeDelta = new Vector2(_slotSize, _slotSize);

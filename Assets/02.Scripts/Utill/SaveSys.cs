@@ -46,10 +46,7 @@ public static class SaveSys
       
             return items;
         }
-        else
-        {
-            Debug.LogError($"Save File Not Found in {path}");
-        }
+
         return null;
     }
 

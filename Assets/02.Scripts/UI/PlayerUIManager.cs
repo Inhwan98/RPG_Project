@@ -27,12 +27,11 @@ public class PlayerUIManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance != null)
+        if (instance != null)
         {
             Destroy(this.gameObject);
         }
         instance = this;
-
     }
 
     /// <summary> PlayerController Awake() 에서 참조 됌</summary>
@@ -77,5 +76,10 @@ public class PlayerUIManager : MonoBehaviour
     {
         m_curLevel = _level;
      
+    }
+
+    private void OnDestroy()
+    {
+        instance = null;
     }
 }

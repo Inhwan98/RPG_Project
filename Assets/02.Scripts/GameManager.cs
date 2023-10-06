@@ -9,8 +9,9 @@ public struct MonsterRecord
 
 public class GameManager : MonoBehaviour
 {
-    private bool m_bisPlayerDie; //플레이어가 죽었는가
+    public static GameManager instance = null;
 
+    private bool m_bisPlayerDie; //플레이어가 죽었는가
     private int[] monsterRecords = new int[100];
 
     private PlayerController _playerCtr;
@@ -18,7 +19,6 @@ public class GameManager : MonoBehaviour
 
     private ResourcesData _resourcesData;
 
-    public static GameManager instance = null;
     private DialogSystem _dialogSystem;
     private QuestSystem _questSystem;
 
@@ -65,7 +65,9 @@ public class GameManager : MonoBehaviour
         _skillMgr.Init_Skills(_allData.SkillDB, _allData.PlayerSkillDB); //스킬 세팅
         _itemInvenMgr.SetPlayerCtr(_playerCtr);
 
-        //skillManager Awake() 전에 skinvenUI는 할당 되었다.(드로그 앤 드랍)
+        //플레이어에 포함되어 있는 이펙트 스크립트 참조 후, 데이터 할당
+        var effectCtr = _playerCtr.gameObject.GetComponent<AnimationEventEffects>();
+        effectCtr.SetEffectData(_allData.SkillEffectDB);
 
         _playerCtr.SetGameManager(this);
         _playerCtr.SetItemInvenManager(_itemInvenMgr);
@@ -76,7 +78,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
         InvisibleCursor();
 
         //StartCoroutine(UpdateMonster());
@@ -95,24 +96,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    ////몬스터 생성주기
-    //IEnumerator UpdateMonster()
-    //{
-    //    while(!m_bisPlayerDie)
-    //    {
-    //        float randRotNum = Random.Range(0, 360.0f);
-    //        Quaternion randRot = Quaternion.Euler(playerTr.up * randRotNum);
-    //        //Vector3 randPos = randRot * (playerTr.forward * respawnDistance);
 
-    //        //플레이어 주변으로 respawnDistance 만큼 떨어짐. 각도는 랜덤
-    //        Vector3 randPos = playerTr.rotation * randRot * (playerTr.forward * respawnDistance);
-    //        GameObject mon = Instantiate(monObj, playerTr.position + randPos, Quaternion.identity);
-    //        playerCtr.AddMonsterObjs(AllMonstersNum-1, mon.transform); // 07 26
-
-    //        yield return new WaitForSeconds(respawnTime);
-    //        yield return new WaitUntil(() => currentMonsters < maxMonsters); // 최대 생성 몬스터 개수에 도달하면 대기
-    //    }
-    //}
 
     //몬스터의 생성
     public void AddCurrentMonsters(int nMonsterID)
@@ -314,6 +298,7 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        instance = null;
         SaveAllData();
     }
 

@@ -17,8 +17,6 @@ public abstract class ObjectBase : MonoBehaviour
     protected bool  m_bisAttack;
     protected bool  m_bisDead;
     
-
-
     protected ResourcesData _resourcesData;
 
     #region Animation Setting
@@ -35,7 +33,9 @@ public abstract class ObjectBase : MonoBehaviour
     public int GetCurMP() => m_nCurMP;
 
     public int GetCurStr() => m_nCurSTR;
-    
+
+    public int GetID() => m_nID;
+    public int SetID(int value) => m_nID = value;
 
     /// <summary> Resource Data 클래스 </summary>
     //protected ResourcesData _resourcesData;
