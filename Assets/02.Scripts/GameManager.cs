@@ -266,6 +266,7 @@ public class GameManager : MonoBehaviour
             //바뀐 데이터를 PlayerController QuestList 데이터에도 영향을 주기 위해
             //새로 생긴 객체(다음 퀘스트)를 참조 주소에 직접 넣어준다.
             _playerQuestList[index] = nextQuest;
+
             UpdateQuestUI(_playerQuestList);
         }
     }
@@ -298,8 +299,8 @@ public class GameManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        instance = null;
         SaveAllData();
+        instance = null;
     }
 
 }

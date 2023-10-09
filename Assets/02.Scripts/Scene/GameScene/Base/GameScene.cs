@@ -7,9 +7,9 @@ public abstract class GameScene : BaseScene
 {
     private Transform startTr;
 
-    GameObject player;
-    GameObject gameManager;
-    GameObject uiManager;
+    protected GameObject player;
+    protected GameManager gameManager;
+    protected GameObject uiManager;
 
     protected Camera mainCamera;
 
@@ -21,13 +21,13 @@ public abstract class GameScene : BaseScene
 
        
         player = Resources.Load<GameObject>("Prefab/SceneLoad/Player");
-        gameManager = Resources.Load<GameObject>("Prefab/SceneLoad/GameManager");
+        gameManager = Resources.Load<GameManager>("Prefab/SceneLoad/GameManager");
         uiManager = Resources.Load<GameObject>("Prefab/SceneLoad/UIManager");
 
 
         Instantiate<GameObject>(uiManager);
         Instantiate<GameObject>(player, startTr.position, startTr.rotation);
-        Instantiate<GameObject>(gameManager);
+        gameManager = Instantiate<GameManager>(gameManager);
 
         mainCamera = FindObjectOfType<CameraController>()?.GetComponent<Camera>();
         if (mainCamera == null)

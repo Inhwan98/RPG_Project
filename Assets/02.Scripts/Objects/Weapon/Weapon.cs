@@ -30,7 +30,6 @@ public class Weapon : MonoBehaviour
     {
         //공격의 단계를 코루틴으로 구분
         //1
-        yield return new WaitForSeconds(0.1f);
         meleeArea.enabled   = true; //컴포넌트 활성화
         weaponTrail.enabled = true; //트레일렌더러 활성화
         //2

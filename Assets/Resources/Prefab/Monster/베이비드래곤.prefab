@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 1971276880}
   - component: {fileID: 6815209571967389696}
   m_Layer: 0
-  m_Name: BabyDragon
+  m_Name: "\uBCA0\uC774\uBE44\uB4DC\uB798\uACE4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -383,7 +383,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_nID: 100
   m_nLevel: 0
-  m_nCurExp: 0
   m_nCurHP: 0
   m_nCurMP: 0
   m_nCurSTR: 0
@@ -391,7 +390,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 8
-  m_fSensorRadius: 5.95
+  m_fSensorRadius: 15
   m_fSensorRange: 0
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
