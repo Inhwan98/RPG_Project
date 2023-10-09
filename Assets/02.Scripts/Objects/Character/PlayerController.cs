@@ -246,7 +246,8 @@ public class PlayerController : Character
     {
         if (m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
         {
-            _weaponCtr.Use();
+            m_bisAttack = true;
+            _weaponCtr.Use(); //무기 콜라이더 활성화 / 비활성화 루틴
             //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
             if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
             _anim.SetTrigger(hashAttack[m_nAttackCount]);
@@ -254,7 +255,6 @@ public class PlayerController : Character
             m_nAttackCount++;
             if (m_nAttackCount >= 3) m_nAttackCount = 0;
 
-            m_bisAttack = true;
             m_fAttackRunTime = 0;
             //마지막 공격 후, 더 길게 대기
             if(m_nAttackCount == 0)

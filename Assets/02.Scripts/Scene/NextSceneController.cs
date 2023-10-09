@@ -8,7 +8,7 @@ public class NextSceneController : MonoBehaviour
     {
         if(coll.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            LodingSceneController.LoadScene("Dungeon");
+            LodingSceneController.LoadScene("DragonDungeon");
         }
     }
 }

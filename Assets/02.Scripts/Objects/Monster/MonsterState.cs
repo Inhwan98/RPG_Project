@@ -5,5 +5,8 @@ public enum ObjectState
     MOVE,
     ATK,
     DEAD,
-    IDLE
+    IDLE,
+    PATROL,
+    NONE
+
 }

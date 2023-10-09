@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    public static CameraController instance = null;
+
     [SerializeField] PlayerController playerCtr;
     Transform playertr;
 
@@ -23,6 +25,15 @@ public class CameraController : MonoBehaviour
     private bool _isUseWindow;
 
     Vector3 velocity;
+
+    private void Awake()
+    {
+        if(instance != null)
+        {
+            Destroy(this.gameObject);
+        }
+        instance = this;
+    }
 
     void Start()
     {

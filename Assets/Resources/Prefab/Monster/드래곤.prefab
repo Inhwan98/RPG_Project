@@ -1219,12 +1219,12 @@ GameObject:
   - component: {fileID: 6923244857261920876}
   - component: {fileID: 2906481560574609277}
   m_Layer: 6
-  m_Name: Dragon
+  m_Name: "\uB4DC\uB798\uACE4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8378837324141999831
 Transform:
   m_ObjectHideFlags: 0
@@ -1354,7 +1354,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_nID: 101
   m_nLevel: 0
-  m_nCurExp: 0
   m_nCurHP: 0
   m_nCurMP: 0
   m_nCurSTR: 0
@@ -1362,7 +1361,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 8
-  m_fSensorRadius: 5.95
+  m_fSensorRadius: 15
   m_fSensorRange: 0
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
