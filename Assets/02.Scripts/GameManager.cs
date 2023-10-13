@@ -33,8 +33,17 @@ public class GameManager : MonoBehaviour
 
     /// <summary> 플레이어 퀘스트 리스트 할당 </summary>
     public void SetPlayerQuestList(List<QuestData> playerQuestList) => _playerQuestList = playerQuestList;
+    public void SetPlayerCtr(PlayerController playerCtr) => _playerCtr = playerCtr;
+
+    public DialogSystem GetDialogSystem() => _dialogSystem;
+    public QuestSystem GetQuestSystem() => _questSystem;
+    public ResourcesData GetResourcesData() => _resourcesData;
+    public AllData GetAllData() => _allData;
+
     public void UpdateQuestUI(List<QuestData> playerQuestList) => _questUICtr.UpdateQuestUI(playerQuestList);
     public void UpdateQuestUI(QuestData playerQuestData) => _questUICtr.UpdateQuestUI(playerQuestData);
+    public void UpdateQuestList(int m_nLevel) => _questSystem.UpdateQuestList(m_nLevel);
+
 
     private void Awake()
     {
@@ -76,6 +85,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+
     void Start()
     {
         InvisibleCursor();
@@ -105,13 +115,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public DialogSystem GetDialogSystem() => _dialogSystem;
-    public QuestSystem GetQuestSystem() => _questSystem;
-    public ResourcesData GetResourcesData() => _resourcesData;
 
-    public void SetPlayerCtr(PlayerController playerCtr) => _playerCtr = playerCtr;
-
-    public void UpdateQuestList(int m_nLevel) => _questSystem.UpdateQuestList(m_nLevel);
 
     //몬스터를 잡았을 때
     public void MonsterDead(int nMonsterID)
@@ -247,7 +251,6 @@ public class GameManager : MonoBehaviour
         //null이라면 다음 퀘스트가 없는 완료된 퀘스트이기 때문에, 현재 진행 퀘스트에서 제거
         if (nextQuest == null)
         {
-            Debug.Log("보상을 주는 내용");
             _playerCtr.SetEXP(currentQuestData.nRewardEXP); //경험치 전달
 
             //아이템의 개수만큼 아이템과 수량 전달
@@ -259,7 +262,8 @@ public class GameManager : MonoBehaviour
             }
 
             UpdateQuestUI(_playerQuestList);
-            _playerQuestList.Remove(currentQuestData);
+
+           _playerQuestList.Remove(currentQuestData);
         }
         else
         {

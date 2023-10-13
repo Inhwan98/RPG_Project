@@ -11,7 +11,7 @@ public class Monster : ObjectBase
     private bool m_bisChase = false;
 
     [Header("Target")]
-    [SerializeField] private LayerMask targetLayer;
+    [SerializeField] protected LayerMask targetLayer;
 
     [Header("Detect Sensor")]
     [SerializeField] private float m_fSensorRadius = 35.0f;
@@ -26,10 +26,19 @@ public class Monster : ObjectBase
     
     [SerializeField] protected ObjectState objState = ObjectState.NONE; // 상태에 따른 액션
 
+    // 공격 지연 관련
+    [Header("Attack Delay")]
+    [SerializeField]  protected float _attackDelay = 5.0f;
+    protected bool _isAttackWaiting;
+
     private float _fIdleTimer;
     private Vector3 _destPos;
 
     private Material _mat; //활성화 / 비활성화 시 COLOR에서 ALPHA값을 변경할 것
+
+    //타겟팅 레이케스트 저장
+    protected RaycastHit[] _rayHits;
+    protected RaycastHit[] _attackHits;
 
 
     //Drop Item
@@ -55,7 +64,7 @@ public class Monster : ObjectBase
     protected Transform _destTr;
     #endregion
 
-
+    public Transform GetDestTr() => _destTr;
 
     protected override void Awake()
     {
@@ -113,7 +122,7 @@ public class Monster : ObjectBase
     }
 
     #region NavMesh On/Off Func
-    void ChaseStart()
+    protected void ChaseStart()
     {
         if (!_nav.enabled) return;
 
@@ -123,7 +132,7 @@ public class Monster : ObjectBase
         _nav.isStopped = false;
     }
 
-    void ChaseEnd()
+    protected void ChaseEnd()
     {
         if (!_nav.enabled) return;
 
@@ -134,66 +143,63 @@ public class Monster : ObjectBase
     #endregion
 
     /// <summary> ray를 통해 상태 변환 </summary>
-    public void Targetting()
+    protected virtual void Targetting()
     {
+        // RaycastHit[] ray = new RaycastHit[10];
+        //Physics.SphereCastNonAlloc(transform.position, m_fSensorRadius, transform.forward, ray, m_fSensorRange, targetLayer);
 
-        RaycastHit[] rayHits =
-      Physics.SphereCastAll(transform.position,
-                            m_fSensorRadius,
-                            transform.forward,
-                            m_fSensorRange,
-                            targetLayer);
-
-        RaycastHit[] attackHits =
-            Physics.SphereCastAll(transform.position,
-                                  m_fTargetRadius,
-                                  transform.forward,
-                                  m_fTargetRange,
-                                  targetLayer);
+        _rayHits =  Physics.SphereCastAll(transform.position,
+                                         m_fSensorRadius,
+                                         transform.forward,
+                                         m_fSensorRange,
+                                         targetLayer);
+                                         
+        _attackHits =  Physics.SphereCastAll(transform.position,
+                                            m_fTargetRadius,
+                                            transform.forward,
+                                            m_fTargetRange,
+                                            targetLayer);
         //Physics.SphereCastAll:
         //위치, (구체)반지름, 방향, 구체범위, 구체의 들어온 레이어판별
 
         //센서에 잡히지 않았으며, 패트롤, 아이들 상태가 아닐때... 추격 혹은 공격중일 때 IDLE로 변환
         // IDLE과 PATROL은 순환해야함... IDLE 유지는 x
-        if (rayHits.Length == 0 && objState != ObjectState.PATROL && objState != ObjectState.IDLE)
+        if (_rayHits.Length == 0 && objState != ObjectState.PATROL && objState != ObjectState.IDLE)
             objState = ObjectState.IDLE;
 
         //탐지 센서에 감지 되었다면...
-        if (rayHits.Length > 0 && !m_bisAttack)
+        if (_rayHits.Length > 0 && !m_bisAttack)
         {
             //공격센서 감지되지 않았다면
-            if (attackHits.Length == 0 && !m_bisAttack)
+            if (_attackHits.Length == 0 && !m_bisAttack)
             {
-                _destTr = rayHits[0].transform;
-                _destPos = rayHits[0].transform.position;
+                _destTr = _rayHits[0].transform;
+                _destPos = _destTr.position;
 
                 objState = ObjectState.MOVE;
             }
             //공격센서에 감지되었다면
-            else if (attackHits.Length > 0 && !m_bisAttack)
-            {
-                objState = ObjectState.ATK;
-            }
+            DetectedAttackRay();
         }
     }
 
-    private void SetRandomTargetPosition()
+    /// <summary> 공격센서 안에 들어갈 경우 FSM 공격패턴 </summary>
+    protected virtual void DetectedAttackRay()
     {
-        // 무작위로 새로운 목표 위치 설정 (예시로 -10에서 10 사이의 범위로 설정)
-        float randomX = Random.Range(transform.position.x - 10f, transform.position.x + 10f);
-        float randomZ = Random.Range(transform.position.z - 10f, transform.position.z + 10f);
-        _destPos = new Vector3(randomX, transform.position.y, randomZ);
-
-        _fIdleTimer = Random.Range(0.3f, 3.0f);
+        if (_attackHits.Length > 0 && !m_bisAttack && !_isAttackWaiting)
+        {
+            objState = ObjectState.MELEEATK;
+        }
     }
 
     /// <summary> Monster의 공격 코루틴 함수 </summary>
     protected override IEnumerator Attack()
     {
+        StartCoroutine(StartAttackCoolTime(_attackDelay));
         ChaseEnd();
 
         m_bisAttack = true;
-        transform.LookAt(_destTr);
+        //transform.LookAt(_destTr);
         _anim.SetBool(hashAttack, true);
 
         Debug.Assert(_destTr, "destTr is NULL !!!");
@@ -203,6 +209,23 @@ public class Monster : ObjectBase
         _objCtr.OnDamage(m_nCurSTR);
         yield return new WaitForSeconds(1);
         m_bisAttack = false;
+    }
+
+    protected virtual IEnumerator SkillAttack()
+    {
+
+        yield return null;
+    }
+
+    /// <summary> 순찰에 필요한 NavMesh의 랜덤 포지션값 설정 </summary>
+    private void SetRandomTargetPosition()
+    {
+        // 무작위로 새로운 목표 위치 설정 (예시로 -10에서 10 사이의 범위로 설정)
+        float randomX = Random.Range(transform.position.x - 10f, transform.position.x + 10f);
+        float randomZ = Random.Range(transform.position.z - 10f, transform.position.z + 10f);
+        _destPos = new Vector3(randomX, transform.position.y, randomZ);
+
+        _fIdleTimer = Random.Range(0.3f, 3.0f);
     }
 
     /// <summary Nav의 목적지 설정 </summary>
@@ -221,12 +244,14 @@ public class Monster : ObjectBase
             //에이전트의 이동 방향
             Vector3 direction = _nav.desiredVelocity;
             //회전 각도(쿼터니언) 산출
-            Quaternion rot = Quaternion.LookRotation(direction);
-
-            //구면 선형보간 함수로 부드러운 회전 처리
-            transform.rotation = Quaternion.Slerp(transform.rotation,
-                                                  rot,
-                                                  Time.deltaTime * 10.0f);
+            if(direction != Vector3.zero)
+            {
+                Quaternion rot = Quaternion.LookRotation(direction);
+                //구면 선형보간 함수로 부드러운 회전 처리
+                transform.rotation = Quaternion.Slerp(transform.rotation,
+                                                      rot,
+                                                      Time.deltaTime * 10.0f);
+            }
         }
     }
 
@@ -273,11 +298,20 @@ public class Monster : ObjectBase
                     
                     break;
 
-                case ObjectState.ATK:
+                case ObjectState.MELEEATK:
 
-                    if(!m_bisAttack)
+                    if(!_isAttackWaiting)
                     {
                         StartCoroutine(Attack());
+                    }
+
+                    break;
+
+                case ObjectState.SKILLATK:
+
+                    if (!_isAttackWaiting)
+                    {
+                        StartCoroutine(SkillAttack());
                     }
 
                     break;
@@ -308,7 +342,7 @@ public class Monster : ObjectBase
 
 
     /// <summary>  탐지, 센서 범위 가시화 </summary>
-    private void OnDrawGizmos()
+    protected virtual void OnDrawGizmos()
     {
         //추격탐지
         Gizmos.color = Color.red;
@@ -336,7 +370,7 @@ public class Monster : ObjectBase
     }
 
     /// <summary> 데미지를 받았을 시 </summary>
-    public override void OnDamage(int _str)
+    public override void OnDamage(int _str, bool _isKnockback = false, Transform posTr = null)
     {
         //죽어있다면 데미지 이벤트 발생 x
         if (m_bisDead) return;
@@ -354,6 +388,15 @@ public class Monster : ObjectBase
             this.objState = ObjectState.DEAD;
         }
     }
+
+    /// <summary> 공격 후 매개변수 시간에 따라 공격이 가능한지에 대한 bool값 설정 </summary>
+    protected IEnumerator StartAttackCoolTime(float waitTime)
+    {
+        _isAttackWaiting = true;
+        yield return new WaitForSeconds(waitTime);
+        _isAttackWaiting = false;
+    }
+
 
     /// <summary>
     /// 몬스터가 사망했을 시 이벤트

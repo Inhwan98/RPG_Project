@@ -3,7 +3,8 @@
 public enum ObjectState
 {
     MOVE,
-    ATK,
+    MELEEATK,
+    SKILLATK,
     DEAD,
     IDLE,
     PATROL,

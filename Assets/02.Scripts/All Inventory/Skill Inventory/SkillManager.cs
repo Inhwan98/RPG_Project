@@ -340,7 +340,7 @@ public class SkillManager : MonoBehaviour
     }
 
 
-
+    /// <summary> 마나 차감후 스킬데미지양 플레이어에게 전달 </summary>
     public void UseSkill(SkillData _skilldata, ObjectBase _selfCtr, ref int _objectMP)
     {
         _objectMP -= _skilldata.GetSkillManaAmount(); //사용 Object에서 스킬 마나만큼 차감

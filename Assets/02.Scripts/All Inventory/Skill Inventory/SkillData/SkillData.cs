@@ -31,7 +31,7 @@ public class SkillData
 
 
     private Sprite m_iSprite;
-    private bool m_bInUse;
+    private bool m_bInAvailable;
     private int  m_nSkillDamage;
     private int _anim_Hash;
     
@@ -107,8 +107,9 @@ public class SkillData
     public Sprite GetSkill_Sprite() { return m_iSprite; }
 
     //스킬 사용 여부
-    public bool GetInUse() { return m_bInUse; }
-    public void SetInUse(bool _bInUse) { this.m_bInUse = _bInUse; }
+    public bool GetInAvailable() { return m_bInAvailable; }
+    
+    public void SetInAvailable(bool value) { this.m_bInAvailable = value; }
 
     //애니메이션 이름
     public string GetAnimName() { return m_sAnimParameterName; }

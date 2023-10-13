@@ -19,18 +19,19 @@ public class QuestSystem
 {
 
     private QuestData[] _questDatas;
+    private List<QuestData> _inProgressQuestList = new List<QuestData>();
     private List<QuestData> _possibleToProceedQuest = new List<QuestData>();
     private List<QuestData> _completeQuest = new List<QuestData>();
-
-    public List<QuestData> GetPossibleQuest() => _possibleToProceedQuest;
-    public QuestData[] GetQuestDataArray() => _questDatas;
 
     public QuestSystem(QuestData[] questDatas)
     {
         this._questDatas = questDatas;
     }
 
-   
+    public List<QuestData> GetPossibleQuest() => _possibleToProceedQuest;
+    public List<QuestData> GetInProgressQuestList() => _inProgressQuestList;
+    public QuestData[] GetQuestDataArray() => _questDatas;
+
     /// <summary>
     /// 플레이어의 레벨을 기준으로
     /// 가능한 퀘스트 목록을 업데이트한다.
@@ -44,6 +45,13 @@ public class QuestSystem
         {
             int conditionLevel = _questDatas[i].nConditionLevel;
             bool isCompleteQuest = _questDatas[i].bIsComplete;
+            bool isProgress = _questDatas[i].bIsProgress;
+
+            if (isProgress)
+            {
+                _inProgressQuestList.Add(_questDatas[i]);
+            }
+
             //플레이어 레벨과 퀘스트 조건 레벨 비교
             if (CompareToPlayerLevel(playerLevel, conditionLevel))
             {
@@ -73,6 +81,7 @@ public class QuestSystem
             //해당 퀘스트ID에서 다음 브렌치가 있다면 다음 퀘스트를 리턴
             if (quest.nQuestID == questData.nQuestID && quest.nBranch == questData.nBranch + 1)
             {
+                quest.bIsProgress = true;
                 return quest;
             }
         }
@@ -86,6 +95,7 @@ public class QuestSystem
     /// </summary>
     public void QuestCompleteProcess(QuestData questData)
     {
+        questData.bIsProgress = false;
         questData.bIsComplete = true;
 
         _possibleToProceedQuest.Remove(questData);
