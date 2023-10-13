@@ -67,6 +67,7 @@ public class PlayerController : Character
     public bool GetUseInven() => _isUseInven;
     public CameraController GetCameraCtr() => _cameraCtr;
     public List<QuestData> GetPlayerQuestList() => _currentQuestList;
+    public QuestSystem GetQuestSystem() => _questSystem;
 
     public void SetUseItemInven(bool value) { _isUseInven = value; }                                    // 인벤토리창이 켜져 있는가
     public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }                            // 스킬창이 켜져있는가
@@ -77,10 +78,14 @@ public class PlayerController : Character
     public void SetSkillMgr(SkillManager skillMgr) => _skillMgr = skillMgr;                             // 스킬 매니져
     public void SetCameraCtr(CameraController value) => _cameraCtr = value;                             // 카메라
 
-    public void AddPlayerQuest(QuestData questData) => _currentQuestList.Add(questData);
+    public void AddPlayerQuest(QuestData questData)
+    {
+        questData.bIsProgress = true;
+        _currentQuestList.Add(questData);
+    }
 
-    /// <summary> 플레이어 레벨에 비례해서 퀘스트 목록들 갱신 </summary>
-    private void UpdateQuest() => _gameMgr.UpdateQuestList(m_nLevel);
+        /// <summary> 플레이어 레벨에 비례해서 퀘스트 목록들 갱신 </summary>
+        private void UpdateQuest(int nLevel) => _gameMgr.UpdateQuestList(nLevel);
 
 
     protected override void Awake()
@@ -131,8 +136,8 @@ public class PlayerController : Character
     protected override void Start()
     {
         //_cam           = Camera.main;
-
-        UpdateQuest(); //퀘스트 정보 업데이트
+        UpdateQuest(m_nLevel); //플레이어 레벨 기준 퀘스트 정보 업데이트
+        _currentQuestList = _questSystem.GetInProgressQuestList(); //진행중인 퀘스트 받아오기
         CurrentQuestInit(_currentQuestList);
 
         PlayerUI_Init();
@@ -286,7 +291,7 @@ public class PlayerController : Character
         if (curSkill == null) yield break;
 
         //사용 가능 상태가 아니면
-        if (curSkill.GetInUse())
+        if (curSkill.GetInAvailable())
         {
             //빨간색 이미지가 깜빡거림
             _skillMgr.SkillUsedWarring(skill_Idx);
@@ -365,11 +370,23 @@ public class PlayerController : Character
     }
 
     /// <summary> 플레이어 대미지 발생 이벤트 </summary>
-    public override void OnDamage(int _str)
+    public override void OnDamage(int _str, bool _isKnockback = false, Transform posTr = null)
     {
         this.m_nCurHP -= _str;
 
         //if (m_fCurHP <= 0) this.objState = ObjectState.DEAD; //사망 없음
+
+        if(_isKnockback == true)
+        {
+            Vector3 pos = posTr.position;
+            pos.y = 0;
+
+            transform.LookAt(pos);
+
+            _rigid.AddForce(-_rigid.transform.forward * 2000.0f);
+            _rigid.AddForce(_rigid.transform.up * 2000.0f);
+
+        }
 
         if (m_nCurHP <= 0) m_nCurHP = 0;
         _playerUICtr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
@@ -460,7 +477,6 @@ public class PlayerController : Character
             m_nCurExp = _playerData.nCurExp;
             m_nMaxExp = _playerData.ntotalExp;
 
-            _currentQuestList = _playerData.currentQuestList;
             return;
         }
         else
@@ -514,6 +530,18 @@ public class PlayerController : Character
         m_nCurSTR = playerData.nSTR;
 
         m_nMaxExp = playerData.ntotalExp;
+    }
+
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (coll.gameObject.layer == LayerMask.NameToLayer("BossAttack"))
+        {
+            BossMonster monsterCtr = coll.gameObject?.GetComponentInParent<ObjectBase>() as BossMonster;
+            Debug.Assert(monsterCtr != null, "MonsterCtr is NULL");
+            int monsterDamage = monsterCtr.GetSkillDamage();
+
+            OnDamage(monsterDamage);
+        }
     }
 
     private void OnTriggerStay(Collider coll)

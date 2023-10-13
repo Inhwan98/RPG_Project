@@ -169,9 +169,8 @@ public class DungeonManager : MonoBehaviour
     {
         float randRotNum = Random.Range(0, 360.0f);
         Quaternion randRot = Quaternion.Euler(spwanTr.up * randRotNum);
-        //Vector3 randPos = randRot * (playerTr.forward * respawnDistance);
 
-        //플레이어 주변으로 respawnDistance 만큼 떨어짐. 각도는 랜덤
+        //생성 스테이지 주변으로 respawnDistance 만큼 떨어짐. 각도는 랜덤
         Vector3 randPos = spwanTr.rotation * randRot * (spwanTr.forward * _respawnDistance);
 
         return randPos;
@@ -184,6 +183,7 @@ public class DungeonManager : MonoBehaviour
         _dungeonUI.UpdateDungeonUI(stageDataArray[m_nStageIndex], _dungeonName);
     }
 
+    /// <summary> 특정구역에 플레이어가 들어왔다면 던전 활성화 </summary>
     private void OnTriggerEnter(Collider coll)
     {
         if(coll.gameObject.layer == LayerMask.NameToLayer("Player"))

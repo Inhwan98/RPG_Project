@@ -13,6 +13,9 @@ public class ResourcesData
 
     private GameObject[] _levelUPEffect; //레벨업 이펙트
 
+    private GameObject _questionMarkGo;
+    private GameObject _exclamationMarkGO;
+
     public ResourcesData(AllData allData)
     {
         Init(allData);
@@ -26,6 +29,9 @@ public class ResourcesData
         _questHeader = Resources.Load<TMP_Text>("Prefab/UI/Header");
         _questContext = Resources.Load<TMP_Text>("Prefab/UI/Context");
         _levelUPEffect = Resources.LoadAll<GameObject>("Prefab/LevelUP");
+
+        _questionMarkGo = Resources.Load<GameObject>("Prefab/Mark/QuestionMark");
+        _exclamationMarkGO = Resources.Load<GameObject>("Prefab/Mark/ExclamationMark");
     }
 
     public List<ItemData> GetItemList(int[] _nIDArray)
@@ -74,4 +80,7 @@ public class ResourcesData
     public TMP_Text GetQuestHeader() => _questHeader;
     public TMP_Text GetQuestConText() => _questContext;
     public GameObject[] GetLevelUPEffect() => _levelUPEffect;
+
+    public GameObject GetQuestionMarkGo() => _questionMarkGo;
+    public GameObject GetExclamationMarkGO() => _exclamationMarkGO;
 }

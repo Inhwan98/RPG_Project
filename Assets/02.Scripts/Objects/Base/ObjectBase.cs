@@ -81,7 +81,7 @@ public abstract class ObjectBase : MonoBehaviour
     protected abstract void Die();
 
     /// <summary> 대미지를 입었을 때 함수 </summary>
-    public abstract void OnDamage(int _str);
+    public abstract void OnDamage(int _str, bool _isKnockback = false, Transform posTr = null);
 
     /// <summary> 각 객체에 맞게 Data Load </summary>
     protected abstract void LoadData();

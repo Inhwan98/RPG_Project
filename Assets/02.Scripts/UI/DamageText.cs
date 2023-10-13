@@ -48,8 +48,8 @@ public class DamageText : MonoBehaviour
         {
             // easeOutBounce 함수를 사용하여 이동 보간값 계산
             float t = _currentTime / _moveDuration;
-            float easeValue = easeOutQuint(t); //점점 상승
-            float fadeAlphaValue = easeInCirc(t); //점점 투명하게
+            float easeValue = EaseLerp.easeOutQuint(t); //점점 상승
+            float fadeAlphaValue = EaseLerp.easeInCirc(t); //점점 투명하게
 
             // 시작 위치부터 목표 위치까지 보간하여 이동
             transform.localPosition = Vector3.Lerp(_startPos, _destPos, easeValue);
@@ -68,44 +68,4 @@ public class DamageText : MonoBehaviour
     {
         transform.LookAt(transform.position + _cam.transform.forward);
     }
-
-    // easeOutBounce 함수 (https://easings.net/ 참고)
-    public float easeOutBounce(float x)
-    {
-        const float n1 = 7.5625f;
-        const float d1 = 2.75f;
-
-        if (x < 1f / d1)
-        {
-            return n1 * x * x;
-        }
-        else if (x < 2f / d1)
-        {
-            x -= 1.5f / d1;
-            return n1 * x * x + 0.75f;
-        }
-        else if (x < 2.5f / d1)
-        {
-            x -= 2.25f / d1;
-            return n1 * x * x + 0.9375f;
-        }
-        else
-        {
-            x -= 2.625f / d1;
-            return n1 * x * x + 0.984375f;
-        }
-    }
-
-    /// <summary> 상승 효과 </summary>
-    public float easeOutQuint(float x)
-    {
-        return 1 - Mathf.Pow(1 - x, 5); 
-    }
-
-    /// <summary> 점점 투명하게 만들 함수 </summary>
-    public float easeInCirc(float x)
-    {
-        return 1 - Mathf.Sqrt(1 - Mathf.Pow(x, 2));
-    }
-
 }

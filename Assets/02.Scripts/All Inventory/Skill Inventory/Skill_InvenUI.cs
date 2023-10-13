@@ -241,7 +241,7 @@ public class Skill_InvenUI : InvenUIBase
     /// <summary> 스킬의 쿨타임을 시각적인 이미지, 텍스트로 나타낸다 </summary>
     public IEnumerator StartSkillCoolTime(int _idx, SkillData _curSkill)
     {
-        _curSkill.SetInUse(true); // 현재 스킬은 사용 중으로 bool 값 상태
+        _curSkill.SetInAvailable(true); // 현재 스킬 사용 불가능으로 
 
         Image coolTimeImage = _playerSlotUIList[_idx].GetCoolTimeImage();
         TMP_Text coolTimeText = _playerSlotUIList[_idx].GetCoolTimeText();
@@ -265,7 +265,7 @@ public class Skill_InvenUI : InvenUIBase
         //쿨타임이 끝나면 Fill 이미지와 CoolTime Text 비활성화
         //스킬 사용 가능 상태로 변환
         coolTimeImage.gameObject.SetActive(false);
-        _curSkill.SetInUse(false);
+        _curSkill.SetInAvailable(false); // 현재 스킬 사용 다시 가능으로
     }
 
 }

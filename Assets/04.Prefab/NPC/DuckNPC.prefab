@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &782875359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 782875360}
+  m_Layer: 9
+  m_Name: MarkTr
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &782875360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782875359}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 7.43, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 294447431853663962}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &682723053527843291
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +165,9 @@ GameObject:
   m_Component:
   - component: {fileID: 294447431853663962}
   - component: {fileID: 2109755696740020756}
-  m_Layer: 0
+  - component: {fileID: 1593756960}
+  - component: {fileID: 1593756961}
+  m_Layer: 9
   m_Name: DuckNPC
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -155,6 +187,7 @@ Transform:
   m_Children:
   - {fileID: 8693850758287865412}
   - {fileID: 786604829597872941}
+  - {fileID: 782875360}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 14.37, z: 0}
@@ -174,6 +207,33 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 1
+--- !u!65 &1593756960
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107259669557656672}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.79, y: 1, z: 18.12}
+  m_Center: {x: -7.73, y: 0, z: -1.18}
+--- !u!114 &1593756961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107259669557656672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9e981c269027f14f9dad1f137dd00b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _nID: 1
+  _markTr: {fileID: 782875360}
 --- !u!1 &1669217158804022568
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,9 +351,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3094490047018089532}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 294447431853663962}
   m_RootOrder: 1
@@ -361,7 +421,7 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 5670725314328492119}
   m_AABB:
-    m_Center: {x: 0.27209872, y: 1.6935616, z: 0.008954048}
+    m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 1.9689415, y: 3.2874956, z: 2.6891992}
   m_DirtyAABB: 0
 --- !u!1 &3096595899436220892
