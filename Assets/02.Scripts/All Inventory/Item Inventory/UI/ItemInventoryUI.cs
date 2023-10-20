@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+using TMPro;
+//using System;
 
 public class ItemInventoryUI : InvenUIBase
 {
@@ -20,6 +21,9 @@ public class ItemInventoryUI : InvenUIBase
     [Space(16)]
     [SerializeField] private bool _mouseReversed = false; // 마우스 클릭 반전 여부
 
+    [Header("Ruby(Money)")]
+    [SerializeField] private TMP_Text _rubyAmountText;
+
     [Header("Connected Objects")]
     [SerializeField] private RectTransform _contentAreaRT;       // 슬롯들이 위치할 영역
     [SerializeField] private GameObject _slotUiPrefab;           // 슬롯의 원본 프리팹
@@ -31,16 +35,17 @@ public class ItemInventoryUI : InvenUIBase
     /// <summary> 연결된 인벤토리 </summary>
     private ItemInventoryManager _itemInventory;
 
+    /// <summary> 루비의 양 업데이트 </summary>
+    public void UpdateRubyAmount(int nRubyAmount) => _rubyAmountText.text = nRubyAmount.ToString();
 
     protected override void Awake()
     {
         InitSlots();
         _sortButton.onClick.AddListener(() => _itemInventory.SortAll());
-        _exitButton.onClick.AddListener(() => _itemInventory.SetInventoryActive(false));
-
+        _exitButton.onClick.AddListener(() => _itemInventory.SetWindowActive(false));
+        
         base.Awake();
     }
-
 
     /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
     protected override void UpdateTooltipUI(SlotUIBase slot)
@@ -83,7 +88,6 @@ public class ItemInventoryUI : InvenUIBase
         }
     }
 
-
     protected override void EndDrag()
     {
         ItemInvenSlotUI endDragSlot = RaycastAndGetFirstComponent<ItemInvenSlotUI>();
@@ -94,7 +98,6 @@ public class ItemInventoryUI : InvenUIBase
             // 1) 마우스 클릭 떼는 순간 좌측 Ctrl 또는 Shift 키 유지
             // 2) begin : 셀 수 있는 아이템 / end : 비어있는 슬롯
             // 3) begin 아이템의 수량 > 1
-
             bool isSepartable =
                 (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) &&
                 (_itemInventory.IsCountableItem(_beginDragSlot.GetIndex()) && !_itemInventory.HasItem(endDragSlot.GetIndex()));
@@ -203,6 +206,7 @@ public class ItemInventoryUI : InvenUIBase
         from.SwapOnMoveIcon(to);
         _itemInventory.Swap(from.GetIndex(), to.GetIndex());
     }
+
 
 
     /// <summary>

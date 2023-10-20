@@ -3,15 +3,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum Coordinate
-{
 
-}
 
 public class LodingSceneController : MonoBehaviour
 {
     static string nextScene;
-    Coordinate coordinate;
+    static int nextSceneindex;
 
     [SerializeField]
     Image progressBar;
@@ -19,6 +16,12 @@ public class LodingSceneController : MonoBehaviour
     public static void LoadScene(string sceneName)
     {
         nextScene = sceneName;
+        SceneManager.LoadScene("Loading");
+    }
+
+    public static void LoadScene(int sceneindex)
+    {
+        nextSceneindex = sceneindex;
         SceneManager.LoadScene("Loading");
     }
 
@@ -32,7 +35,18 @@ public class LodingSceneController : MonoBehaviour
     IEnumerator LoadSceneProcess()
     {
         Resources.UnloadUnusedAssets();
-        AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
+
+        AsyncOperation op;
+
+        if (nextScene == null)
+        {
+            op = SceneManager.LoadSceneAsync(nextSceneindex);
+        }
+        else
+        {
+            op = SceneManager.LoadSceneAsync(nextScene);
+        }
+       
 
         op.allowSceneActivation = false; // 씬 로딩이 끝나면 자동으로 씬을 불러올 것인가?
 

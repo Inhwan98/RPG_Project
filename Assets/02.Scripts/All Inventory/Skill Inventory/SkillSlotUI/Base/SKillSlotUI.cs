@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class SKillSlotUI : SlotUIBase
 {
-    private Skill_InvenUI _skInvenUI;
+    //private Skill_InvenUI _skInvenUI;
 
     protected override void InitComponents()
     {
-        _skInvenUI = GetComponentInParent<Skill_InvenUI>();
+       // _skInvenUI = GetComponentInParent<Skill_InvenUI>();
         base.InitComponents();
     }
 

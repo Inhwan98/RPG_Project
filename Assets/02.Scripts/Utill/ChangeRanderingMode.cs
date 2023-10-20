@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public static class ChangeRanderingMode
 {
@@ -27,5 +28,53 @@ public static class ChangeRanderingMode
         mat.EnableKeyword("_ALPHABLEND_ON");
         mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
         mat.renderQueue = 3000;
+    }
+
+    /// <summary> 활성화, 비활성화 여부에 따른 현재 오브젝트의 불투명도 </summary>
+    public static IEnumerator ActiveAlphaValue(Material mat, bool value)
+    {
+        Fade(ref mat); //쉐이더 랜더링모드를 Fade로 변경
+
+        Color color = mat.color;
+
+        float time = 0.0f;
+        float t = 0.0f;
+        float destTime = 2.0f; //2초에 걸쳐서
+
+        if (value == true)
+        {
+            color.a = 0;
+            while (color.a != 1)
+            {
+                if (time < destTime)
+                {
+                    time += Time.deltaTime;
+                    t = time / destTime;
+                }
+
+                color.a = Mathf.Lerp(0, 1, t);
+
+                mat.color = color;
+                yield return null;
+            }
+            Opaque(ref mat);
+        }
+        else
+        {
+            color.a = 1;
+            while (color.a != 0)
+            {
+                if (time < destTime)
+                {
+                    time += Time.deltaTime;
+                    t = time / destTime;
+                }
+
+                color.a = Mathf.Lerp(1, 0, t);
+
+                mat.color = color;
+                yield return null;
+            }
+        }
     }
 }

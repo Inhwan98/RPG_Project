@@ -25,7 +25,7 @@ public class BossAnimEvent : MonoBehaviour
 
         var instance = Instantiate(Effects[EffectNumber].Effect, Effects[EffectNumber].StartPositionRotation.position, Effects[EffectNumber].StartPositionRotation.rotation);
 
-        var projectileCtr = instance.GetComponent<Projectile>();
+        var projectileCtr = instance.GetComponent<ProjectileController>();
         projectileCtr.Init(Effects[EffectNumber].StartPositionRotation.position, PlayerController.instance.transform.position + (Vector3.up));
 
         if (Effects[EffectNumber].UseLocalPosition)

@@ -13,7 +13,7 @@ public class DungeonUI : MonoBehaviour
 
 
 
-    public void UpdateDungeonUI(StageData stagedata, string dungeonName)
+    public void UpdateDungeonUI(DungeonStage stagedata, string dungeonName)
     {
         _dungeonName.text = dungeonName;
 

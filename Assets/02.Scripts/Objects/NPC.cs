@@ -2,14 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class NPCData
+{
+    public int _nNPCID;
+    public string _sNPCName;
+    public string _sNPCJob;
+    public int[] _itemIDArray;
+}
+
+public enum NPCState
+{
+    일반,
+    장비상인,
+    잡화상인
+}
 
 public class NPC : MonoBehaviour
 {
     [SerializeField]
     private int _nID;
+    private string _sNPCName;
+    private string _sNPCJob;
+
 
     [SerializeField]
     private Transform _markTr;
+
+    protected ResourcesData _resourcesData;
+    protected NPCData _npcData;
 
     private GameObject _questionMarkGo;
     private GameObject _exclamationMarkGO;
@@ -18,25 +39,59 @@ public class NPC : MonoBehaviour
     private List<QuestData> _InProgressQuestList;
 
     private QuestSystem _questSystem;
-    private ResourcesData _resourcesData;
+    
+    private int _unsolvedQuestId;
+    private int _nCompleteIndex;
+    QuestData _questData;
 
+    protected TextMesh _npcNameTextMesh;
 
+    private bool _isPossibleQuest;
+    private bool _isCompleteQuest;
+    private bool _isInProgressQuest;
 
-    public int GetID()
+    public int GetID() => _nID;
+    public int SetID(int nID) => this._nID = nID;
+
+    public bool GetIsPossibleQuest() => _isPossibleQuest;
+    public bool GetIsCompleteQuest() => _isCompleteQuest;
+    public bool GetIsInProgressQuest() => _isInProgressQuest;
+
+    public QuestData GetQuestData() => _questData;
+    public int GetCompleteQuestIndex() => _nCompleteIndex;
+    public int GetUnSolvedQuestID() => _unsolvedQuestId;
+
+    
+
+    private void Awake()
     {
-        return _nID;
+        LoadData();
+        NPCNameTextInit();
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         MarkInit();
-        StartCoroutine(CheckQuestList());
+        CheckQuest();
+
+        PlayerController.OnSettingNPCQuest += this.CheckQuest;
+    }
+
+    protected virtual void NPCNameTextInit()
+    {
+        _npcNameTextMesh = Resources.Load<TextMesh>("Prefab/UI/NPCNameText");
+        
+        _npcNameTextMesh = Instantiate(_npcNameTextMesh, _markTr.position, Quaternion.identity);
+        _npcNameTextMesh.transform.localScale = (Vector3.one * 0.1f);
+        _npcNameTextMesh.transform.parent = this.transform;
+        _npcNameTextMesh.text = $"{_sNPCName}";
+        _npcNameTextMesh.transform.GetChild(0).GetComponent<TextMesh>().text = $"[{_sNPCJob}]";
     }
 
     /// <summary> 
     /// 퀘스트에 대한 감정마크를 미리 생성하여 활성화, 비활성화 방법으로 사용
     /// </summary>
-    public void MarkInit()
+    protected void MarkInit()
     {
         _questSystem = GameManager.instance.GetQuestSystem();
         _resourcesData = GameManager.instance.GetResourcesData();
@@ -54,50 +109,79 @@ public class NPC : MonoBehaviour
         _exclamationMarkGO = Instantiate(_exclamationMarkGO, this.transform);
 
         var markMoveCtr = _questionMarkGo.GetComponent<MarkMovement>();
-        markMoveCtr.SetYOffset(_markTr.position);
+        markMoveCtr.SetYOffset(_markTr.position + Vector3.up);
         markMoveCtr = _exclamationMarkGO.GetComponent<MarkMovement>();
-        markMoveCtr.SetYOffset(_markTr.position);
+        markMoveCtr.SetYOffset(_markTr.position + Vector3.up);
     }
 
-    IEnumerator CheckQuestList()
+    public void CheckQuest()
     {
-        while (true)
+        this._possibleQuestList = _questSystem.GetPossibleQuest();
+        this._InProgressQuestList = PlayerController.instance.GetPlayerQuestList();
+
+        if (_InProgressQuestList.Count == 0)
         {
-            yield return null;
+            _isCompleteQuest = false;
+            _isInProgressQuest = false;
+            _questionMarkGo.SetActive(false);
+        }
+        if (_possibleQuestList.Count == 0)
+        {
+            _isPossibleQuest = false;
+            _exclamationMarkGO.SetActive(false);
+        }
 
-            _possibleQuestList = _questSystem.GetPossibleQuest();
-            _InProgressQuestList = PlayerController.instance.GetPlayerQuestList();
 
-            if(_InProgressQuestList.Count == 0) _questionMarkGo.SetActive(false);
-            if (_possibleQuestList.Count == 0) _exclamationMarkGO.SetActive(false);
-
-            //진행중인 퀘스트중, 퀘스트의 목표ID가 본인ID와 같다면...
-            foreach (var a in _InProgressQuestList)
+        foreach (var poQuest in _possibleQuestList)
+        {
+            for (int i = 0; i < _InProgressQuestList.Count; i++)
             {
-                if (this._nID == a.nDestID)
+                QuestData inProgressQuest = _InProgressQuestList[i];
+
+                if (this._nID == inProgressQuest.nDestID)
                 {
+                    _isCompleteQuest = true;
                     _questionMarkGo.SetActive(true);
                     _exclamationMarkGO.SetActive(false);
-                    
+
+                    _questData = inProgressQuest;
+                    _nCompleteIndex = i;
                     break;
                 }
             }
 
-            // 완성 퀘스트가 있다면 "!" 는 활성화하지 않고 "?"만 활성화한다.
-            if (_questionMarkGo.activeSelf) continue;
-
-            // 가능한 퀘스트들 중 하나의 ID가 본인 ID와 같다면
-            foreach (var a in _possibleQuestList)
+            if (this._nID == poQuest.nID)
             {
-                if (this._nID == a.nID)
+                if (!_InProgressQuestList.Contains(poQuest))
                 {
+                    _isPossibleQuest = true;
                     _exclamationMarkGO.SetActive(true);
-                    break;
+                    _questData = poQuest;
                 }
+                else
+                {
+                    _isInProgressQuest = true; //진행중인 퀘스트인가
+                    _exclamationMarkGO.SetActive(true);
+                    _unsolvedQuestId = poQuest.nQuestID;
+                }
+                break;
             }
 
         }
     }
 
+    protected virtual void LoadData()
+    {
+        //NPC의 ID는 1부터 시작.
+        _npcData = SaveSys.LoadAllData().NPCDB[_nID];
+        _nID = _npcData._nNPCID;
+        _sNPCName = _npcData._sNPCName;
+        _sNPCJob = _npcData._sNPCJob;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerController.OnSettingNPCQuest -= this.CheckQuest;
+    }
 }
 

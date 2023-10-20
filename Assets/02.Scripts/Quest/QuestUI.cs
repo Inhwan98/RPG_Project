@@ -32,6 +32,15 @@ public class QuestUI : MonoBehaviour
         _questSlotIDArray = new int[n_maxManageableQuest];
     }
 
+
+
+
+    private void Start()
+    {
+        _gameMgr = GameManager.instance;
+        _QuestPanel.SetActive(false);
+    }
+
     /// <summary> GameManager Awake()에서 초기화 </summary>
     public void QuestUI_Init(ResourcesData resourcesData)
     {
@@ -53,20 +62,20 @@ public class QuestUI : MonoBehaviour
         }
     }
 
-
-    private void Start()
-    {
-        _gameMgr = GameManager.instance;
-
-    }
-
     /// <summary>
     /// 플레이어가 승인한 퀘스트들을 시각적으로 좌측에 표시할 목록 Update
     /// </summary>
     /// <param name="currentQuestList"> Player Controller이 지닌 현재 퀘스트 리스트 이다. </param>
     public void UpdateQuestUI(List<QuestData> currentQuestList)
     {
-        if (currentQuestList == null) return;
+        //진행 퀘스트가 없다면 비활성화
+        if (currentQuestList == null)
+        {
+            _QuestPanel.SetActive(false);
+            return;
+        }
+
+        _QuestPanel.SetActive(true);
 
         int size = currentQuestList.Count;
 

@@ -11,8 +11,11 @@ public abstract class Character : ObjectBase
     [SerializeField] protected int m_nMaxExp;
     [SerializeField] protected int m_nCurExp;
 
-    public int GetMaxExp() => m_nMaxExp;
-    public int GetCurExp() => m_nCurExp;
+    protected string m_sClassName = "워리어";
+
+    public int GetMaxExp()       => m_nMaxExp;
+    public int GetCurExp()       => m_nCurExp;
+    public string GetClassName() => m_sClassName;
 
     /// <summary> 모든 스킬 덮어 씌우기 </summary>
     public void SetPlayerSkill(SkillData[] skill_datas) => _skill_Datas = skill_datas;
@@ -45,6 +48,8 @@ public abstract class Character : ObjectBase
 
         base.Start(); //_resourcesData 할당
         _levelUPEffect = _resourcesData.GetLevelUPEffect();
+
+        ChangeDamageTextColor(Color.red);
     }
 
 

@@ -32,6 +32,7 @@ public abstract class InvenUIBase : MonoBehaviour
 
     protected SlotUIBase _pointerOverSlot; // 현재 포인터가 위치한 곳의 슬롯
 
+    protected int _curSiblingIndex;
 
     protected virtual void Awake()
     {
@@ -64,12 +65,13 @@ public abstract class InvenUIBase : MonoBehaviour
 
         //Graphic RayCaster
         _ped = new PointerEventData(EventSystem.current);
+    
         _rrList = new List<RaycastResult>(10);
 
     }
 
     /// <summary> 아이템 정보 툴팁 보여주거나 감추기 </summary>
-    private void ShowOrHideItemToolTip()
+    protected virtual void ShowOrHideItemToolTip()
     {
         // 마우스가 유효한 아이템 아이콘 위에 올라와 있다면 툴팁 보여주기
         bool isValid =                                                 //09.19
@@ -90,11 +92,13 @@ public abstract class InvenUIBase : MonoBehaviour
         // Left Click : begin Drag
         if (Input.GetMouseButtonDown(0))
         {
+            
             _beginDragSlot = RaycastAndGetFirstComponent<SlotUIBase>();
 
             //아이템을 갖고 있는 슬롯만 해당
             if (_beginDragSlot != null && _beginDragSlot.GetHasItem() && _beginDragSlot.GetIsAccessible())
             {
+                LastSiblingUI();
                 //위치 기억, 참조 등록
                 _beginDragIconTransform = _beginDragSlot.GetIconRect().transform;
                 _beginDragIconPoint = _beginDragIconTransform.position;
@@ -113,7 +117,6 @@ public abstract class InvenUIBase : MonoBehaviour
 
             }
         }
-        
     }
 
     /// <summary>  드래그 하는 도중 /// </summary>
@@ -137,6 +140,7 @@ public abstract class InvenUIBase : MonoBehaviour
             // End Drag
             if (_beginDragSlot != null)
             {
+                ComeBackSiblingUI();
                 // 위치 복원
                 _beginDragIconTransform.position = _beginDragIconPoint;
 
@@ -199,6 +203,20 @@ public abstract class InvenUIBase : MonoBehaviour
         }
 
     }
+
+    /// <summary> 사용 중인 UI를 제일 먼저 보이게 설정 </summary>
+    protected void LastSiblingUI()
+    {
+        _curSiblingIndex = transform.GetSiblingIndex();
+        transform.SetAsLastSibling();
+    }
+
+    /// <summary> 사용이 끝나면 원래 보이는 순서로 컴백 </summary>
+    protected void ComeBackSiblingUI()
+    {
+        transform.SetSiblingIndex(_curSiblingIndex);
+    }
+
 
     /// <summary> 접근 가능한 슬롯 범위 설정 </summary>
     public virtual void SetAccessibleSlotRange(int accessibleSlotCount)

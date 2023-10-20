@@ -6,14 +6,10 @@ using UnityEngine;
 public abstract class Item
 {
     [Newtonsoft.Json.JsonProperty]
-    protected string Type;
-
-    [Newtonsoft.Json.JsonProperty]
     private ItemData m_data;
 
     public Item(ItemData _data)
     {
-        Type = "Item";
         this.m_data = _data;
     }
 

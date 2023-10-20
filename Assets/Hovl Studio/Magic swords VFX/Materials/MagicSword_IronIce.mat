@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: MagicSword_IronIce
+  m_Shader: {fileID: 4800000, guid: 3d7fdafe4d8ab3a48839262d4a230867, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Albedo:
+        m_Texture: {fileID: 2800000, guid: 430ca6a749bf93b43bcb741ae6191db1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AmbientOcclusion:
+        m_Texture: {fileID: 2800000, guid: f362488482812bf4db7cdbdadfa24bbb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Emission:
+        m_Texture: {fileID: 2800000, guid: dc6f0d63157418d4bafa47460840901a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask:
+        m_Texture: {fileID: 2800000, guid: 11891173a58b9fd4b8694f6b103baab7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Metallic:
+        m_Texture: {fileID: 2800000, guid: 9761c4a4302f9324d94fbcc3277e20b8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Noiseflow:
+        m_Texture: {fileID: 2800000, guid: 3f1d4fadb37c37e4488860109d7dce4b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal:
+        m_Texture: {fileID: 2800000, guid: 4684953ed14054a439da24d569fd4b3c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Desaturation: 0
+    - _Emissionmult: 6
+    - _Emissionpower: 7
+    - _Fresnelpower: 0.5
+    - _ParallaxHeight: 0.1
+    - __dirty: 1
+    m_Colors:
+    - _FlowSpeedXYPowerZHeightW: {r: -0.2, g: -0.1, b: 0.3, a: 0.1}
+    - _Fresnelcolor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
