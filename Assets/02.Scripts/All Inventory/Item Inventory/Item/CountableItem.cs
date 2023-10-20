@@ -33,7 +33,6 @@ public abstract class CountableItem : Item
 
     public CountableItem(CountableItemData data, int amount = 1) : base(data)
     {
-        Type = "CountableItem";
         m_countableData = data;
         SetAmount(amount);
     }

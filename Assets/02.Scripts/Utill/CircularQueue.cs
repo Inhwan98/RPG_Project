@@ -39,7 +39,7 @@ namespace InHwan.CircularQueue
             else
             {
                 front = ++front % maxQueueSize;
-                //if (IsEmpty()) front = 0;
+                if (IsEmpty()) front = 0;
             }
             return true;
         }

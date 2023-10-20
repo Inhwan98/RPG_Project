@@ -12,6 +12,9 @@ public abstract class ItemData
     private string _sName; //아이템 이름
 
     [Newtonsoft.Json.JsonProperty]
+    private int _nPrice; //아이템 가격
+
+    [Newtonsoft.Json.JsonProperty]
     private int _nUsedLevel; //제한 레벨
 
     [Multiline]
@@ -21,14 +24,28 @@ public abstract class ItemData
     [Newtonsoft.Json.JsonProperty]
     private string _sIconPath;
 
+
     private Sprite _iconSprite; //아이템 아이콘
-    //[SerializeField] private GameObject _dropItemPrefab; //바닥에 떨어질 때 생성할 프리팹
+    //private GameObject _dropItemPrefab; //착용할 프리팹
+
+    private int _returnPrice;
 
     public int GetID() { return _nId; }
+    public int GetPrice() { return _nPrice; }
     public int GetUsedLevel() { return _nUsedLevel; }
     public string GetName() { return _sName; }
     public string GetToolTip() { return _sTooltip; }
     public Sprite GetIconSprite() { return _iconSprite; }
+
+    /// <summary>
+    /// 되팔기 가격은 원래 가격의 70% 이다.
+    /// </summary>
+    public int GetReturnPrice()
+    {
+        _returnPrice = Mathf.RoundToInt(_nPrice * 0.7f);  // 가장 가까운 정수로 반올림하여 int로 변환
+
+        return _returnPrice;
+    }
 
     /// <summary> _sIconPath에 대한 Resources Load </summary>
     public void SetIcon()

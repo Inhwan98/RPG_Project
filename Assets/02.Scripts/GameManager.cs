@@ -26,8 +26,12 @@ public class GameManager : MonoBehaviour
     private DialogUI _dialogUICtr;
     private QuestUI _questUICtr;
 
+    #region Inven Manager
     private SkillManager _skillMgr;
     private ItemInventoryManager _itemInvenMgr;
+    private MerChantInventoryManager _merChantInvenMgr;
+    private PlayerUIManager _playerUIMgr;
+    #endregion
 
     private AllData _allData;
 
@@ -38,6 +42,7 @@ public class GameManager : MonoBehaviour
     public DialogSystem GetDialogSystem() => _dialogSystem;
     public QuestSystem GetQuestSystem() => _questSystem;
     public ResourcesData GetResourcesData() => _resourcesData;
+    public MerChantInventoryManager GetMerChantInvenMgr() => _merChantInvenMgr;
     public AllData GetAllData() => _allData;
 
     public void UpdateQuestUI(List<QuestData> playerQuestList) => _questUICtr.UpdateQuestUI(playerQuestList);
@@ -65,32 +70,40 @@ public class GameManager : MonoBehaviour
         _dialogSystem = new DialogSystem(_allData.DialogDB);
         _questSystem = new QuestSystem(_allData.QuestDB);
 
+        _questUICtr.QuestUI_Init(_resourcesData);
+
         _skillMgr = GetComponent<SkillManager>();
         _itemInvenMgr = GetComponent<ItemInventoryManager>();
+        _merChantInvenMgr = GetComponent<MerChantInventoryManager>();
+        _playerUIMgr = GetComponent<PlayerUIManager>();
 
-        _questUICtr.QuestUI_Init(_resourcesData);
+        _playerUIMgr.SetItemInvenMgr(_itemInvenMgr);
+        _playerUIMgr.SetPlayerCtr(_playerCtr);
+
+        _merChantInvenMgr.SetPlayerCtr(_playerCtr);
+        _merChantInvenMgr.SetItemInvenMgr(_itemInvenMgr);
 
         _skillMgr.SetPlayerCtr(_playerCtr);
         _skillMgr.Init_Skills(_allData.SkillDB, _allData.PlayerSkillDB); //스킬 세팅
         _itemInvenMgr.SetPlayerCtr(_playerCtr);
+        _itemInvenMgr.SetPlayerUIMgr(_playerUIMgr);
 
         //플레이어에 포함되어 있는 이펙트 스크립트 참조 후, 데이터 할당
         var effectCtr = _playerCtr.gameObject.GetComponent<AnimationEventEffects>();
         effectCtr.SetEffectData(_allData.SkillEffectDB);
 
+        _playerCtr.SetQuestSystem(_questSystem);
         _playerCtr.SetGameManager(this);
         _playerCtr.SetItemInvenManager(_itemInvenMgr);
         _playerCtr.SetSkillMgr(_skillMgr);
-        _playerCtr.SetQuestSystem(_questSystem);
-
+        _playerCtr.SetMerChantMgr(_merChantInvenMgr);
+        _playerCtr.SetPlayerUIMgr(_playerUIMgr);
     }
 
 
     void Start()
     {
         InvisibleCursor();
-
-        //StartCoroutine(UpdateMonster());
     }
 
     #region Cursor Controll
@@ -105,17 +118,6 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
     }
     #endregion
-
-
-
-    //몬스터의 생성
-    public void AddCurrentMonsters(int nMonsterID)
-    {
-         
-    }
-
-
-
 
     //몬스터를 잡았을 때
     public void MonsterDead(int nMonsterID)
@@ -145,45 +147,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
- 
-
-    public void PlayerDie()
-    {
-        m_bisPlayerDie = true;
-        Debug.Log("다이");
-    }
-
-    //9.24 생성중
-    public IEnumerator CheckQuest(QuestData questData)
-    {
-        QuestObjectives questObjectives = (QuestObjectives)questData.eObjectives;
-
-
-        switch (questObjectives)
-        {
-            case QuestObjectives.CONVERSATION:
-                break;
-            case QuestObjectives.HUNT:
-                
-                int monindex = questData.nDestID - 100; // monster의 ID는 100대 부터 시작.
-
-                //퀘스트의 목표 개수와 해당ID 몬스터를 잡은 카운트가 다르다면 코루틴 계속 반복
-                //questData.nCurCnt는 몬스터 사망시
-                while (questData.nGoalCnt > questData.nCurCnt)
-                {
-
-
-
-                    yield return null;
-                }
-                break;
-            case QuestObjectives.SKILL:
-                break;
-        }
-
-        yield return null;
-    }
-
+    public void PlayerDie() => m_bisPlayerDie = true;
+   
 
     /// <summary>
     /// NPC의 불평을 듣게 될 것이다.
@@ -252,9 +217,10 @@ public class GameManager : MonoBehaviour
         if (nextQuest == null)
         {
             _playerCtr.SetEXP(currentQuestData.nRewardEXP); //경험치 전달
+            _playerCtr.AddMoney(currentQuestData.nRewardGold); //돈 전달
 
             //아이템의 개수만큼 아이템과 수량 전달
-            for(int i = 0; i < currentQuestData.nRewardItem.Length; i++)
+            for (int i = 0; i < currentQuestData.nRewardItem.Length; i++)
             {
                 int nID = currentQuestData.nRewardItem[i];
                 int nAmount = currentQuestData.nItemAmount[i];
@@ -263,7 +229,7 @@ public class GameManager : MonoBehaviour
 
             UpdateQuestUI(_playerQuestList);
 
-           _playerQuestList.Remove(currentQuestData);
+            _playerQuestList.Remove(currentQuestData);
         }
         else
         {
@@ -273,16 +239,19 @@ public class GameManager : MonoBehaviour
 
             UpdateQuestUI(_playerQuestList);
         }
+        _playerCtr.UpdateNPCQuest();
     }
 
 
     /// <summary> 몬스터의 아이템을 Inventory로 전달 </summary>
-    public void AddInven(Dictionary<ItemData, int> _itemDic)
+    public void AddInven(ItemData itemData, int amount = 1)
     {
-        foreach (var itemDic in _itemDic)
-        {
-            _itemInvenMgr.AddItem(itemDic.Key, itemDic.Value);
-        }
+        _itemInvenMgr.AddItem(itemData, amount);
+    }
+
+    public void RemoveInvenItem(int index)
+    {
+        _itemInvenMgr.Remove(index);
     }
 
 

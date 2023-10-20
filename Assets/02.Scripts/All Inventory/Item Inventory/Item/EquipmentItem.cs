@@ -12,7 +12,6 @@ public abstract class EquipmentItem : Item
     [Newtonsoft.Json.JsonProperty]
     private EquipmentItemData equipmentData;
 
-
     public void SetEequipmentData(EquipmentItemData value) => equipmentData = value;
     public EquipmentItemData GetEequipmentData() => equipmentData;
 
@@ -30,8 +29,6 @@ public abstract class EquipmentItem : Item
     public EquipmentItem(EquipmentItemData data) : base(data)
     {
         if (data == null) return;
-
-        Type = "EquipmentItem";
         equipmentData = data;
 
         _durability = data.GetMaxDurability();

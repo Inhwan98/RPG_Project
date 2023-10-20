@@ -7,6 +7,7 @@ public class ResourcesData
 {
     private ItemData[] _portionDatas; //포션데이터
     private ItemData[] _aromorDatas;  //방어구데이터
+    private ItemData[] _weaponDatas;  //무기데이터
 
     private TMP_Text _questHeader;  //퀘스트의 제목
     private TMP_Text _questContext; //퀘스트의 내용
@@ -15,6 +16,10 @@ public class ResourcesData
 
     private GameObject _questionMarkGo;
     private GameObject _exclamationMarkGO;
+
+    private GameObject _villiagePortal;
+
+    private GameObject _npcConversationKeyGo;
 
     public ResourcesData(AllData allData)
     {
@@ -25,6 +30,7 @@ public class ResourcesData
     {
         _portionDatas = allData.PortionItemDB;
         _aromorDatas = allData.ArmorItemDB;
+        _weaponDatas = allData.WeaponItemDB;
 
         _questHeader = Resources.Load<TMP_Text>("Prefab/UI/Header");
         _questContext = Resources.Load<TMP_Text>("Prefab/UI/Context");
@@ -32,6 +38,10 @@ public class ResourcesData
 
         _questionMarkGo = Resources.Load<GameObject>("Prefab/Mark/QuestionMark");
         _exclamationMarkGO = Resources.Load<GameObject>("Prefab/Mark/ExclamationMark");
+
+        _villiagePortal = Resources.Load<GameObject>("Prefab/SceneMove/Portal");
+
+        _npcConversationKeyGo = Resources.Load<GameObject>("Prefab/UI/ConversationKey");
     }
 
     public List<ItemData> GetItemList(int[] _nIDArray)
@@ -51,6 +61,11 @@ public class ResourcesData
             {
                 index = nID - 2000;
                 itemDatas.Add(_aromorDatas[index]);
+            }
+            else if(nID >= 3000 && nID < 4000)
+            {
+                index = nID - 3000;
+                itemDatas.Add(_weaponDatas[index]);
             }
         }
 
@@ -83,4 +98,7 @@ public class ResourcesData
 
     public GameObject GetQuestionMarkGo() => _questionMarkGo;
     public GameObject GetExclamationMarkGO() => _exclamationMarkGO;
+    public GameObject GetVilliagePortal() => _villiagePortal;
+
+    public GameObject GetConversationKey() => _npcConversationKeyGo;
 }

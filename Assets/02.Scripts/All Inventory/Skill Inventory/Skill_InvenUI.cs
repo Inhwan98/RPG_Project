@@ -66,7 +66,7 @@ public class Skill_InvenUI : InvenUIBase
     {
         _playerSkillGo.TryGetComponent(out _playerGr);
         if (_playerGr == null)
-            _playerSkillGo.AddComponent<GraphicRaycaster>();
+            _playerGr = _playerSkillGo.AddComponent<GraphicRaycaster>();
         base.Init();
     }
 
@@ -91,10 +91,6 @@ public class Skill_InvenUI : InvenUIBase
     /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
     protected override void UpdateTooltipUI(SlotUIBase slot)
     {
-        //09.19
-        //if (!slot.GetIsAccessible() || !slot.GetHasItem())
-        //    return;
-
         if (!slot.GetHasItem())
             return;
 

@@ -20,10 +20,7 @@ public class Monster : ObjectBase
     [SerializeField] private float m_fTargetRadius = 1.5f;
     [SerializeField] private float m_fTargetRange = 0.5f;
 
-    [Header("Damage UI")]
-    [SerializeField] private Transform _damageTr;
-    private GameObject _damageTextObj;
-    
+
     [SerializeField] protected ObjectState objState = ObjectState.NONE; // 상태에 따른 액션
 
     // 공격 지연 관련
@@ -47,6 +44,7 @@ public class Monster : ObjectBase
 
     protected string m_sName; //Data Load
     protected int m_nDromExp; //Data Load
+    protected int m_nDropMoney; //Data Load
     protected int[] m_nDropItemArray; //Data Load
 
     protected int m_nPortionDrop_MinAmount;
@@ -72,11 +70,11 @@ public class Monster : ObjectBase
         _nav = GetComponent<NavMeshAgent>();
         _mat = GetComponentInChildren<SkinnedMeshRenderer>().material;
 
-        _damageTextObj = Resources.Load<GameObject>("Prefab/DamageText");
-
         //어색한 자동회전은 꺼준다.
         _nav.updateRotation = false;
+
     }
+
 
     protected virtual void OnEnable()
     {
@@ -97,12 +95,9 @@ public class Monster : ObjectBase
         _playerTr = _playerCtr.transform;
         //_destTr = _playerTr;
 
-        SettingDropItem();
-        
-        // 손볼필요있음
-        GameManager.instance.AddCurrentMonsters(m_nID);
-        //StartCoroutine(CheckObjState());
+        ChangeDamageTextColor(new Color32(255, 142, 198, 255));
 
+        SettingDropItem();
     }
 
     private void FixedUpdate()
@@ -186,7 +181,7 @@ public class Monster : ObjectBase
     /// <summary> 공격센서 안에 들어갈 경우 FSM 공격패턴 </summary>
     protected virtual void DetectedAttackRay()
     {
-        if (_attackHits.Length > 0 && !m_bisAttack && !_isAttackWaiting)
+        if (_attackHits.Length > 0 && !m_bisAttack)
         {
             objState = ObjectState.MELEEATK;
         }
@@ -205,8 +200,10 @@ public class Monster : ObjectBase
         Debug.Assert(_destTr, "destTr is NULL !!!");
 
         ObjectBase _objCtr = _destTr.GetComponent<ObjectBase>();
+        Debug.Assert(_objCtr, "_objCtr is NULL !!!");
 
-        _objCtr.OnDamage(m_nCurSTR);
+        int nDamage = GetAttackPower(m_nCurSTR);
+        _objCtr.OnDamage(nDamage);
         yield return new WaitForSeconds(1);
         m_bisAttack = false;
     }
@@ -300,7 +297,8 @@ public class Monster : ObjectBase
 
                 case ObjectState.MELEEATK:
 
-                    if(!_isAttackWaiting)
+                    ChaseEnd();
+                    if (!_isAttackWaiting)
                     {
                         StartCoroutine(Attack());
                     }
@@ -308,7 +306,7 @@ public class Monster : ObjectBase
                     break;
 
                 case ObjectState.SKILLATK:
-
+                    ChaseEnd();
                     if (!_isAttackWaiting)
                     {
                         StartCoroutine(SkillAttack());
@@ -359,29 +357,33 @@ public class Monster : ObjectBase
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerWeapon"))
         {
-            int playerStr = _playerCtr.GetCurStr();
-            OnDamage(playerStr);
+            int playerPower = _playerCtr.GetCurStr();
+            int nDamage = _playerCtr.GetAttackPower(playerPower);
+
+            OnDamage(nDamage);
         }
         else if (coll.gameObject.layer == LayerMask.NameToLayer("PlayerSkill"))
         {
             int playerSkillPower = _playerCtr.GetSkillDamage();
-            OnDamage(playerSkillPower);
+            int nDamage = _playerCtr.GetAttackPower(playerSkillPower);
+            OnDamage(nDamage);
         }
     }
 
     /// <summary> 데미지를 받았을 시 </summary>
-    public override void OnDamage(int _str, bool _isKnockback = false, Transform posTr = null)
+    public override void OnDamage(int _power, bool _isKnockback = false, Transform posTr = null)
     {
         //죽어있다면 데미지 이벤트 발생 x
         if (m_bisDead) return;
 
         //방어력을 가졌다면 증감해서 대미지 입는다
-        this.m_nCurHP -= _str;
 
-        //데미지 텍스트  발생. 오브젝트 풀링할 것
-        GameObject damageText;
-        damageText = Instantiate(_damageTextObj, _damageTr.position, Quaternion.identity, transform);
-        damageText.GetComponent<TextMesh>().text = $"{_str}";
+        int nDamage = _power - m_nDefence;
+        if (nDamage < 0) nDamage = 0;
+
+        this.m_nCurHP -= nDamage;
+
+        ActiveDamageText(nDamage);
 
         if (m_nCurHP <= 0)// 체력이 0 이하
         {
@@ -407,20 +409,34 @@ public class Monster : ObjectBase
     {
         PlayerController.OnPlayerDie -= this.OnPlayerDie;
         GameManager.instance.MonsterDead(m_nID);
-        DungeonManager.instance?.MonsterDead();
+
+        if(BaseSceneManager.instance is DungeonSceneManager dgScene)
+        {
+            dgScene.MonsterDead();
+        }
 
         //StopAllCoroutines(); //FSM 중단
 
         StartCoroutine(ActiveAlphaValue(false)); //투명해지며 죽는다.
 
         _playerCtr.AddInven(_itemDic);//플레이어에게 아이템 전달
+        _playerCtr.AddMoney(m_nDropMoney); //플레이어에게 돈 전달
         _playerCtr.SetEXP(m_nDromExp); //플레이어에게 경험치 전달
+
         this.gameObject.layer = 2;    // Ignore Raycast        
         _anim.SetTrigger(hashDead);   // 쓰러지는 애니메이션
         _nav.enabled = false;        // Nav Mesh 중단
         m_bisDead = true;             // 죽음 상태 true
-        Destroy(this.gameObject, 2.0f); // 쓰러진뒤 2초뒤에 오브젝트 삭제... 오브젝트 풀링시 수정
+        StartCoroutine(SetActive(false, 2.0f)); //2초 뒤 비활성화
     }
+
+    IEnumerator SetActive(bool value, float time)
+    {
+        yield return new WaitForSeconds(time);
+        transform.gameObject.SetActive(value);
+    }
+
+
 
     /// <summary> 활성화, 비활성화 여부에 따른 현재 오브젝트의 불투명도 </summary>
     IEnumerator ActiveAlphaValue(bool value)
@@ -542,8 +558,11 @@ public class Monster : ObjectBase
         m_nCurMP = _monsterData.nMaxMP;
 
 
-        m_nCurSTR = _monsterData.nCurSTR;
+        m_nCurSTR  = _monsterData.nCurSTR;
+        m_nDefence = _monsterData.nDefence;
+
         m_nDromExp = _monsterData.nDropExp;
+        m_nDropMoney = _monsterData.nDropMoney;
 
         //아이템 ID가 담긴 Array
         m_nDropItemArray = _monsterData.nDropItemArray;

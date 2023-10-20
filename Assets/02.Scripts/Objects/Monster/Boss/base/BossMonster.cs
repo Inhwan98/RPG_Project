@@ -13,6 +13,8 @@ public enum BossPhase
 public class BossSkillData
 {
     [SerializeField]
+    [JsonProperty] private int m_nID;
+    [SerializeField]
     [JsonProperty] private string m_sSkillName;
     [SerializeField]
     [JsonProperty] private string m_sAnimParameterName; // 동작할 애니메이션 이름
@@ -36,9 +38,11 @@ public class BossSkillData
         _anim_Hash = Animator.StringToHash(m_sAnimParameterName);
     }
 
+    /// <summary> 몬스터 ID 반환 </summary>
+    public int GetID() => m_nID;
+
     /// <summary> 스킬 이름 반환 </summary>
     public string GetSKillName() => m_sSkillName;
-
 
     /// <summary> 애니메이션의 해쉬코드 </summary>
     public int GetAnimHash() { return _anim_Hash; }
@@ -67,21 +71,19 @@ public class BossMonster : Monster
     [SerializeField]
     protected BossPhase _eBossPhase = BossPhase.ONE;
 
-    [SerializeField]
-    protected BossSkillData[] _bossMeleeAttackArray = new BossSkillData[3]; // 근거리
-    [SerializeField]
-    protected BossSkillData[] _bossRangeAttackArray = new BossSkillData[2]; // 원거리
-
-
-    private int nPhaseChangeHP;
+    protected List<BossSkillData> _bossMeleeAttackList = new List<BossSkillData>();
+    protected List<BossSkillData> _bossRangeAttackList = new List<BossSkillData>();
 
     BossMeleeAttack _bossMeleeAttack;
+
+    //페이즈 변경할 체력 기점
+    private int nPhaseChangeHP;
 
     protected int _meleeAttackIndex;
     protected int _rangeAttackIndex;
 
 
-
+    //범위 공격 Ray
     protected RaycastHit[] _rangeAttackHits;
 
 
@@ -95,14 +97,31 @@ public class BossMonster : Monster
 
         _bossMeleeAttack = GetComponent<BossMeleeAttack>();
 
-        foreach (var meleeAttack in _bossMeleeAttackArray)
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        BossSkillData[] bossMeleeAtkDB = GameManager.instance.GetAllData().BossMeleeAttackDB;
+        BossSkillData[] bossRangeAtkDB = GameManager.instance.GetAllData().BossRangeAttackDB;
+
+        foreach(BossSkillData meleeATKData in bossMeleeAtkDB)
         {
-            meleeAttack.Init(m_nCurSTR);
+
+            if(meleeATKData.GetID() == m_nID)
+            {
+                meleeATKData.Init(m_nCurSTR);
+                _bossMeleeAttackList.Add(meleeATKData);
+            }
         }
 
-        foreach(var rangeAttack in _bossRangeAttackArray)
+        foreach(BossSkillData rangeATKData in bossRangeAtkDB)
         {
-            rangeAttack.Init(m_nCurSTR);
+            if(rangeATKData.GetID() == m_nID)
+            {
+                rangeATKData.Init(m_nCurSTR);
+                _bossRangeAttackList.Add(rangeATKData);
+            }
         }
 
         //페이즈 피 구간 정하기
@@ -135,7 +154,7 @@ public class BossMonster : Monster
     protected override void DetectedAttackRay()
     {
         
-        if (_attackHits.Length > 0 && !m_bisAttack && !_isAttackWaiting)
+        if (_attackHits.Length > 0 && !m_bisAttack)
         {
             objState = ObjectState.MELEEATK;
         }
@@ -159,11 +178,10 @@ public class BossMonster : Monster
 
     protected override IEnumerator Attack()
     {
-        BossSkillData curMeleeAttack = _bossMeleeAttackArray[_meleeAttackIndex];
+        BossSkillData curMeleeAttack = _bossMeleeAttackList[_meleeAttackIndex];
         Debug.Assert(curMeleeAttack != null, "curMeleeAttack is NULL");
 
         m_bisAttack = true;                                 //공격중인 상태 - true
-        ChaseEnd();                                         //추적 종료
         StartCoolTime(curMeleeAttack);                      //공격 딜레이 설정 (코루틴함수)
         _anim.SetTrigger(curMeleeAttack.GetAnimHash());     //공격 애니메이션 실행
         _bossMeleeAttack.Use(_meleeAttackIndex);            //어택 콜라이더 활성/비활성
@@ -174,18 +192,16 @@ public class BossMonster : Monster
         yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
         _meleeAttackIndex++;                                //다음 공격패턴 이동
 
-        if (_bossMeleeAttackArray.Length == _meleeAttackIndex) //최대치에 도달했을 시 다시 처음패턴부터
+        if (_bossMeleeAttackList.Count == _meleeAttackIndex) //최대치에 도달했을 시 다시 처음패턴부터
             _meleeAttackIndex = 0;
         m_bisAttack = false;                                 //공격중인 상태 - false
     }
 
     protected override IEnumerator SkillAttack()
     {
-       
         if (_eBossPhase == BossPhase.TWO)
         {
-            BossSkillData curSkillAttack = _bossRangeAttackArray[0];
-            ChaseEnd();                                         //추적 종료
+            BossSkillData curSkillAttack = _bossRangeAttackList[_rangeAttackIndex];
             StartCoolTime(curSkillAttack);                      //공격 딜레이 설정 (코루틴함수)
 
             int skillDamage = curSkillAttack.GetSkillDamage();  //대미지 설정 - 1
@@ -199,8 +215,9 @@ public class BossMonster : Monster
 
         _rangeAttackIndex++;                                   //다음 공격패턴 이동
 
-        if (_bossRangeAttackArray.Length == _rangeAttackIndex) //최대치에 도달했을 시 다시 처음패턴부터
-            _meleeAttackIndex = 0;
+        //최대치에 도달했을 시 다시 처음패턴부터
+        if (_bossRangeAttackList.Count == _rangeAttackIndex) _rangeAttackIndex = 0;
+
         m_bisAttack = false;
     }
 

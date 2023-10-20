@@ -7,6 +7,10 @@ public class EffectData
 {
     public int nID;
 
+    public bool bIsMultiple;
+
+    public int nMultipleAmount;
+
     public string sName;
 
     public float[] fPosArray;
@@ -18,11 +22,8 @@ public class EffectData
     [Newtonsoft.Json.JsonProperty]
     private bool bUseLocalPosition;
 
-    [Newtonsoft.Json.JsonIgnore]
-    [SerializeField]
+
     private Vector3 pos;
-    [Newtonsoft.Json.JsonIgnore]
-    [SerializeField]
     private Quaternion rot;
 
     public void PosAndRot_Init()
@@ -30,12 +31,11 @@ public class EffectData
         pos = new Vector3(fPosArray[0], fPosArray[1], fPosArray[2]);
         rot = Quaternion.Euler(fRotArray[0], fRotArray[1], fRotArray[2]);
     }
+    public Vector3 GetPos() => pos;
+    public Quaternion GetRot() => rot;
 
     public float GetDisableAfter() => fDisableAfter;
     public bool GetUseLocalPos() => bUseLocalPosition;
-
-    public Vector3 GetPos() => pos;
-    public Quaternion GetRot() => rot;
 }
 
 
@@ -46,7 +46,9 @@ public class AnimationEventEffects : MonoBehaviour
     protected GameObject[] skillEffects;
     protected List<WaitForSeconds> waitSecondList = new List<WaitForSeconds>();
 
-    protected GameObject skillEffectGo;
+    protected GameObject _skillEffectGo;
+
+    protected GameObject[,] _multipleSkillEffectsGo;
 
     protected virtual void Awake()
     {
@@ -55,16 +57,41 @@ public class AnimationEventEffects : MonoBehaviour
 
     protected virtual void Start()
     {
+        _multipleSkillEffectsGo = new GameObject[skillEffects.Length, 10];
+
         for (int i = 0; i < skillEffects.Length; i++)
         {
-            skillEffects[i] = Instantiate(skillEffects[i]);
-            skillEffects[i].SetActive(false);
-            skillEffects[i].transform.SetParent(transform);
-            skillEffects[i].transform.localPosition = _effectDatas[i].GetPos();
-            skillEffects[i].transform.localRotation = _effectDatas[i].GetRot();
+            if(_effectDatas[i].bIsMultiple)
+            {
+                for(int k = 0; k < _effectDatas[i].nMultipleAmount; k++)
+                {
+                    _multipleSkillEffectsGo[i, k] = Instantiate(skillEffects[i]);
 
-            waitSecondList.Add(new WaitForSeconds(_effectDatas[i].GetDisableAfter()));
+                    GameObject curEffectGo = _multipleSkillEffectsGo[i, k];
+
+                    SkillEffect_Init(curEffectGo, i);
+                }
+                
+            }
+            else
+            {
+                skillEffects[i] = Instantiate(skillEffects[i]);
+                GameObject curEffectGo = skillEffects[i];
+
+                SkillEffect_Init(curEffectGo, i);
+            }
+            
         }
+    }
+
+    public void SkillEffect_Init(GameObject effectGo, int idx)
+    {
+        effectGo.SetActive(false);
+        effectGo.transform.SetParent(transform);
+        effectGo.transform.localPosition = _effectDatas[idx].GetPos();
+        effectGo.transform.localRotation = _effectDatas[idx].GetRot();
+
+        waitSecondList.Add(new WaitForSeconds(_effectDatas[idx].GetDisableAfter()));
     }
 
 
@@ -88,32 +115,50 @@ public class AnimationEventEffects : MonoBehaviour
             Debug.LogError("Incorrect effect number or effect is null");
         }
 
-        skillEffectGo = skillEffects[EffectNumber];
+        //다중 스킬이 아닌 경우
+        if(!_effectDatas[EffectNumber].bIsMultiple)
+        {
+            _skillEffectGo = skillEffects[EffectNumber];
 
+            EffectStart(_skillEffectGo, EffectNumber);
+        }
+        //다중 스킬 이라면
+        else
+        {
+            for(int i = 0; i < _effectDatas[EffectNumber].nMultipleAmount; i++)
+            {
+                _skillEffectGo =  _multipleSkillEffectsGo[EffectNumber, i];
 
-        if (_effectDatas[EffectNumber].GetUseLocalPos())
+                if (_skillEffectGo == null) break;
+
+                EffectStart(_skillEffectGo, EffectNumber);
+            }
+        }
+    }
+
+    private void EffectStart(GameObject skillEffectGo, int effectNumber)
+    {
+        if (_effectDatas[effectNumber].GetUseLocalPos())
         {
             skillEffectGo.transform.SetParent(null);
         }
-
-        SkillEffectInit(EffectNumber);
+        SkillEffectInit(skillEffectGo, effectNumber);
 
         skillEffectGo.SetActive(true);
-
-        StartCoroutine(SetActive(EffectNumber));
+        StartCoroutine(SetActive(skillEffectGo, effectNumber));
     }
 
-    protected virtual void SkillEffectInit(int EffectNumber)
+    protected virtual void SkillEffectInit(GameObject skillEffectGo, int EffectNumber)
     {
 
     }
 
-    IEnumerator SetActive(int index)
+    IEnumerator SetActive(GameObject curEffectGo, int index)
     {
         yield return waitSecondList[index];
-        skillEffects[index].SetActive(false);
-        skillEffects[index].transform.SetParent(transform);
-        skillEffects[index].transform.localPosition = _effectDatas[index].GetPos();
-        skillEffects[index].transform.localRotation = _effectDatas[index].GetRot();
+        curEffectGo.SetActive(false);
+        curEffectGo.transform.SetParent(transform);
+        curEffectGo.transform.localPosition = _effectDatas[index].GetPos();
+        curEffectGo.transform.localRotation = _effectDatas[index].GetRot();
     }
 }

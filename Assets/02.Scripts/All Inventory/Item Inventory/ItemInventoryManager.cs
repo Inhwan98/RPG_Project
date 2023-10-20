@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemInventoryManager : MonoBehaviour
+public class ItemInventoryManager : BaseItemInvenManager
 {
-    [SerializeField]
     private ItemInventoryUI _itemInventoryUI;
 
     private int _capacity;     //아이템 수용 한도
@@ -16,7 +15,16 @@ public class ItemInventoryManager : MonoBehaviour
     /// <summary> 아이템 목록 </summary>
     private Item[] _items;
 
+    private int _nRubyAmount; // 게임 머니
+
     private PlayerController _playerCtr;
+    private PlayerUIManager _playerUIMgr;
+  
+
+    public override void SetPlayerCtr(PlayerController player) => _playerCtr = player;
+    public void SetPlayerUIMgr(PlayerUIManager playerUIMgr) => _playerUIMgr = playerUIMgr;
+    /// <summary> 해당 슬롯이 셀 수 있는 아이템인지 여부 </summary>
+    public bool IsCountableItem(int index) => HasItem(index) && _items[index] is CountableItem;
 
     /// <summary> 아이템 데이터 타입별 정렬 가중치 </summary>
     private readonly static Dictionary<Type, int> _sortWeightDict = new Dictionary<Type, int>
@@ -51,7 +59,6 @@ public class ItemInventoryManager : MonoBehaviour
     private void Start()
     {
         UpdateAccessibleStatesAll();
-        
     }
 
     private void OnDestroy()
@@ -60,134 +67,48 @@ public class ItemInventoryManager : MonoBehaviour
     }
 
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
-    private bool IsValidIndex(int index)
-    {
-        return index >= 0 && index < _capacity;
-    }
-
-    /// <summary> 앞에서부터 비어있는 슬롯 인덱스 탐색 </summary>
-    private int FindEmptySlotIndex(int startIndex = 0)
-    {
-        for (int i = startIndex; i < _capacity; i++)
-        {
-            if (_items[i] == null)
-                return i;
-        }
-
-        return -1;
-    }
-
-    /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
-    private void UpdateAccessibleStatesAll()
-    {
-        _itemInventoryUI.SetAccessibleSlotRange(_capacity);
-    }
-
+    public override bool IsValidIndex(int index) => index >= 0 && index < _capacity;
     /// <summary> 해당 슬롯이 아이템을 갖고 있는지 여부 </summary>
-    public bool HasItem(int index)
-    {
-        return IsValidIndex(index) && _items[index] != null;
-    }
-
-    /// <summary> 해당 슬롯이 셀 수 있는 아이템인지 여부 </summary>
-    public bool IsCountableItem(int index)
-    {
-        return HasItem(index) && _items[index] is CountableItem;
-    }
-
-    /// <summary>
-    /// 해당 슬롯의 현재 아이템 개수 리턴
-    /// <para/> - 잘못된 인덱스 : -1 리턴
-    /// <para/> - 빈 슬롯 : 0 리턴
-    /// <para/> - 셀 수 없는 아이템 : 1 리턴
-    /// </summary>
-    public int GetCurrentAmount(int index)
-    {
-        if (!IsValidIndex(index)) return -1;
-        if (_items[index] == null) return 0;
-
-        CountableItem ci = _items[index] as CountableItem;
-        if (ci == null)
-            return 1;
-
-        return ci.GetAmount();
-    }
-
+    public override bool HasItem(int index) => IsValidIndex(index) && _items[index] != null;
     /// <summary> 해당 슬롯의 아이템 정보 리턴 </summary>
-    public ItemData GetItemData(int index)
+    public override ItemData GetItemData(int index)
     {
         if (!IsValidIndex(index)) return null;
         if (_items[index] == null) return null;
 
         return _items[index].GetData();
     }
-
     /// <summary> 해당 슬롯의 아이템 이름 리턴 </summary>
-    public string GetItemName(int index)
+    public override string GetItemName(int index)
     {
         if (!IsValidIndex(index)) return "";
         if (_items[index] == null) return "";
 
         return _items[index].GetData().GetName();
     }
-
-
-    public void Swap(int indexA, int indexB)
+    /// <summary> 해당 아이템 반환 </summary>
+    public override Item GetItem(int index)
     {
-        if (!IsValidIndex(indexA)) return;
-        if (!IsValidIndex(indexB)) return;
+        if (!IsValidIndex(index)) return null;
+        if (_items[index] == null) return null;
 
-        Item itemA = _items[indexA];
-        Item itemB = _items[indexB];
-
-        // 1. 셀 수 있는 아이템이고, 동일한 아이템일 경우
-        // indexA -> indexB로 개수 합치기
-        if (itemA != null && itemB != null &&
-            itemA.GetData().GetID() == itemB.GetData().GetID() &&
-            itemA is CountableItem ciA && itemB is CountableItem ciB)
-        {
-            int maxAmount = ciB.GetMaxAmount();
-            int sum = ciA.GetAmount() + ciB.GetAmount();
-
-            if (sum <= maxAmount)
-            {
-                ciA.SetAmount(0);
-                ciB.SetAmount(sum);
-            }
-            else
-            {
-                ciA.SetAmount(sum - maxAmount);
-                ciB.SetAmount(maxAmount);
-            }
-        }
-        // 2. 일반적인 경우 : 슬롯 교체
-        else
-        {
-            _items[indexA] = itemB;
-            _items[indexB] = itemA;
-        }
-
-        // 두 슬롯 정보 갱신
-        UpdateSlot(indexA, indexB);
+        return _items[index];
     }
-
     /// <summary> 해당하는 인덱스의 슬롯들의 상태 및 UI 갱신 </summary>
-    private void UpdateSlot(params int[] indices)
+    public override void UpdateSlot(params int[] indices)
     {
         foreach (var i in indices)
         {
             UpdateSlot(i);
         }
     }
-
     /// <summary> 해당하는 인덱스의 슬롯 상태 및 UI 갱신 </summary>
-    public void UpdateSlot(int index)
+    public override void UpdateSlot(int index)
     {
         if (!IsValidIndex(index)) return;
 
         Item item = _items[index];
 
-        
         // 1. 아이템이 슬롯에 존재하는 경우
         if (item != null)
         {
@@ -230,15 +151,20 @@ public class ItemInventoryManager : MonoBehaviour
             _itemInventoryUI.HideItemAmountText(index);
         }
     }
-
-
-
+    /// <summary> 모든 슬롯들의 상태를 UI에 갱신 </summary>
+    public override void UpdateAllSlot()
+    {
+        for (int i = 0; i < _capacity; i++)
+        {
+            UpdateSlot(i);
+        }
+    }
     ///<summary>
     /// 인벤토리에 아이템 추가<br></br>
     /// 넣는 데 실패한 아이템 개수 리턴<br></br>
     /// 리턴이 0이면 넣는데 모두 성공했다는 의미
     /// </summary>
-    public int AddItem(ItemData itemData, int amount = 1)
+    public override int AddItem(ItemData itemData, int amount = 1)
     {
         if (itemData == null) return 0;
 
@@ -337,37 +263,128 @@ public class ItemInventoryManager : MonoBehaviour
 
         return amount;
     }
-
+    /// <summary> Inventory 활성화 유무 </summary>
+    public override void SetWindowActive(bool value)
+    {
+        _playerCtr.SetUseItemInven(value); //플레이어의 움직임 제어
+        _itemInventoryUI.gameObject.SetActive(value);
+    }
     ///<summary> 해당 슬롯의 아이템 제거 </summary>
-    public void Remove(int index)
+    public override void Remove(int index)
     {
         if (!IsValidIndex(index)) return;
 
         _items[index] = null;
         UpdateSlot(index);
     }
-
-    /// <summary> 앞에서부터 개수 여유가 있는 Countable 아이템의 슬롯 인덱스 탐색 </summary>
-    private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
+    public override void Swap(int indexA, int indexB)
     {
-        for (int i = startIndex; i < _capacity; i++)
-        {
-            var current = _items[i];
-            if (current == null)
-                continue;
+        if (!IsValidIndex(indexA)) return;
+        if (!IsValidIndex(indexB)) return;
 
-            // 아이템 종류 일치, 개수 여유 확인
-            if (current.GetData().GetID() == target.GetID() && current is CountableItem ci)
+        Item itemA = _items[indexA];
+        Item itemB = _items[indexB];
+
+        // 1. 셀 수 있는 아이템이고, 동일한 아이템일 경우
+        // indexA -> indexB로 개수 합치기
+        if (itemA != null && itemB != null &&
+            itemA.GetData().GetID() == itemB.GetData().GetID() &&
+            itemA is CountableItem ciA && itemB is CountableItem ciB)
+        {
+            int maxAmount = ciB.GetMaxAmount();
+            int sum = ciA.GetAmount() + ciB.GetAmount();
+
+            if (sum <= maxAmount)
             {
-                
-                if (!ci.GetIsMax())
-                    return i;
+                ciA.SetAmount(0);
+                ciB.SetAmount(sum);
+            }
+            else
+            {
+                ciA.SetAmount(sum - maxAmount);
+                ciB.SetAmount(maxAmount);
             }
         }
+        // 2. 일반적인 경우 : 슬롯 교체
+        else
+        {
+            _items[indexA] = itemB;
+            _items[indexB] = itemA;
+        }
 
-        return -1;
+        // 두 슬롯 정보 갱신
+        UpdateSlot(indexA, indexB);
     }
+    /// <summary> 해당 슬롯의 아이템 사용 </summary>
+    public override void Use(int index)
+    {
+        if (_items[index] == null) return;
 
+        // 사용 가능한 아이템인 경우
+        if (_items[index] is IUsableItem uItem)
+        {
+            //아이템 사용
+            bool succeeded = uItem.Use();
+
+            if (_items[index] is PortionItem pitem)
+            {
+                PortionItemData potionData = pitem.GetData() as PortionItemData;
+                IPortionState portionState = potionData.GetPortionState();
+
+                int value = potionData.GetValue();
+
+                if (portionState == IPortionState.HP) _playerCtr.RecoveryHP(value);
+                else if (portionState == IPortionState.MP) _playerCtr.RecoveryMP(value);
+            }
+
+            if (succeeded)
+            {
+                UpdateSlot(index);
+            }
+        }
+        else if (_items[index] is EquipmentItem eqItem)
+        {
+            // 1. =>플레이어 플레이어 스탯 상승
+            // 2. 플레이어 => 플레이어 UI 업데이트
+            int equipIndex = (int)eqItem.GetEequipmentData().GetEquipState();
+            _playerUIMgr.Swap(equipIndex, index);
+        }
+    }
+    /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
+    public override void UpdateAccessibleStatesAll()
+    {
+        _itemInventoryUI.SetAccessibleSlotRange(_capacity);
+    }
+    /// <summary>
+    /// 해당 슬롯의 현재 아이템 개수 리턴
+    /// <para/> - 잘못된 인덱스 : -1 리턴
+    /// <para/> - 빈 슬롯 : 0 리턴
+    /// <para/> - 셀 수 없는 아이템 : 1 리턴
+    /// </summary>
+    public int GetCurrentAmount(int index)
+    {
+        if (!IsValidIndex(index)) return -1;
+        if (_items[index] == null) return 0;
+
+        CountableItem ci = _items[index] as CountableItem;
+        if (ci == null)
+            return 1;
+
+        return ci.GetAmount();
+    }
+    /// <summary>
+    /// 아이템 인벤토리 index 번째에 item을 세팅
+    /// </summary>
+    /// <param name="item"> 무엇을 </param>
+    /// <param name="index"> 어디에 </param>
+    public bool TrySetItem(Item item, int index)
+    {
+        if (!IsValidIndex(index)) return false;
+        if (item == null) return false;
+
+        _items[index] = item;
+        return true;
+    }
     /// <summary> 셀 수 있는 아이템의 수량 나누기(A -> B 슬롯으로) </summary>
     public void SeparateAmount(int indexA, int indexB, int amount)
     {
@@ -390,36 +407,6 @@ public class ItemInventoryManager : MonoBehaviour
             UpdateSlot(indexA, indexB);
         }
     }
-
-    /// <summary> 해당 슬롯의 아이템 사용 </summary>
-    public void Use(int index)
-    {
-        if (_items[index] == null) return;
-
-        // 사용 가능한 아이템인 경우
-        if (_items[index] is IUsableItem uItem)
-        {
-            //아이템 사용
-            bool succeeded = uItem.Use();
-
-            if(_items[index] is PortionItem pitem)
-            {
-                PortionItemData potionData = pitem.GetData() as PortionItemData;
-                IPortionState portionState = potionData.GetPortionState();
-
-                int value = potionData.GetValue();
-
-                if (portionState == IPortionState.HP) _playerCtr.RecoveryHP(value);
-                else if (portionState == IPortionState.MP) _playerCtr.RecoveryMP(value);
-            }
-
-            if (succeeded)
-            {
-                UpdateSlot(index);
-            }
-        }
-    }
-
     /// <summary> 빈 슬롯 없이 채우면서 아이템 종류별로 정렬하기 </summary>
     public void SortAll()
     {
@@ -447,43 +434,50 @@ public class ItemInventoryManager : MonoBehaviour
 
         UpdateAllSlot();
     }
-
-
-    /// <summary> 모든 슬롯들의 상태를 UI에 갱신 </summary>
-    private void UpdateAllSlot()
+    /// <summary> 앞에서부터 비어있는 슬롯 인덱스 탐색 </summary>
+    private int FindEmptySlotIndex(int startIndex = 0)
     {
-        for (int i = 0; i < _capacity; i++)
+        for (int i = startIndex; i < _capacity; i++)
         {
-            UpdateSlot(i);
+            if (_items[i] == null)
+                return i;
         }
-    }
 
-    public void SetPlayerCtr(PlayerController player)
+        return -1;
+    }
+    /// <summary> UI에게 루비 업데이트 호출 </summary>
+    public void UpdateRubyAmount(int rubyAmount)
     {
-        _playerCtr = player;
+        _nRubyAmount = rubyAmount;
+        _itemInventoryUI.UpdateRubyAmount(_nRubyAmount);
     }
-
-    /// <summary> Inventory 활성화 유무 (마우스 커서도 같이 활성화) </summary>
-    public void SetInventoryActive(bool value)
+    /// <summary> 앞에서부터 개수 여유가 있는 Countable 아이템의 슬롯 인덱스 탐색 </summary>
+    private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
     {
-        _playerCtr.SetUseItemInven(value); //플레이어의 움직임 제어
-        _itemInventoryUI.gameObject.SetActive(value);      
-        _playerCtr.GetCameraCtr().UseWindow(value); //카메라의 회전 제어
+        for (int i = startIndex; i < _capacity; i++)
+        {
+            var current = _items[i];
+            if (current == null)
+                continue;
 
-        if (value) GameManager.instance.VisibleCursor();
-        else
-            GameManager.instance.InvisibleCursor();
+            // 아이템 종류 일치, 개수 여유 확인
+            if (current.GetData().GetID() == target.GetID() && current is CountableItem ci)
+            {
+                
+                if (!ci.GetIsMax())
+                    return i;
+            }
+        }
+
+        return -1;
     }
 
-    public void SaveInven()
-    {
-        SaveSys.SaveInvenItem(_items);
-    }
+    public void SaveInven() => SaveSys.SaveInvenItem(_items, "Item.Json");
 
     /// <summary> Load Data 없을시 초기화 </summary>
     public void Init_InvenItems()
     {
-        _items = SaveSys.LoadInvenitem();
+        _items = SaveSys.LoadInvenitem("Item.Json");
 
         if (_items == null)
         {

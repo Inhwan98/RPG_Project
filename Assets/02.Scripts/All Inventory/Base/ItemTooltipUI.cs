@@ -14,6 +14,11 @@ public class ItemTooltipUI : MonoBehaviour
     [SerializeField]
     private TMP_Text _contentText; //아이템 설명 텍스트
 
+    [SerializeField]
+    private TMP_Text _returnPriceText; //되팔기 가격
+
+    StringBuilder sb = new StringBuilder();
+
     private RectTransform _rt;
     private CanvasScaler _canvasScaler;
 
@@ -59,7 +64,7 @@ public class ItemTooltipUI : MonoBehaviour
     {
         _titleText.text = data.GetName();
 
-        StringBuilder sb = new StringBuilder();
+        
 
         //인벤 UI에 나타나는 습득레벨제한 표시. 플레이어가 낮다면 빨간색으로 표시
         if (PlayerController.instance.GetLevel() < data.GetUsedLevel())
@@ -77,14 +82,19 @@ public class ItemTooltipUI : MonoBehaviour
         sb.Append($"<br><br> {data.GetToolTip()}");
 
         _contentText.text = sb.ToString();
+
+        sb.Clear();
+        int returnPrice = data.GetReturnPrice();
+        sb.Append($"판매 가격 : {returnPrice} 루비");
+        _returnPriceText.text = sb.ToString();
+
+        sb.Clear();
     }
 
     ///<summary> 툴팁 UI에 스킬 정보 등록 </summary>
     public void SetItemInfo(SkillData data)
     {
         _titleText.text = data.GetSKillName();
-
-        StringBuilder sb = new StringBuilder();
 
         //스킬 UI에 나타나는 습득레벨제한 표시. 플레이어가 낮다면 빨간색으로 표시
         if(PlayerController.instance.GetLevel() < data.GetSkillUsedLevel())
@@ -100,6 +110,8 @@ public class ItemTooltipUI : MonoBehaviour
         sb.Append($"{data.GetToolTip()}");
 
         _contentText.text = sb.ToString();
+
+        sb.Clear();
     }
 
     /// <summary> 툴팁의 위치 조정 </summary>

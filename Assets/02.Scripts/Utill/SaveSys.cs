@@ -18,21 +18,22 @@ public static class SaveSys
 
 
     /// <summary> Inventory Data 저장 </summary>
-    public static void SaveInvenItem(Item[] items)
+    public static void SaveInvenItem(Item[] items, string name)
     {
         string jsonData = JsonConvert.SerializeObject(items, Formatting.Indented, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All
         });
 
-        string path = Path.Combine(Application.persistentDataPath, "Item.Json");
+        string path = Path.Combine(Application.persistentDataPath, name);
 
         File.WriteAllText(path, jsonData);
     }
 
-    public static Item[] LoadInvenitem()
+
+    public static Item[] LoadInvenitem(string name)
     {
-        string path = Path.Combine(Application.persistentDataPath, "Item.Json");
+        string path = Path.Combine(Application.persistentDataPath, name);
         string jsonData;
         Item[] items;
 

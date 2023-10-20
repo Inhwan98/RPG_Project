@@ -59,9 +59,16 @@ public class DamageText : MonoBehaviour
         }
         else
         {
-            //보간 완료시 삭제
-            Destroy(this.gameObject);
+            //보간 완료시 비활성화
+            this.gameObject.SetActive(false);
+            
         }
+    }
+
+    private void OnDisable()
+    {
+        _textMesh.color = _originColor;
+        _currentTime = 0;
     }
 
     private void LateUpdate()
