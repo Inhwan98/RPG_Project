@@ -7,6 +7,10 @@ using TMPro;
 
 public class ItemInventoryUI : InvenUIBase
 {
+    /******************************************************
+     *                       Fields
+     ******************************************************/
+    #region option Fields
     [Header("Options")]
     [Range(0, 10)]
     [SerializeField] private int _horizontalSlotCount = 8;    // 슬롯 개수 카운트
@@ -18,9 +22,6 @@ public class ItemInventoryUI : InvenUIBase
     [Range(32, 64)]
     [SerializeField] private float _slotSize = 64f;             // 각 슬롯의 크기
 
-    [Space(16)]
-    [SerializeField] private bool _mouseReversed = false; // 마우스 클릭 반전 여부
-
     [Header("Ruby(Money)")]
     [SerializeField] private TMP_Text _rubyAmountText;
 
@@ -31,12 +32,16 @@ public class ItemInventoryUI : InvenUIBase
 
     [SerializeField] private Button _sortButton;
     [SerializeField] private Button _exitButton;
-
+    #endregion
+    #region private Fields
+    
     /// <summary> 연결된 인벤토리 </summary>
     private ItemInventoryManager _itemInventory;
+    #endregion
 
-    /// <summary> 루비의 양 업데이트 </summary>
-    public void UpdateRubyAmount(int nRubyAmount) => _rubyAmountText.text = nRubyAmount.ToString();
+    /******************************************************
+     *                      Unity Event
+     ******************************************************/
 
     protected override void Awake()
     {
@@ -47,33 +52,12 @@ public class ItemInventoryUI : InvenUIBase
         base.Awake();
     }
 
-    /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
-    protected override void UpdateTooltipUI(SlotUIBase slot)
-    {
-        if (!slot.GetIsAccessible() || !slot.GetHasItem())
-            return;
+    /******************************************************
+     *                      Methods
+     ******************************************************/
+    #region override Methods
 
-        // 툴팁 정보 갱신
-        _itemTooltip.SetItemInfo(_itemInventory.GetItemData(slot.GetIndex()));
-
-        // 툴팁 위치 조정
-        _itemTooltip.SetRectPosition(slot.GetSlotRect());
-    }
-
-
-    /// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
-    public void SetInventoryReference(ItemInventoryManager itemInventory)
-    {
-        _itemInventory = itemInventory;
-    }
-
-
-    /// <summary> 아이템 사용 </summary>
-    private void TryUseItem(int index)
-    {
-        _itemInventory.Use(index);
-    }
-
+    /// <summary> 마우스 클릭 이벤트 </summary>
     protected override void OnPointerDown()
     {
         base.OnPointerDown();
@@ -87,7 +71,6 @@ public class ItemInventoryUI : InvenUIBase
             }
         }
     }
-
     protected override void EndDrag()
     {
         ItemInvenSlotUI endDragSlot = RaycastAndGetFirstComponent<ItemInvenSlotUI>();
@@ -144,61 +127,22 @@ public class ItemInventoryUI : InvenUIBase
             _popup.OpenConfirmationPopup(() => TryRemoveItem(index), itemName);
         }
     }
-
     protected override T RaycastAndGetFirstComponent<T>()
     {
         _rrList.Clear();
 
         _gr.Raycast(_ped, _rrList);
 
+
         if (_rrList.Count == 0)
             return null;
         return _rrList[0].gameObject.GetComponent<T>();
     }
-
     /// <summary> UI 및 인벤토리에서 아이템 제거 </summary>
     protected override void TryRemoveItem(int index)
     {
         _itemInventory.Remove(index);
     }
-
-    /// <summary> 셀 수 있는 아이템 개수 나누기 </summary>
-    private void TrySeparateAmount(int indexA, int indexB, int amount)
-    {
-        if (indexA == indexB)
-        {
-            return;
-        }
-        string itemName = _itemInventory.GetItemName(indexA);
-
-        _popup.OpenAmountInputPopup(
-            amt => _itemInventory.SeparateAmount(indexA, indexB, amt),
-            amount, itemName
-        );
-    }
-
-    /// <summary> 해당 슬롯의 아이템 개수 텍스트 지정 </summary>
-    public void SetItemAmountText(int index, int amount)
-    {
-        //amount가 1 이하일 경우 텍스트 미표시
-        if(_slotUIList[index] is ItemInvenSlotUI slotUI)
-        {
-            slotUI.SetItemAmount(amount);
-        }
-        
-    }
-
-    /// <summary> 해당 슬롯의 아이템 개수 텍스트 지정 </summary>
-    internal void HideItemAmountText(int index)
-    {
-        if (_slotUIList[index] is ItemInvenSlotUI slotUI)
-        {
-            slotUI.SetItemAmount(1);
-        }
-    }
-
-
-
     /// <summary> 두 슬롯의 아이템 교환 </summary>
     protected override void TrySwapItems(SlotUIBase from, SlotUIBase to)
     {
@@ -206,12 +150,22 @@ public class ItemInventoryUI : InvenUIBase
         from.SwapOnMoveIcon(to);
         _itemInventory.Swap(from.GetIndex(), to.GetIndex());
     }
+    /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
+    protected override void UpdateTooltipUI(SlotUIBase slot)
+    {
+        if (!slot.GetIsAccessible() || !slot.GetHasItem())
+            return;
 
+        // 툴팁 정보 갱신
+        _itemTooltip.SetItemInfo(_itemInventory.GetItemData(slot.GetIndex()));
 
+        // 툴팁 위치 조정
+        _itemTooltip.SetRectPosition(slot.GetSlotRect());
+    }
+    #endregion
 
-    /// <summary>
-    /// 지정된 개수만큼 슬롯 영역 내에 슬롯들 동적 생성
-    /// </summary>
+    #region private Methods
+    /// <summary> 지정된 개수만큼 슬롯 영역 내에 슬롯들 동적 생성 </summary>
     private void InitSlots()
     {
         // 슬롯 프리팹 설정
@@ -277,4 +231,53 @@ public class ItemInventoryUI : InvenUIBase
             return rt;
         }
     }
+
+    /// <summary> 아이템 사용 </summary>
+    private void TryUseItem(int index)
+    {
+        _itemInventory.Use(index);
+    }
+    /// <summary> 셀 수 있는 아이템 개수 나누기 </summary>
+    private void TrySeparateAmount(int indexA, int indexB, int amount)
+    {
+        if (indexA == indexB)
+        {
+            return;
+        }
+        string itemName = _itemInventory.GetItemName(indexA);
+
+        _popup.OpenAmountInputPopup(
+            amt => _itemInventory.SeparateAmount(indexA, indexB, amt),
+            amount, itemName
+        );
+    }
+    #endregion
+    #region public Methods
+    /// <summary> 루비의 양 업데이트 </summary>
+    public void UpdateRubyAmount(int nRubyAmount) => _rubyAmountText.text = nRubyAmount.ToString();
+    /// <summary> 해당 슬롯의 아이템 개수 텍스트 지정 </summary>
+    public void SetItemAmountText(int index, int amount)
+    {
+        //amount가 1 이하일 경우 텍스트 미표시
+        if (_slotUIList[index] is ItemInvenSlotUI slotUI)
+        {
+            slotUI.SetItemAmount(amount);
+        }
+
+    }
+    /// <summary> 해당 슬롯의 아이템 개수 텍스트 지정 </summary>
+    public void HideItemAmountText(int index)
+    {
+        if (_slotUIList[index] is ItemInvenSlotUI slotUI)
+        {
+            slotUI.SetItemAmount(1);
+        }
+    }
+    /// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
+    public void SetInventoryReference(ItemInventoryManager itemInventory)
+    {
+        _itemInventory = itemInventory;
+    }
+    #endregion
+
 }

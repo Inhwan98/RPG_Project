@@ -3,8 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+    * 부모 *
+    SlotUIBase(abstract) : 하나의 슬롯에 대한 모든 정보, 이벤트를 가지고 있다.
+                           아이콘의 변경, 하이라이트 표시 등
+
+     [상속 구조]
+
+       - ItemInvenSlotUI - 아이템 인벤토리에 포함되는 슬롯
+       - MerChantSlotUI  - 아이템 상인 인벤토리에 포함되는 슬롯
+       - PlayerEquipUI   - 플레이어가 장착하는 장비 슬롯
+
+       - SKillSlotUI (abstract)
+            -InvenSkillUI  - 스킬트리 인벤에 포함될 슬롯 (모든스킬슬롯)
+            -PlayerSkillUI - 플레이어가 습득한 스킬슬롯
+
+*/
+
 public class SlotUIBase : MonoBehaviour
 {
+    /***********************************************************************
+    *                               Fields 
+    ***********************************************************************/
+    #region Option Fields
     [Tooltip("슬롯 내에서 아이콘과 슬롯 사이의 여백")]
     [SerializeField] protected float _padding = 1f;
 
@@ -15,7 +36,7 @@ public class SlotUIBase : MonoBehaviour
     [SerializeField] protected Image _iconImage;
 
     [Tooltip("슬롯이 포커스될 때 나타나는 하이라이트 이미지")]
-    [SerializeField] private Image _highlightImage;
+    [SerializeField] protected Image _highlightImage;
 
     [Space]
     [Tooltip("하이라이트 이미지 알파 값")]
@@ -23,82 +44,66 @@ public class SlotUIBase : MonoBehaviour
 
     [Tooltip("하이라이트 소요 시간")]
     [SerializeField] private float _highlightFadeDuration = 0.2f;
-
+    #endregion
+    #region private Fields
     private int index;
-
     private RectTransform _slotRect;
-    protected RectTransform _iconRect;
     private RectTransform _highlightRect;
-
-   
-
-    private GameObject _highlightGo;
-
     private Image _slotImage;
-
-    // 현재 하이라이트 알파값
-    private float _currentAlpha = 0f;
-
+    private float _currentAlpha = 0f;    // 현재 하이라이트 알파값
+    #endregion
+    #region protected Fields
+    protected RectTransform _iconRect;
+    protected GameObject _highlightGo;
     protected bool _isHasItem = false;
     protected bool _isAccessibleSlot = true; // 슬롯 접근가능 여부
     protected bool _isAccessibleItem = true; // 아이템 접근가능 여부
-
     /// <summary> 비활성화된 슬롯의 색상 </summary>
     protected static readonly Color InaccessibleSlotColor = new Color(0.2f, 0.2f, 0.2f, 0.5f);
     /// <summary> 비활성화된 아이콘 색상 </summary>
     protected static readonly Color InaccessibleIconColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+    #endregion
 
-
-    ///--- Method
-
+    /**********************************************************************
+    *                           Get, Set Methods                          *
+    ***********************************************************************/
+    #region Get
     /// <summary> 슬롯의 인덱스 /// </summary>
     public int GetIndex() => index;
-
-    public void SetSlotIndex(int _slotIndex) => index = _slotIndex;
-
-    /// <summary> 슬롯이 아이템을 보유하고 있는지 여부  </summary>
-    public bool GetHasItem() => _iconImage.sprite != null;
-
-    public Image GetIconImage() => _iconImage;
-    /// <summary> 슬롯이 아이템을 보유하고 있는지 여부 세팅  </summary>
-    public void SetHasItem(bool value) => _isHasItem = value;
-
-    /// <summary> 접근 가능한 슬롯인지 여부  </summary>
-    public bool GetIsAccessible() => _isAccessibleSlot && _isAccessibleItem;
     public RectTransform GetSlotRect() => _slotRect;
     public RectTransform GetIconRect() => _iconRect;
+    /// <summary> 접근 가능한 슬롯인지 여부  </summary>
+    public bool GetIsAccessible() => _isAccessibleSlot && _isAccessibleItem;
+    /// <summary> 슬롯이 아이템을 보유하고 있는지 여부  </summary>
+    public bool GetHasItem() => _iconImage.sprite != null;
+    public Image GetIconImage() => _iconImage;
+    #endregion
+    #region Set
+    /// <summary> 슬롯이 아이템을 보유하고 있는지 여부 세팅  </summary>
+    public void SetHasItem(bool value) => _isHasItem = value;
+    public void SetSlotIndex(int _slotIndex) => index = _slotIndex;
+    #endregion
 
-
-
-    //아이콘 활성화 / 비활성화
-    private void ShowIcon()
-    {
-        _iconGo.SetActive(true);
-    }
-
-    private void HideIcon() => _iconGo.SetActive(false);
-
+    /***********************************************************************
+    *                               Unity Events
+    ***********************************************************************/
+    #region Unity Evnets
     protected virtual void Awake()
     {
         InitComponents();
         InitValues();
     }
+    #endregion
 
-    protected virtual void InitComponents()
-    {
-        // Rects
-        _slotRect = GetComponent<RectTransform>();
-        _iconRect = _iconImage.rectTransform;
-        _highlightRect = _highlightImage.rectTransform;
 
-        // Game Objects
-        //_iconGo = _iconRect.gameObject;
-        _highlightGo = _highlightImage.gameObject;
+    /***********************************************************************
+    *                               Methods
+    ***********************************************************************/
 
-        // Images
-        _slotImage = GetComponent<Image>();
-    }
-
+    #region private Methods
+    //아이콘 활성화 / 비활성화
+    private void ShowIcon() => _iconGo.SetActive(true);
+    private void HideIcon() => _iconGo.SetActive(false);
     private void InitValues()
     {
         // 1. Item Icon, Highlight Rect
@@ -125,7 +130,23 @@ public class SlotUIBase : MonoBehaviour
         HideIcon();
         _highlightGo.SetActive(false);
     }
+    #endregion
+    #region protected Methods
+    protected virtual void InitComponents()
+    {
+        // Rects
+        _slotRect = GetComponent<RectTransform>();
+        _iconRect = _iconImage.rectTransform;
+        _highlightRect = _highlightImage.rectTransform;
 
+        // Game Objects
+        _highlightGo = _highlightImage.gameObject;
+
+        // Images
+        _slotImage = GetComponent<Image>();
+    }
+    #endregion
+    #region public Methods
     /// <summary> 슬롯 자체의 활성화 / 비활성화 여부 설정  </summary>
     public void SetSlotAccessibleState(bool value)
     {
@@ -141,8 +162,6 @@ public class SlotUIBase : MonoBehaviour
         }
         _isAccessibleSlot = value;
     }
-
-
     /// <summary> 다른 슬롯과 아이템 교환 </summary>
     public void SwapOnMoveIcon(SlotUIBase other, bool isJustCopy = false)
     {
@@ -164,10 +183,9 @@ public class SlotUIBase : MonoBehaviour
         // 2. 없는 경우 : 이동
         else RemoveItem();
 
-        
+
     }
-
-
+    /// <summary> 아이템 스프라이트 등록 (아이템 등록) </summary>
     public void SetItem(Sprite itemSprite)
     {
         if (itemSprite != null)
@@ -180,22 +198,19 @@ public class SlotUIBase : MonoBehaviour
             RemoveItem();
         }
     }
-
+    /// <summary> 아이템 스프라이트 삭제 (아이템삭제) </summary>
     public void RemoveItem()
     {
         _iconImage.sprite = null;
         HideIcon();
         //HideText();
     }
-
     /// <summary> 아이템 이미지 투명도 설정  </summary>
     public void SetIconAlpha(float alpha)
     {
         _iconImage.color = new Color(
             _iconImage.color.r, _iconImage.color.g, _iconImage.color.b, alpha);
     }
-
-
     /// <summary> 슬롯에 하이라이트 표시/해제 </summary>
     public void Highlight(bool show)
     {
@@ -204,7 +219,20 @@ public class SlotUIBase : MonoBehaviour
         else
             StartCoroutine(nameof(HighlightFadeOutRoutine));
     }
+    /// <summary> 하이라이트를 먼저 보이게 하기 위한 함수 </summary>
+    public void SetHighlightOnTop(bool value)
+    {
+        if (value)
+            _highlightRect.SetAsLastSibling();
+        else
+            _highlightRect.SetAsFirstSibling();
+    }
+    #endregion
 
+    /***********************************************************************
+    *                             Coroutines
+    ***********************************************************************/
+    #region private Coroutines
     /// <summary> 하이라이트 알파값 서서히 증가 </summary>
     private IEnumerator HighlightFadeInRoutine()
     {
@@ -225,7 +253,6 @@ public class SlotUIBase : MonoBehaviour
             yield return null;
         }
     }
-
     /// <summary> 하이라이트 알파값 0%까지 서서히 감소 </summary>
     private IEnumerator HighlightFadeOutRoutine()
     {
@@ -247,12 +274,6 @@ public class SlotUIBase : MonoBehaviour
 
         _highlightGo.SetActive(false);
     }
+    #endregion
 
-    public void SetHighlightOnTop(bool value)
-    {
-        if (value)
-            _highlightRect.SetAsLastSibling();
-        else
-            _highlightRect.SetAsFirstSibling();
-    }
 }

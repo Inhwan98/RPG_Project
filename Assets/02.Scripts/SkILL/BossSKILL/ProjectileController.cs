@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> 투사체 스킬 컨트롤러 </summary>
 public class ProjectileController : MonoBehaviour
 {
     [SerializeField] private float _moveDuration = 1.0f; // 이동하는 데 걸리는 시간
     [SerializeField] private GameObject collisionEffectGo;
-
 
     private Rigidbody _rigid;
 
@@ -62,7 +62,6 @@ public class ProjectileController : MonoBehaviour
         Destroy(colGO, 1.5f);
     }
 
-  
 
     public void Init(Vector3 startPos, Vector3 destPos)
     {

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
+/// <summary> 현재씬에서 다음씬으로 이동 </summary>
 public class NextSceneController : MoveSceneBase
 { 
     protected override void MoveScene()

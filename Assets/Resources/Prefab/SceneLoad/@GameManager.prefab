@@ -56,10 +56,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6207881771040676527}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5df549edd8475c408c8f5be1de1d35f, type: 3}
+  m_Script: {fileID: 11500000, guid: 248714b30a20f114dbede81a07503b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _skInvenUI: {fileID: 0}
 --- !u!114 &41758553418957803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,7 +71,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd95ee2bdaaa5454bad7c00d09a7a626, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _itemInventoryUI: {fileID: 0}
   _maxCapacity: 30
 --- !u!114 &658483975883980481
 MonoBehaviour:
@@ -86,7 +84,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2543039a045346e41ba471972e36c4a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _merChantItemUI: {fileID: 0}
   _maxCapacity: 8
 --- !u!114 &-6384237304449957196
 MonoBehaviour:

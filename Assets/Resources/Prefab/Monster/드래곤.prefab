@@ -1217,7 +1217,7 @@ GameObject:
   - component: {fileID: 6923244857261920873}
   - component: {fileID: 6923244857261920877}
   - component: {fileID: 6923244857261920876}
-  - component: {fileID: 2906481560574609277}
+  - component: {fileID: -1984029341676484493}
   m_Layer: 6
   m_Name: "\uB4DC\uB798\uACE4"
   m_TagString: Untagged
@@ -1340,7 +1340,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &2906481560574609277
+--- !u!114 &-1984029341676484493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1349,17 +1349,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8378837324141898485}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db14487fb8b43ff438d508ba4a167a6a, type: 3}
+  m_Script: {fileID: 11500000, guid: 22467670f4eee7e4cbe79874c57a3be5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_nID: 101
-  m_nLevel: 0
-  m_nCurHP: 0
-  m_nCurMP: 0
-  m_nCurSTR: 0
-  m_nSkillDamage: 0
-  m_nDefence: 0
   _damageTr: {fileID: 1359316832}
+  m_nID: 101
   targetLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1367,7 +1361,7 @@ MonoBehaviour:
   m_fSensorRange: 0
   m_fTargetRadius: 1.48
   m_fTargetRange: 0.55
-  objState: 0
+  objState: 6
   _attackDelay: 5
 --- !u!1 &8378837324141898487
 GameObject:

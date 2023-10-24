@@ -32,9 +32,9 @@ public class PlayerStatusData
         m_nMaxHP     = m_playerCtr.GetMaxHP();
         m_nCurMP     = m_playerCtr.GetCurMP();
         m_nMaxMP     = m_playerCtr.GetMaxMP();
-        m_nStr       = m_playerCtr.GetCurStr();
+        m_nStr       = m_playerCtr.GetTotalSTR();
         m_MinPower   = m_nStr * m_playerCtr.GetMinAttack();
         m_nMaxPower  = m_nStr * m_playerCtr.GetMaxAttack();
-        m_nDefence   = m_playerCtr.GetDefence();
+        m_nDefence   = m_playerCtr.GetTotalDefence();
     }
 }

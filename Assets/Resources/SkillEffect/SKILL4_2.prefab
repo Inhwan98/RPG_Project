@@ -24470,4 +24470,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coll: {fileID: 9112105827031370772}
-  attackPerSecond: 0.1
+  attackSecond: 0.1
+  repeatCount: 8

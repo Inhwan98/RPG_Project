@@ -4,25 +4,34 @@ using UnityEngine;
 
 public class PointBlank : MonoBehaviour
 {
-    [SerializeField] private Collider coll;
-    [SerializeField] private float attackPerSecond;
+    [SerializeField] protected Collider coll;
+    [SerializeField] private float attackSecond;
+    [SerializeField] private int repeatCount;
 
-    private void OnEnable()
+    private int count;
+
+    protected virtual void OnEnable()
     {
-        StartCoroutine(AttacksPerSecond());
+        StartCoroutine("AttacksPerSecond");
     }
 
     IEnumerator AttacksPerSecond()
     {
-        while(true)
+        while(count < repeatCount)
         {
-            yield return new WaitForSeconds(attackPerSecond);
+            yield return new WaitForSeconds(attackSecond);
             coll.enabled = !(coll.enabled);
+            count++;
         }
+       //0 2 4
+
+        coll.enabled = false;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         StopCoroutine("AttacksPerSecond");
+        count = 0;
+        coll.enabled = true;
     }
 }

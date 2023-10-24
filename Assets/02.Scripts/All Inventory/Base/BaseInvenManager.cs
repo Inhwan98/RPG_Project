@@ -5,6 +5,22 @@ using UnityEngine.UI;
 using TMPro;
 
 
+/*
+    [상속 구조]
+
+    BaseInvenManager(abstract)
+        
+        * 아이템 관련 인벤토리
+        - BaseItemInvenManager(abstract) : 모든 아이템 인벤토리에 공통될 정보를 가지고 있다. ex) GetItem, AddItem
+            - ItemInventoryManager       : 아이템 인벤토리를 관리하는 매니져 스크립트
+            - MerChantInventoryManager   : 상인 아이템 인벤토리를 관리하는 매니져 스크립트
+            - PlayerStatManager          : 플레이어의 장비를 관리하는 매니져 스크립트
+
+        * 스킬 관련 인벤토리
+        - SkillManager :전체 스킬 인벤토리를 관리한다.
+
+*/
+
 public abstract class BaseInvenManager : MonoBehaviour
 {
     public abstract void SetPlayerCtr(PlayerController player);

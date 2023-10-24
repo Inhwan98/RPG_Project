@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InvenSkillSlotUI : SKillSlotUI
 
+/// <summary>
+/// 스킬트리의 모든 스킬 정보
+/// </summary>
+public class InvenSkillSlotUI : SKillSlotUI
 {
     [SerializeField] private Button _plusButton;
     [SerializeField] private Text _levelText;
@@ -14,6 +17,6 @@ public class InvenSkillSlotUI : SKillSlotUI
     /// </summary>
     public Button GetPlusButton() => _plusButton;
     public Text GetLevelText() => _levelText;
-    public void SetLevelText(int level) => _levelText.text = $"{level}";
 
+    public void SetLevelText(int level) => _levelText.text = $"{level}";
 }

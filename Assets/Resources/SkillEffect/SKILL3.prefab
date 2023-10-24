@@ -4944,7 +4944,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coll: {fileID: 5554906832771422084}
-  attackPerSecond: 0.5
+  attackSecond: 0.5
+  repeatCount: 4
 --- !u!1 &1654362036819264
 GameObject:
   m_ObjectHideFlags: 0

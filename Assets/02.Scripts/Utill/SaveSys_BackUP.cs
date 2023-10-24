@@ -133,7 +133,7 @@ public static class SaveSys_BackUP
         {
             jsonData = File.ReadAllText(path);
             data = JsonConvert.DeserializeObject<T>(jsonData);
-            data.SetIcon();
+            data.Init();
             return data;
         }
         else

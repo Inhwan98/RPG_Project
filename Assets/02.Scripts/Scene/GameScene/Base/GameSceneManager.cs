@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/// <summary> GameScene에 필수적인 요소 구성 </summary>
 public abstract class GameSceneManager : BaseSceneManager
 {
     private Transform startTr;
@@ -20,13 +20,13 @@ public abstract class GameSceneManager : BaseSceneManager
         startTr = GameObject.FindWithTag("StartPos").transform;
 
        
+        uiManager = Resources.Load<GameObject>("Prefab/SceneLoad/@UIManager");
         player = Resources.Load<GameObject>("Prefab/SceneLoad/@Player");
         gameManager = Resources.Load<GameManager>("Prefab/SceneLoad/@GameManager");
-        uiManager = Resources.Load<GameObject>("Prefab/SceneLoad/@UIManager");
-
 
         Instantiate<GameObject>(uiManager);
         Instantiate<GameObject>(player, startTr.position, startTr.rotation);
+        //gameManager는 Find 함수로 player, UI 목록을 찾아야 하기 때문에 가장 마지막에 생성
         gameManager = Instantiate<GameManager>(gameManager);
 
         mainCamera = FindObjectOfType<CameraController>()?.GetComponent<Camera>();

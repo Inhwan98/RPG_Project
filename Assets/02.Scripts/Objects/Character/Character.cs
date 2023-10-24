@@ -5,73 +5,68 @@ using InHwan.CircularQueue;
 
 public abstract class Character : ObjectBase
 {
-    [Header("SkILL Related")]
-    [SerializeField] protected SkillData[] _skill_Datas = new SkillData[6];
-    
-    [SerializeField] protected int m_nMaxExp;
-    [SerializeField] protected int m_nCurExp;
+    /*********************************************
+     *                  Fields
+     *********************************************/
+    #region option Fields
+    [SerializeField]
+    protected Transform _weaponTr;
+    #endregion
+    #region protected Fields
+    protected GameObject[] _levelUPEffect; //레벨업 이펙트
+    protected GameObject _equipWeaponGo;
+    protected SkillData[] _skill_Datas = new SkillData[6];
 
+    protected Skill_InvenManager _skillMgr;
+    protected Skill_InvenUI _skInvenUI;
+
+    protected int m_nMaxExp;
+    protected int m_nCurExp;
     protected string m_sClassName = "워리어";
+    #endregion
 
+    /*********************************************
+    *               Get, Set Methods
+    *********************************************/
+    #region Get Methods
     public int GetMaxExp()       => m_nMaxExp;
     public int GetCurExp()       => m_nCurExp;
     public string GetClassName() => m_sClassName;
-
+    public SkillData[] GetCharacterSillList() => _skill_Datas;
+    #endregion
+    #region Set Methods
     /// <summary> 모든 스킬 덮어 씌우기 </summary>
     public void SetPlayerSkill(SkillData[] skill_datas) => _skill_Datas = skill_datas;
     /// <summary> 플레이어 스킬 데이터에 할당 </summary>
     public void SetPlayerSkill(int idx, SkillData skillData) => _skill_Datas[idx] = skillData;
+    #endregion
 
-    //스킬을 자동 실행할 원형 큐
-    // protected CircularQueue<SkillStatus> circualrQueue;
-    protected SkillManager _skillMgr;
-    protected Skill_InvenUI _skInvenUI;
 
-    private GameObject[] _levelUPEffect; //레벨업 이펙트
+    /*********************************************
+    *                 Unity Evenet
+    *********************************************/
 
-    protected override void Awake()
-    {
-        base.Awake();
-       
-    }
-
+    #region Unity Evenet
     protected override void Start()
     {
-        #region 자동스킬 사용 세팅
-        //circualrQueue = new CircularQueue<SkillStatus>(skillMaxAmount);
-        //기초 세팅 될 스킬을 미리 원형 큐에 넣어 둔다.
-        //foreach (var a in skill_List)
-        //{
-        //    circualrQueue.EnQueue(a);
-        //}
-        #endregion
-
         base.Start(); //_resourcesData 할당
         _levelUPEffect = _resourcesData.GetLevelUPEffect();
 
         ChangeDamageTextColor(Color.red);
     }
 
+    #endregion
 
-    public override void Buff(int _str)
-    {
-        this.m_nCurHP += _str;
-        
-        if (m_nCurHP >= m_nMaxHP)// 체력이 맥스 이상이면
-        {
-            m_nCurHP = m_nMaxHP;
-        }
-    }
+    /*********************************************
+    *                  Methods
+    *********************************************/
 
-    /// <summary> 레벨업 이펙트 및 스킬 데미지 세팅</summary>
-    public virtual void LevelUP()
-    {
-        LevelUPEffect();
+    #region abstract Methods
+    /// <summary> 스킬 공격 관련 메서드 </summary>
+    protected abstract IEnumerator SkillAttack(int skillNum);
+    #endregion
 
-        _skillMgr.SetSkillPower(m_nCurSTR);
-        _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
-    }
-
+    /// <summary> 레벨업시 등장하는 이펙트 </summary>
     private void LevelUPEffect()
     {
         int _size = _levelUPEffect.Length;
@@ -84,12 +79,14 @@ public abstract class Character : ObjectBase
         foreach (var v in _levelUP) Destroy(v, 4.0f);
     }
 
-    public SkillData[] GetCharacterSillList()
+    #region public Methods
+    /// <summary> 레벨업 이펙트 및 스킬 데미지 세팅</summary>
+    public virtual void LevelUP()
     {
-        return _skill_Datas;
+        LevelUPEffect();
+
+        _skillMgr.SetSkillPower(GetTotalSTR());
+        _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
     }
-
-
-    protected override void Die() { }
-    protected abstract IEnumerator SkillAttack(int skillNum);
+    #endregion
 }

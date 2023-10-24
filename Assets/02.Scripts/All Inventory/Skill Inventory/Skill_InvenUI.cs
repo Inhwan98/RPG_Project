@@ -8,21 +8,81 @@ using System;
 
 public class Skill_InvenUI : InvenUIBase
 {
+    /********************************************
+     *                Fields
+     ********************************************/
+
+    #region option Fields
     [SerializeField] private GameObject _playerSkillGo;
-    private GraphicRaycaster _playerGr;
 
     [SerializeField]
     private List<PlayerSkillSlotUI> _playerSlotUIList = new List<PlayerSkillSlotUI>(); // 플레이어 스킬 슬롯 리스트
+    #endregion
 
+    #region private Fields
+    private GraphicRaycaster _playerGr;
     private Button[] plusButton;
-
     /// <summary> 연결된 인벤토리 </summary>
-    private SkillManager _skillManager;
+    private Skill_InvenManager _skillManager;
+    #endregion
 
-    protected override void Awake()
+    /********************************************
+    *               Get, Set Methods
+    ********************************************/
+
+    #region Get Methods
+    #endregion
+
+    #region Set Methods
+    /// <summary> 모든 스킬목록의 레벨텍스트 업데이트 </summary>
+    public void SetLevelText(SkillData[] skillDatas)
     {
-        base.Awake();
+        for (int i = 0; i < skillDatas.Length; i++)
+        {
+            var skillSlot = _slotUIList[i] as InvenSkillSlotUI;
+            skillSlot.SetLevelText(skillDatas[i].GetSkillLevel());
+        }
+    }
+    /// <summary> 해당 슬롯 Index의 스킬레벨 업데이트 </summary>
+    public void SetLevelText(SkillData skillData, int index)
+    {
+        var skillSlot = _slotUIList[index] as InvenSkillSlotUI;
+        skillSlot.SetLevelText(skillData.GetSkillLevel());
+    }
+    /// <summary> 슬롯에 플레이어 스킬 아이콘 등록 </summary>
+    public void SetPlayerSkill_ItemIcon(int index, Sprite icon) => _playerSlotUIList[index].SetItem(icon);
+    /// <summary> 스킬매니져 참조 등록 (스킬매니져 직접 호출) </summary>
+    public void SetSkillTreeReference(Skill_InvenManager skillMgr) => _skillManager = skillMgr;
+    #endregion
 
+    /********************************************
+     *                Unity Evenet
+     ********************************************/
+    private void OnDisable()
+    {
+        foreach (var a in _playerSlotUIList)
+        {
+            a.HideHighlightImage();
+        }
+        _itemTooltip.Hide();
+    }
+
+    /********************************************
+    *                Methods
+    ********************************************/
+
+    #region override Methods
+    public override void SetAccessibleSlotRange(int accessibleSlotCount)
+    {
+        for (int i = 0; i < _slotUIList.Count; i++)
+        {
+            _playerSlotUIList[i].SetSlotAccessibleState(i < accessibleSlotCount);
+        }
+
+        base.SetAccessibleSlotRange(accessibleSlotCount);
+    }
+    protected override void Init()
+    {
         int slotSize = _slotUIList.Count;
 
         plusButton = new Button[slotSize];
@@ -40,41 +100,12 @@ public class Skill_InvenUI : InvenUIBase
             plusButton[i].onClick.AddListener(() => _skillManager.SkillLevelUP(index));
             plusButton[i].onClick.AddListener(() => _skillManager.UpdateAccessibleAcquiredState(index));
         }
-    }
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    public void SetLevelText(SkillData[] skillDatas)
-    {
-        for(int i = 0; i < skillDatas.Length; i++)
-        {
-            var skillSlot = _slotUIList[i] as InvenSkillSlotUI;
-            skillSlot.SetLevelText(skillDatas[i].GetSkillLevel());
-        }
-    }
-
-    public void SetLevelText(SkillData skillData, int index)
-    {
-        var skillSlot = _slotUIList[index] as InvenSkillSlotUI;
-        skillSlot.SetLevelText(skillData.GetSkillLevel());
-    }
-
-    protected override void Init()
-    {
         _playerSkillGo.TryGetComponent(out _playerGr);
         if (_playerGr == null)
             _playerGr = _playerSkillGo.AddComponent<GraphicRaycaster>();
         base.Init();
     }
-
-    public void RemovePlayerItem(int index)
-    {
-        _playerSlotUIList[index].RemoveItem();
-    }
-
     /// <summary> 마우스 레이와 충돌한 첫번째 원소 /summary>
     protected override T RaycastAndGetFirstComponent<T>()
     {
@@ -87,7 +118,6 @@ public class Skill_InvenUI : InvenUIBase
             return null;
         return _rrList[0].gameObject.GetComponent<T>();
     }
-
     /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
     protected override void UpdateTooltipUI(SlotUIBase slot)
     {
@@ -103,56 +133,6 @@ public class Skill_InvenUI : InvenUIBase
         // 툴팁 위치 조정
         _itemTooltip.SetRectPosition(slot.GetSlotRect());
     }
-
-    /// <summary> 스킬데이터들을 조회하며 습득하지 않은 스킬은 비활성화 처리 </summary>
-    public void SetItemAccessibleState(SkillData[] datas)
-    {
-        for(int i = 0; i < _slotUIList.Count; i++)
-        {
-            bool isAcquired = datas[i].GetIsAcquired();
-
-            if (_slotUIList[i] is SKillSlotUI skSlotUI)
-            {
-                skSlotUI.SetItemAccessibleState(isAcquired);
-            }
-        }
-    }
-
-    /// <summary> 스킬을 습득한 상태로 만들고, 활성화 시킨다. </summary>
-    public void SetItemAccessibleState(SkillData data, int index)
-    {
-        data.SetIsAcquired(true);
-        bool isAcquired = data.GetIsAcquired();
-
-        if (_slotUIList[index] is SKillSlotUI skSlotUIk)
-        {
-            skSlotUIk.SetItemAccessibleState(isAcquired);
-        }
-    }
-
-
-    public override void SetAccessibleSlotRange(int accessibleSlotCount)
-    {
-        for (int i = 0; i < _slotUIList.Count; i++)
-        {
-            _playerSlotUIList[i].SetSlotAccessibleState(i < accessibleSlotCount);
-        }
-
-        base.SetAccessibleSlotRange(accessibleSlotCount);
-    }
-
-    /// <summary> 슬롯에 플레이어 스킬 아이콘 등록 </summary>
-    public void SetPlayerSkill_ItemIcon(int index, Sprite icon)
-    {
-        _playerSlotUIList[index].SetItem(icon);
-    }
-
-    /// <summary> 스킬매니져 참조 등록 (스킬매니져 직접 호출) </summary>
-    public void SetSkillTreeReference(SkillManager skillMgr)
-    {
-        _skillManager = skillMgr;
-    }
-
     protected override void EndDrag()
     {
         SlotUIBase endDragSlot = RaycastAndGetFirstComponent<SlotUIBase>();
@@ -167,7 +147,7 @@ public class Skill_InvenUI : InvenUIBase
                 return;
             }
             //플레이어의 skill Inven에서만 스왑 가능
-            else if(_beginDragSlot is PlayerSkillSlotUI && endDragSlot is PlayerSkillSlotUI)
+            else if (_beginDragSlot is PlayerSkillSlotUI && endDragSlot is PlayerSkillSlotUI)
             {
                 TrySwapItems(_beginDragSlot, endDragSlot);
                 // 툴팁 갱신
@@ -186,13 +166,11 @@ public class Skill_InvenUI : InvenUIBase
             TryRemoveItem(index);
         }
     }
-
     /// <summary> UI 및 인벤토리에서 아이템 제거 </summary>
     protected override void TryRemoveItem(int index)
     {
         _skillManager.Remove(index);
     }
-
     /// <summary> 두 슬롯의 아이템 교환 </summary>
     protected override void TrySwapItems(SlotUIBase from, SlotUIBase to)
     {
@@ -200,7 +178,37 @@ public class Skill_InvenUI : InvenUIBase
         from.SwapOnMoveIcon(to);
         _skillManager.Swap(from.GetIndex(), to.GetIndex());
     }
+    #endregion
 
+    #region public Methods
+    public void RemovePlayerItem(int index)
+    {
+        _playerSlotUIList[index].RemoveItem();
+    }
+    /// <summary> 스킬데이터들을 조회하며 습득하지 않은 스킬은 비활성화 처리 </summary>
+    public void SetItemAccessibleState(SkillData[] datas)
+    {
+        for (int i = 0; i < _slotUIList.Count; i++)
+        {
+            bool isAcquired = datas[i].GetIsAcquired();
+
+            if (_slotUIList[i] is SKillSlotUI skSlotUI)
+            {
+                skSlotUI.SetItemAccessibleState(isAcquired);
+            }
+        }
+    }
+    /// <summary> 스킬을 습득한 상태로 만들고, 활성화 시킨다. </summary>
+    public void SetItemAccessibleState(SkillData data, int index)
+    {
+        data.SetIsAcquired(true);
+        bool isAcquired = data.GetIsAcquired();
+
+        if (_slotUIList[index] is SKillSlotUI skSlotUIk)
+        {
+            skSlotUIk.SetItemAccessibleState(isAcquired);
+        }
+    }
     /// <summary> 스킬인벤 -> 플레이어 스킬인벤 이동 </summary>
     public void TryMoveItems(SlotUIBase from, SlotUIBase to)
     {
@@ -208,13 +216,12 @@ public class Skill_InvenUI : InvenUIBase
         from.SwapOnMoveIcon(to, true);
         _skillManager.FromInvenToPlayer(from.GetIndex(), to.GetIndex());
     }
+    #endregion
 
-
-    // *************************************
-    // ******   스킬 사용시 이벤트      ****
-    // ****** PlayerController에서 사용 ****
-    // **************************************
-
+    /********************************************
+    *                Coroutines
+    ********************************************/
+    #region .
     /// <summary> 쿨타임 진행 때 사용시 적색 불 들어온다 </summary>
     public IEnumerator SkillUsedWarring(int _idx)
     {
@@ -232,8 +239,6 @@ public class Skill_InvenUI : InvenUIBase
 
         yield break;
     }
-
-
     /// <summary> 스킬의 쿨타임을 시각적인 이미지, 텍스트로 나타낸다 </summary>
     public IEnumerator StartSkillCoolTime(int _idx, SkillData _curSkill)
     {
@@ -263,5 +268,7 @@ public class Skill_InvenUI : InvenUIBase
         coolTimeImage.gameObject.SetActive(false);
         _curSkill.SetInAvailable(false); // 현재 스킬 사용 다시 가능으로
     }
+
+    #endregion
 
 }

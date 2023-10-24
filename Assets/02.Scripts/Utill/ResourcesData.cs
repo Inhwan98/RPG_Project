@@ -18,7 +18,6 @@ public class ResourcesData
     private GameObject _exclamationMarkGO;
 
     private GameObject _villiagePortal;
-
     private GameObject _npcConversationKeyGo;
 
     public ResourcesData(AllData allData)
@@ -29,11 +28,11 @@ public class ResourcesData
     public void Init(AllData allData)
     {
         _portionDatas = allData.PortionItemDB;
-        _aromorDatas = allData.ArmorItemDB;
-        _weaponDatas = allData.WeaponItemDB;
+        _aromorDatas  = allData.ArmorItemDB;
+        _weaponDatas  = allData.WeaponItemDB;
 
-        _questHeader = Resources.Load<TMP_Text>("Prefab/UI/Header");
-        _questContext = Resources.Load<TMP_Text>("Prefab/UI/Context");
+        _questHeader   = Resources.Load<TMP_Text>("Prefab/UI/Header");
+        _questContext  = Resources.Load<TMP_Text>("Prefab/UI/Context");
         _levelUPEffect = Resources.LoadAll<GameObject>("Prefab/LevelUP");
 
         _questionMarkGo = Resources.Load<GameObject>("Prefab/Mark/QuestionMark");
@@ -43,6 +42,7 @@ public class ResourcesData
 
         _npcConversationKeyGo = Resources.Load<GameObject>("Prefab/UI/ConversationKey");
     }
+
 
     public List<ItemData> GetItemList(int[] _nIDArray)
     {
@@ -79,14 +79,21 @@ public class ResourcesData
         if (nID >= 1000 && nID < 2000)
         {
             index = nID - 1000;
-            _portionDatas[index].SetIcon();
+            _portionDatas[index].Init();
             return _portionDatas[index];
         }
         else if(nID >= 2000 && nID < 3000)
         {
             index = nID - 2000;
-            _aromorDatas[index].SetIcon();
+            _aromorDatas[index].Init();
             return _aromorDatas[index];
+        }
+       else if(nID >= 3000 && nID < 4000)
+        {
+            index = nID - 3000;
+            _weaponDatas[index].Init();
+            
+            return _weaponDatas[index];
         }
 
         return null;

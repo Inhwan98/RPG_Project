@@ -31376,8 +31376,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1279599936}
   - component: {fileID: 1730083656407701421}
-  - component: {fileID: 647184469707258510}
   - component: {fileID: 1279599935}
+  - component: {fileID: 1279599937}
   m_Layer: 0
   m_Name: SceneManager
   m_TagString: Untagged
@@ -31413,6 +31413,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1279599937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1279599934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73be1259d1788d14da847169be2fae4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _respawnMaxDistance: 20
+  spwanTr: {fileID: 1972530762}
+  _bossStartDirector: {fileID: 2093503266}
 --- !u!1001 &1282922880
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51689,12 +51704,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e992f573094dddc41ae2d20dfd3a5072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCtr: {fileID: 0}
   distance: 4.43
   height: 3.24
   damping: 0.2
   yOffset: {x: 0, y: 2, z: 0}
   yRotSpeed: 90
+  playerCtr: {fileID: 0}
 --- !u!1 &1981689620 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3898907535230693562, guid: b048c1c1b77066e42aaa432320eecb38, type: 3}
@@ -54924,21 +54939,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &647184469707258510
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1279599934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e0f2a1f1fbaea946943bcf1bae6ffd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _respawnDistance: 20
-  spwanTr: {fileID: 1972530762}
-  _bossStartDirector: {fileID: 2093503266}
 --- !u!4 &820372499038869920
 Transform:
   m_ObjectHideFlags: 0
@@ -55692,10 +55692,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 476554600, guid: 1c2e82316f7b43a41a221d254ccad05e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.72
-      objectReference: {fileID: 0}
     - target: {fileID: 1485747995291141475, guid: 1c2e82316f7b43a41a221d254ccad05e, type: 3}
       propertyPath: m_RootOrder
       value: 2

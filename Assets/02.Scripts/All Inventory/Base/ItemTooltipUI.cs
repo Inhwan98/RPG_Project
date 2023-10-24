@@ -23,15 +23,20 @@ public class ItemTooltipUI : MonoBehaviour
     private CanvasScaler _canvasScaler;
 
 
+    /****************************************************
+     *                    Unity Event                   *
+     ****************************************************/
     private void Awake()
     {
         Init();
         Hide();
     }
 
-    public void Show() => gameObject.SetActive(true);
-    public void Hide() => gameObject.SetActive(false);
+    /*****************************************************
+     *                    Methods                        *
+     ****************************************************/
 
+    #region private Methods
     private void Init()
     {
         TryGetComponent(out _rt);
@@ -40,7 +45,6 @@ public class ItemTooltipUI : MonoBehaviour
 
         DisableAllChildrenRaycastTraget(transform);
     }
-
     /// <summary> 모든 자식 UI에 레이캐스트 타겟 해제 </summary>
     private void DisableAllChildrenRaycastTraget(Transform tr)
     {
@@ -58,13 +62,16 @@ public class ItemTooltipUI : MonoBehaviour
             DisableAllChildrenRaycastTraget(tr.GetChild(i));
         }
     }
-
+    #endregion
+    #region public Methods
+    public void Show() => gameObject.SetActive(true);
+    public void Hide() => gameObject.SetActive(false);
     ///<summary> 툴팁 UI에 아이템 정보 등록 </summary>
     public void SetItemInfo(ItemData data)
     {
-        _titleText.text = data.GetName();
+        if (data == null) return;
 
-        
+        _titleText.text = data.GetName();
 
         //인벤 UI에 나타나는 습득레벨제한 표시. 플레이어가 낮다면 빨간색으로 표시
         if (PlayerController.instance.GetLevel() < data.GetUsedLevel())
@@ -90,14 +97,13 @@ public class ItemTooltipUI : MonoBehaviour
 
         sb.Clear();
     }
-
     ///<summary> 툴팁 UI에 스킬 정보 등록 </summary>
     public void SetItemInfo(SkillData data)
     {
         _titleText.text = data.GetSKillName();
 
         //스킬 UI에 나타나는 습득레벨제한 표시. 플레이어가 낮다면 빨간색으로 표시
-        if(PlayerController.instance.GetLevel() < data.GetSkillUsedLevel())
+        if (PlayerController.instance.GetLevel() < data.GetSkillUsedLevel())
             sb.Append($"제한 레벨 : <color=#ff0000>{data.GetSkillUsedLevel()}</color><br>");
         else
             sb.Append($"제한 레벨 : {data.GetSkillUsedLevel()}<br><br>");
@@ -113,7 +119,6 @@ public class ItemTooltipUI : MonoBehaviour
 
         sb.Clear();
     }
-
     /// <summary> 툴팁의 위치 조정 </summary>
     public void SetRectPosition(RectTransform slotRect)
     {
@@ -143,17 +148,17 @@ public class ItemTooltipUI : MonoBehaviour
         ref bool B = ref bottomTruncated;
 
         // 오른쪽만 잘림 => 슬롯의 Left Bottom 방향으로 표시
-        if(R && !B)
+        if (R && !B)
         {
             _rt.position = new Vector2(pos.x - width - slotWidth, pos.y);
         }
         // 아래쪽만 잘림 => 슬롯의 Right Top 방향으로 표시
-        else if(!R && B)
+        else if (!R && B)
         {
             _rt.position = new Vector2(pos.x, pos.y + height + slotHeight);
         }
         // 모두 잘림 => 슬롯의 Left Top 방향으로 표시
-        else if(R && B)
+        else if (R && B)
         {
             _rt.position = new Vector2(pos.x - width - slotWidth, pos.y + height + slotHeight);
         }
@@ -161,4 +166,5 @@ public class ItemTooltipUI : MonoBehaviour
         // Do Nothing
 
     }
+    #endregion
 }

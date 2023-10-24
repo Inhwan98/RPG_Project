@@ -8,23 +8,33 @@ using System;
 
 public class QuestUI : MonoBehaviour
 {
-
-    [SerializeField] private int n_maxManageableQuest = 3;
+    /********************************************
+     *                 Fields
+     ********************************************/
+    #region option Fields
+    [SerializeField] private int n_maxManageableQuest = 3; //수락 가능한 퀘스트 수
     [SerializeField] private GameObject _QuestPanel;
 
     [SerializeField] private TMP_Text[] _questHeaders;
     [SerializeField] private TMP_Text[] _disCriptions;
-    private int[] _questSlotIDArray;
+    #endregion
 
+    #region private Fields
     private TMP_Text _questHeader;
     private TMP_Text _disCription;
-
-    ResourcesData _resourcesData;
-    GameManager _gameMgr;
+    private ResourcesData _resourcesData;
+    private GameManager _gameMgr;
 
     //내용을 담기위한 StringBuilder. 수정이 잦기 때문에 String은 쓰지 않았다.
-    StringBuilder sb = new StringBuilder();
+    private StringBuilder sb = new StringBuilder();
+    private int[] _questSlotIDArray;
 
+    #endregion
+
+    /********************************************
+     *                Unity Event
+     ********************************************/
+    #region Unity Event
     private void Awake()
     {
         _questHeaders = new TMP_Text[n_maxManageableQuest];
@@ -32,14 +42,19 @@ public class QuestUI : MonoBehaviour
         _questSlotIDArray = new int[n_maxManageableQuest];
     }
 
-
-
-
     private void Start()
     {
         _gameMgr = GameManager.instance;
         _QuestPanel.SetActive(false);
     }
+    #endregion
+
+
+    /********************************************
+     *               Methods
+     ********************************************/
+
+    #region public Methods
 
     /// <summary> GameManager Awake()에서 초기화 </summary>
     public void QuestUI_Init(ResourcesData resourcesData)
@@ -61,7 +76,6 @@ public class QuestUI : MonoBehaviour
             _disCriptions[i].gameObject.SetActive(false);
         }
     }
-
     /// <summary>
     /// 플레이어가 승인한 퀘스트들을 시각적으로 좌측에 표시할 목록 Update
     /// </summary>
@@ -91,35 +105,6 @@ public class QuestUI : MonoBehaviour
 
             //오버로딩된 UpdateQuestUI 재호출
             UpdateQuestUI(currentQuestList[i]);
-
-            #region 오버로딩 함수 삽입 전
-            //int index = Array.IndexOf(_questSlotIDArray, currentQuestList[i].nQuestID);
-            //Debug.Assert(index != -1, "Quest Slot index NULL");
-
-            //#region Title 설정
-            //if (currentQuestList[i].eQuestType == 1)
-            //    sb.Append($"<color=orange>[메인]");
-            //else
-            //    sb.Append($"[일반]");
-
-            //sb.Append($"{currentQuestList[i].sQuestName}");
-
-            ////사냥 퀘스트라면 진행도를 UI Text로 나타낸다.
-            //if (currentQuestList[i].eObjectives == (int)QuestObjectives.HUNT)
-            //{
-            //    sb.Append($"<color=white> {currentQuestList[i].nCurCnt}/{currentQuestList[i].nGoalCnt}");
-            //}
-            //_questHeaders[index].text = sb.ToString();
-
-            //sb.Clear();
-            //#endregion
-
-
-            //#region 퀘스트 내용 설정
-            //sb.Append($"{currentQuestList[i].sDiscription}");
-            //_disCriptions[index].text = sb.ToString();
-            //#endregion
-            #endregion 오버로딩 함수 삽입 후
         }
     }
 
@@ -139,7 +124,7 @@ public class QuestUI : MonoBehaviour
 
 
         #region Title 설정
-        if (questData.eQuestType == 1)
+        if (questData.eQuestType == QuestType.메인)
             sb.Append($"<color=orange>[메인]");
         else
             sb.Append($"[일반]");
@@ -157,7 +142,7 @@ public class QuestUI : MonoBehaviour
         sb.Append($"{questData.sDiscription}");
 
         //사냥 퀘스트라면 진행도를 UI Text로 나타낸다.
-        if (questData.eObjectives == (int)QuestObjectives.HUNT)
+        if (questData.eObjectives == QuestObjectives.HUNT)
         {
             sb.Append($" {questData.nCurCnt}/{questData.nGoalCnt}");
         }
@@ -166,4 +151,7 @@ public class QuestUI : MonoBehaviour
         sb.Clear();
         #endregion
     }
+
+
+    #endregion
 }
