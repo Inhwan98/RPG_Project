@@ -7,16 +7,23 @@ using InHwan.CircularQueue;
 
 public class PlayerController : Character
 {
+    /********************************************
+     *                Fields
+     ********************************************/
+
+    #region static Fields
     public static PlayerController instance = null;
+    #endregion
+    #region Delegate / Event Fields
     //플레이가 죽었을 때, 모든 몬스터 제어
-    public delegate void PlayerDiehandler();             //델리게이트 선언
-    public static event PlayerDiehandler OnPlayerDie;    //이벤트 선언
+    public delegate void PlayerDiehandler();           
+    public static event PlayerDiehandler OnPlayerDie;
 
-    public delegate void PlayerQuestSetting();             //델리게이트 선언
-    public static event PlayerQuestSetting OnSettingNPCQuest;    //이벤트 선언
+    public delegate void PlayerQuestSetting();             
+    public static event PlayerQuestSetting OnSettingNPCQuest;
+    #endregion
 
-    [SerializeField] private float moveSpeed = 5.0f; // 이동 속도
-    #region Anim Hashing Init
+    #region Anim Hashing Fields
     private readonly int hashTakeDamage  = Animator.StringToHash("DoTakeDamage");
     private readonly int hashStrafe      = Animator.StringToHash("Strafe");
     private readonly int hashForward     = Animator.StringToHash("Forward");
@@ -27,21 +34,36 @@ public class PlayerController : Character
     private readonly int[] hashAttack = new int[] { Animator.StringToHash("DoAttack1"), Animator.StringToHash("DoAttack2"), Animator.StringToHash("DoAttack3")};
     #endregion
 
-    #region Attack 관련
+    #region private Fields
+    #region 공격 관련
     [SerializeField] private float m_fAttackDelay = 0.5f;
     private float m_fAttackRunTime = 0.0f;
     private float m_fAttackInitTime = 1.5f;
     private int m_nAttackCount = 0;
     #endregion
-
-    #region GetComponent 초기화 항목
+    #region GetComponent 초기화할 Fields
     private Rigidbody _rigid;
     private Weapon _weaponCtr;
+
+    private Weapon _basicWeaponCtr;
     #endregion
 
-    private CameraController _cameraCtr;
+    [SerializeField] private float moveSpeed = 5.0f; // 이동 속도
 
-    private PlayerLevelData[] _playerLevelData;
+    private CameraController _cameraCtr;
+    private PlayerLevelData[] _playerLevelData; // player Level에 대한 데이터들
+    private List<QuestData> _currentQuestList = new List<QuestData>(); //수락한 퀘스트 목록
+   
+    private QuestSystem _questSystem;
+
+    //매니져 스크립트
+    private GameManager _gameMgr;
+    private PlayerStatManager _playerStatMgr;
+    private ItemInventoryManager _itemInvenMgr;
+    private MerChantInventoryManager _merChantInvenMgr;
+
+    private PlayerData _playerData;
+    private PlayerStatusData _playerStatData;
 
     private string m_sCurVillageScene; //현재 플레이어가 있는 씬 정보
 
@@ -60,21 +82,12 @@ public class PlayerController : Character
     private bool _isUseSkillWindow;
     private bool _isUseStatusWindow;
     private bool _isPlayDialog;
+    #endregion
+    /********************************************
+     *                Get, Set Methods
+     ********************************************/
 
-    private List<QuestData> _currentQuestList = new List<QuestData>(); //수락한 퀘스트 목록
-   
-    private QuestSystem _questSystem;
-
-    //매니져 스크립트
-    private GameManager _gameMgr;
-    private PlayerUIManager _playerUIMgr;
-    private ItemInventoryManager _itemInvenMgr;
-    private MerChantInventoryManager _merChantInvenMgr;
-
-
-    private PlayerData _playerData;
-
-    #region Get, Set Method
+    #region Get Methods
     public int GetRubyAmount() => m_nRubyAmount;
     public bool GetUseInven() => _isUseInven;
     public CameraController GetCameraCtr() => _cameraCtr;
@@ -82,71 +95,31 @@ public class PlayerController : Character
     public QuestSystem GetQuestSystem() => _questSystem;
     public string GetPlayerStayingVilliage() => m_sCurVillageScene;
     /// <summary> 플레이어 행동 중지 조건 </summary>
-    private bool GetFreezePlayer() => _isUseInven || _isUseSkillWindow || _isPlayDialog || m_bisAttack || _isPlayerDown;
-
+    private bool GetFreezePlayer() => _isUseInven || _isUseSkillWindow || _isPlayDialog || m_bisAttack || _isPlayerDown || m_bisDead;
+    #endregion
+    #region Set Methods
     public void SetUseItemInven(bool value) { _isUseInven = value; }                                    // 인벤토리창이 켜져 있는가
     public void SetUseSKill_Inven(bool value) { _isUseSkillWindow = value; }                            // 스킬창이 켜져있는가
     public void SetUsePlayDialog(bool value) { _isPlayDialog = value; }                                 // 다이얼로그 사용중인가  
     public void SetQuestSystem(QuestSystem questSystem) => _questSystem = questSystem;                  // 퀘스트 시스템
     public void SetGameManager(GameManager gameMgr) => _gameMgr = gameMgr;                              // 게임 매니져
     public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr; // 아이템 인벤토리 매니져
-    public void SetSkillMgr(SkillManager skillMgr) => _skillMgr = skillMgr;                             // 스킬 매니져
-    public void SetPlayerUIMgr(PlayerUIManager playerUIMgr) => _playerUIMgr = playerUIMgr;              // 플레이어 UI 매니져
+    public void SetSkillMgr(Skill_InvenManager skillMgr) => _skillMgr = skillMgr;                             // 스킬 매니져
+    public void SetPlayerUIMgr(PlayerStatManager playerUIMgr) => _playerStatMgr = playerUIMgr;              // 플레이어 UI 매니져
     public void SetMerChantMgr(MerChantInventoryManager merChantMgr) => _merChantInvenMgr = merChantMgr;
     public void SetCameraCtr(CameraController value) => _cameraCtr = value;                             // 카메라
     public void SetVillageScene(string name) => m_sCurVillageScene = name;
     #endregion
 
-    public void UpdateNPCQuest()
-    {
-        if(OnSettingNPCQuest != null) OnSettingNPCQuest();
-    }
 
-    PlayerStatusData _playerStatData;
+    /********************************************
+     *                Unity Event
+     ********************************************/
 
-    protected override void Awake()
-    {
-        #region SingTone
-        if (instance != null)
-        {
-            Destroy(this.gameObject);
-        }
-        instance = this;
-        //DontDestroyOnLoad(this.gameObject);
-        #endregion
-
-        base.Awake();
-        
-        PlayerController_Init();  
-    }
-
-    /// <summary> 플레이어 초기화 </summary>
-    private void PlayerController_Init()
-    {
-        #region GetComponent
-        _rigid = GetComponent<Rigidbody>();
-        _weaponCtr = GetComponentInChildren<Weapon>();
-        #endregion
-
-        //공격속도
-        _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
-
-        _playerStatData = new PlayerStatusData(this);
-        
-        #region Manager스크립트는 GameManager에서 초기화 시킴
-        //_skillMgr = GetComponent<SkillManager>();
-        //_inven = GetComponent<ItemInventoryManager>();
-        //_inven.SetPlayerCtr(this);
-        //_skillMgr.SetPlayerCtr(this);
-        //_skillMgr.SetSkillPower(m_nCurSTR);
-        //_skInvenUI = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
-        #endregion
-
-    }
+    #region Unity Event
 
     protected override void Start()
     {
-        //_cam           = Camera.main;
         UpdateQuest(m_nLevel); //플레이어 레벨 기준 퀘스트 정보 업데이트
         _currentQuestList = _questSystem.GetInProgressQuestList(); //진행중인 퀘스트 받아오기
         CurrentQuestInit(_currentQuestList);
@@ -157,9 +130,8 @@ public class PlayerController : Character
 
         _itemInvenMgr.UpdateRubyAmount(m_nRubyAmount);
 
-        base.Start(); //skill_List 가 부모에서 초기화 됌
+        base.Start();
     }
-
 
     private void FixedUpdate()
     {
@@ -214,14 +186,14 @@ public class PlayerController : Character
 
                 //이벤트 퀘스트 있을 때만 상호작용키 활성화
                 if (isPossible || isInprogress || isComplete || npcCtr is MerChantNPC)
-                    _playerUIMgr.ConversationKeyActiveOn(pos);
+                    _playerStatMgr.ConversationKeyActiveOn(pos);
             }
 
 
             //2.NPC와 상호작용하기
             if (Input.GetKeyDown(KeyCode.F) && !_isPlayDialog)
             {
-                _playerUIMgr.ConversationKeyActiveOff();
+                _playerStatMgr.ConversationKeyActiveOff();
                 PlayerIdleState();
 
                 #region 퀘스트 상호작용
@@ -247,12 +219,14 @@ public class PlayerController : Character
                 }
                 #endregion
 
-                if(npcCtr is MerChantNPC merCtr)
+                
+                if(npcCtr is MerChantNPC merCtr && !(isComplete || isPossible || isInprogress))
                 {
                     merCtr.MerChantInvenOn();
                     _itemInvenMgr.SetWindowActive(true);
                     PlayerIdleState();
                 }
+
             }
      
             if (!_isPlayDialog)
@@ -266,7 +240,7 @@ public class PlayerController : Character
     {
         if (coll.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
-            _playerUIMgr.ConversationKeyActiveOff(); //상호작용키 비가시화
+            _playerStatMgr.ConversationKeyActiveOff(); //상호작용키 비가시화
 
             if (npcCtr is MerChantNPC merCtr)
             {
@@ -292,17 +266,231 @@ public class PlayerController : Character
         PlayerAttack();
     }
 
-    #region Init
+    private void OnDestroy()
+    {
+        ClearStaticField();
+        SavePlayer();
+    }
+    #endregion
+
+
+    /********************************************
+     *                 Methods
+     ********************************************/
+
+    #region override Methods
+    protected override void InitObj()
+    {
+        base.InitObj();
+        PlayerController_Init();
+    }
+    /// <summary> 플레이어의 정보 로드 </summary>
+    protected override void LoadData()
+    {
+        _playerData = SaveSys.LoadObject("PlayerData.Json");
+
+        _playerLevelData = SaveSys.LoadAllData().PlayerLevelDB;
+
+        //저장된 데이터가 있다면 캐릭터 정보를 불러온다.
+        if (_playerData != null)
+        {
+
+            m_nLevel = _playerData.nLevel;
+            m_nMaxHP = _playerData.nMaxHP;
+            m_nCurHP = _playerData.nCurHP;
+
+            m_nMaxMP = _playerData.nMaxMP;
+            m_nCurMP = _playerData.nCurMP;
+
+            m_nCurSTR = _playerData.nCurSTR;
+            m_nCurExp = _playerData.nCurExp;
+            m_nMaxExp = _playerData.ntotalExp;
+
+            m_nRubyAmount = _playerData.nRubyAmount;
+
+            m_sCurVillageScene = _playerData.sVillageScene;
+
+            return;
+        }
+        else
+        {
+            // 저장된 데이터가 없다면, 1레벨 부터 시작
+            PlayerLevelUP(0);
+        }
+    }
+
+    /// <summary> Character LevelUp System </summary>
+    public override void LevelUP()
+    {
+        PlayerLevelUP(m_nLevel);
+        PlayerUI_Init();
+
+        UpdateNPCQuest();
+        base.LevelUP();
+    }
+
+    /// <summary> 플레이어 대미지 발생 이벤트 </summary>
+    public override void OnDamage(int _str, bool _isKnockback = false, Transform posTr = null)
+    {
+        //받은 피해 - (방어력 + 추가 방어력) = 총 받을 피해
+        int nDamage = _str - GetTotalDefence();
+        if (nDamage < 0) nDamage = 0;
+
+        this.m_nCurHP -= nDamage;
+
+        //받은 피해 Text 가시화
+        ActiveDamageText(nDamage);
+
+       
+
+        if (_isKnockback == true)
+        {
+            if (posTr != null)
+            {
+                Vector3 pos = posTr.position;
+
+                pos.y = transform.position.y;
+
+                transform.LookAt(pos);
+            }
+
+            _rigid.velocity = Vector3.zero;
+            _rigid.angularVelocity = Vector3.zero;
+
+            _rigid.AddForce(-_rigid.transform.forward * 2000.0f);
+            _rigid.AddForce(_rigid.transform.up * 2000.0f);
+
+            _anim.SetTrigger(hashTakeDamage);
+
+            StartCoroutine(CheckDownTime());
+        }
+
+        if (m_nCurHP <= 0)
+        {
+            m_nCurHP = 0;
+            Die();
+        }
+
+        _playerStatMgr.UpdateHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
+    }
+
+    /// <summary> 플레이어의 사망 처리 </summary>
+    protected override void Die()
+    {
+        StopAllCoroutines();
+        _anim.SetTrigger(hashDead);
+        m_bisDead = true;
+        this.gameObject.layer = 3;
+        OnPlayerDie(); //delegate event Play
+    }
+
+    /// <summary>
+    /// 3회 콤보 기본 공격
+    /// </summary>
+    protected override IEnumerator Attack()
+    {
+        if (m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
+        {
+            m_bisAttack = true;
+            _weaponCtr.Use(); //무기 콜라이더 활성화 / 비활성화 루틴
+                              //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
+            if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
+            _anim.SetTrigger(hashAttack[m_nAttackCount]);
+
+            m_nAttackCount++;
+            if (m_nAttackCount >= 3) m_nAttackCount = 0;
+
+            m_fAttackRunTime = 0;
+            //마지막 공격 후, 더 길게 대기
+            if (m_nAttackCount == 0)
+                yield return new WaitForSeconds(m_fAttackDelay + 1.0f);
+            else
+                yield return new WaitForSeconds(m_fAttackDelay);
+
+            m_bisAttack = false;
+        }
+    }
+    /// <summary> Player의 스킬 공격 
+    /// <para/> SKill Manager의 플레이어 스킬Index 를 지닌
+    /// <para/> skill_Datas[] 배열 이용
+    /// </summary>
+    protected override IEnumerator SkillAttack(int skillNum)
+    {
+        //현재 사용할 스킬. 0번째 부터 시작함.
+        int skill_Idx = skillNum - 1;
+        SkillData curSkill = _skill_Datas[skill_Idx];
+
+        //획득하지 않은 상태면
+        if (curSkill == null) yield break;
+        //보유 마나보다 스킬 마나가 크다면 공격 중단.
+        if (m_nCurMP < curSkill.GetSkillManaAmount()) yield break;
+
+        //사용 가능 상태가 아니면
+        if (curSkill.GetInAvailable())
+        {
+            //빨간색 이미지가 깜빡거림
+            _skillMgr.SkillUsedWarring(skill_Idx);
+            yield break;
+        }
+
+
+        m_bisAttack = true;
+
+        _anim.SetTrigger(curSkill.GetAnimHash());
+
+        _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
+        _playerStatMgr.UpdateMPbar(m_nCurMP, m_nMaxMP);
+
+        _skillMgr.StartSkillCoolTime(skill_Idx, curSkill);
+
+        yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
+        m_bisAttack = false;
+    }
+    #endregion
+
+    #region Init Moethods
+    /// <summary> 플레이어 초기화 </summary>
+    private void PlayerController_Init()
+    {
+
+        #region SingTone
+        if (instance != null)
+        {
+            Destroy(this.gameObject);
+        }
+        instance = this;
+        //DontDestroyOnLoad(this.gameObject);
+        #endregion
+
+        #region GetComponent
+        _rigid = GetComponent<Rigidbody>();
+        _basicWeaponCtr = GetComponentInChildren<Weapon>();
+        _weaponCtr = _basicWeaponCtr;
+        #endregion
+
+        //공격속도
+        _anim.SetFloat(hashAttackSpeed, m_fAttackDelay);
+        _playerStatData = new PlayerStatusData(this);
+        
+        #region Manager스크립트는 GameManager에서 초기화 시킴
+        //_skillMgr = GetComponent<SkillManager>();
+        //_inven = GetComponent<ItemInventoryManager>();
+        //_inven.SetPlayerCtr(this);
+        //_skillMgr.SetPlayerCtr(this);
+        //_skillMgr.SetSkillPower(m_nCurSTR);
+        //_skInvenUI = _skillMgr.GetSkInvenUI(); //skillMgr은 Awake() 전에 skinvenUI를 할당받음
+        #endregion
+    }
     /// <summary> Player Info UI Set </summary>
     private void PlayerUI_Init()
     {
-        _playerUIMgr.SetHPbar(m_nCurHP, m_nMaxHP);
-        _playerUIMgr.SetMPbar(m_nCurMP, m_nMaxMP);
-        _playerUIMgr.SetEXPbar(m_nCurExp, m_nMaxExp);
-
-        _playerUIMgr.SetPlayerStatusData(_playerStatData);
+        _playerStatMgr.UpdateHPbar(m_nCurHP, m_nMaxHP);
+        _playerStatMgr.UpdateMPbar(m_nCurMP, m_nMaxMP);
+        _playerStatMgr.UpdateEXPbar(m_nCurExp, m_nMaxExp);
+        _playerStatMgr.UpdateLevelText(m_nLevel);
+        _playerStatMgr.SetPlayerStatusData(_playerStatData);
     }
-
+    /// <summary> Input 데이터 할당 </summary>
     private void Input_init()
     {
         _xInput = Input.GetAxis("Horizontal");
@@ -311,8 +499,6 @@ public class PlayerController : Character
         _rollingInput = Input.GetButton("Rolling");
         _attackInput = Input.GetButton("Fire1");
     }
-
-
     public void CurrentQuestInit(List<QuestData> currentQuestList)
     {
         _gameMgr.UpdateQuestUI(currentQuestList);
@@ -321,6 +507,7 @@ public class PlayerController : Character
 
     #endregion
 
+    #region private Methods
     /// <summary> Character dir, move, speed, rot, anim
     /// <para/> Current Use FixedUpdate()
     /// </summary>
@@ -357,42 +544,6 @@ public class PlayerController : Character
 
         _rigid.transform.Translate(movement);
     }
-
-    #region Rolling 관련
-    /// <summary> shift + spacebar 누를 시 구르기 가능 </summary>
-    public void DoRolling(ref float movementSpeed)
-    {
-        if (_rollingInput && _runInput > 0.5f && !_isRollingCoolTime)
-        {
-            StartCoroutine(CheckRolling());
-            movementSpeed *= 1.5f;
-            _anim.SetBool(hashRolling, true);
-        }
-        else
-        {
-            _anim.SetBool(hashRolling, false);
-        }
-    }
-
-    /// <summary>
-    /// 구르는 중인지에 대한 여부와 구르기 쿨타임 체크 함수
-    /// Layer를 Ignore로 구를동안 바꿔준다.
-    /// </summary>
-    IEnumerator CheckRolling()
-    {
-        _isRolling = true;
-        _isRollingCoolTime = true;
-
-        gameObject.layer = 2;
-        yield return new WaitForSeconds(1.0f);
-
-        gameObject.layer = 3;
-        _isRolling = false;
-
-        yield return new WaitForSeconds(4.0f);
-        _isRollingCoolTime = false;
-    }
-    #endregion
     #region Attack 관련
     /// <summary> Player의 기본/스킬 공격 구성 </summary>
     private void PlayerAttack()
@@ -432,69 +583,58 @@ public class PlayerController : Character
         }
         #endregion
     }
-    protected override IEnumerator Attack()
+    #endregion
+    /// <summary> shift + spacebar 누를 시 구르기 가능 </summary>
+    private void DoRolling(ref float movementSpeed)
     {
-        if (m_fAttackRunTime > m_fAttackDelay && !m_bisAttack)
+        if (_rollingInput && _runInput > 0.5f && !_isRollingCoolTime)
         {
-            m_bisAttack = true;
-            _weaponCtr.Use(); //무기 콜라이더 활성화 / 비활성화 루틴
-            //기본공격의 시간이 공격초기화 시간보다 길어진다면 콤보 x
-            if (m_fAttackRunTime > m_fAttackInitTime) m_nAttackCount = 0;
-            _anim.SetTrigger(hashAttack[m_nAttackCount]);
-
-            m_nAttackCount++;
-            if (m_nAttackCount >= 3) m_nAttackCount = 0;
-
-            m_fAttackRunTime = 0;
-            //마지막 공격 후, 더 길게 대기
-            if(m_nAttackCount == 0)
-                yield return new WaitForSeconds(m_fAttackDelay + 1.0f);
-            else
-                yield return new WaitForSeconds(m_fAttackDelay);
-
-            m_bisAttack = false;
+            StartCoroutine(CheckRolling());
+            movementSpeed *= 2f;
+            _anim.SetBool(hashRolling, true);
+        }
+        else
+        {
+            _anim.SetBool(hashRolling, false);
         }
     }
-    /// <summary> Player의 스킬 공격 
-    /// <para/> SKill Manager의 플레이어 스킬Index 를 지닌
-    /// <para/> skill_Datas[] 배열 이용
-    /// </summary>
-    protected override IEnumerator SkillAttack(int skillNum)
+    /// <summary> 플레이어 레벨에 비례해서 퀘스트 목록들 갱신 </summary>
+    private void UpdateQuest(int nLevel) => _gameMgr.UpdateQuestList(nLevel);
+    /// <summary> Inven 창이 켜져 있는지에 대한 bool 값 반환 </summary>
+    private bool IsActiveWindowOnState()
     {
-        //현재 사용할 스킬. 0번째 부터 시작함.
-        int skill_Idx = skillNum - 1;
-        SkillData curSkill = _skill_Datas[skill_Idx];
-
-        //획득하지 않은 상태면
-        if (curSkill == null) yield break;
-
-        //사용 가능 상태가 아니면
-        if (curSkill.GetInAvailable())
-        {
-            //빨간색 이미지가 깜빡거림
-            _skillMgr.SkillUsedWarring(skill_Idx);
-            //StartCoroutine(_skInvenUI.SkillUsedWarring(skill_Idx));
-            yield break;
-        }
-
-        //보유 마나보다 스킬 마나가 크다면 공격 중단.
-        //if (m_fCurMP < curSkill.GetSkillManaAmount()) yield break; 공격 중단 없음
-
-        m_bisAttack = true;
-
-        _anim.SetTrigger(curSkill.GetAnimHash());
-
-        _skillMgr.UseSkill(curSkill, this, ref m_nCurMP);
-        _playerUIMgr.SetMPbar(m_nCurMP, m_nMaxMP);
-
-        _skillMgr.StartSkillCoolTime(skill_Idx, curSkill);
-
-        yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
-        m_bisAttack = false;
-        //circualrQueue.DeQueue(); //스킬 순서 당겨 주기
+        return _isUseInven || _isUseSkillWindow || _isUseStatusWindow;
     }
+    /// <summary> 플레이어의 레벨업 및 캐릭터 정보 초기화 함수 </summary>
+    /// <param name="value"> 현재 레벨을 넣으면 레벨업 후 정보를 불러 온다. </param>
+    private void PlayerLevelUP(int value)
+    {
+        var playerData = _playerLevelData[value];
+
+        m_nLevel = playerData.nLevel;
+        m_nMaxHP = playerData.nMaxHP;
+        m_nCurHP = playerData.nMaxHP;
+
+        m_nMaxMP = playerData.nMaxMP;
+        m_nCurMP = playerData.nMaxMP;
+
+        m_nCurSTR = playerData.nSTR;
+        m_nDefence = playerData.nDefence;
+
+        m_nMaxExp = playerData.ntotalExp;
+    }
+    /// <summary> static Field를 비워주는 함수 </summary>
+    private void ClearStaticField()
+    {
+        instance = null;
+        OnPlayerDie = null;
+        OnSettingNPCQuest = null;
+    }
+    /// <summary> 플레이어의 정보 저장하기 </summary>
+    private void SavePlayer() => SaveSys.SavePlayer(this);
     #endregion
 
+    #region public Methods
     /// <summary> 플레이어 IDLE화 </summary>
     public void PlayerIdleState()
     {
@@ -502,13 +642,12 @@ public class PlayerController : Character
         _anim.SetFloat(hashForward, 0);
         _anim.SetFloat(hashRun, 0);
     }
-
     /// <summary> Invnetory Active</summary>
     public void StatusWindowActiveButton()
     {
         Commandkey.CheckInput(ActionType.Inventory, ref _isUseInven, _itemInvenMgr);
         Commandkey.CheckInput(ActionType.SkillWindow, ref _isUseSkillWindow, _skillMgr);
-        Commandkey.CheckInput(ActionType.StatusWindow, ref _isUseStatusWindow, _playerUIMgr);
+        Commandkey.CheckInput(ActionType.StatusWindow, ref _isUseStatusWindow, _playerStatMgr);
 
         #region 이전
         //if (Input.GetKeyDown(KeyCode.I))
@@ -541,7 +680,6 @@ public class PlayerController : Character
         //}
         #endregion
     }
-
     /// <summary> 컨트롤러가 잠겨야 하는지 체크 한다. </summary>
     public void CheckFreezController()
     {
@@ -553,102 +691,28 @@ public class PlayerController : Character
         else
             GameManager.instance.InvisibleCursor();
     }
-
-    private bool IsActiveWindowOnState()
-    {
-        return _isUseInven || _isUseSkillWindow || _isUseStatusWindow;
-    }
-
     /// <summary> 플레이어가 수락한 퀘스트 추가 </summary>
     public void AddPlayerQuest(QuestData questData)
     {
         questData.bIsProgress = true;
         _currentQuestList.Add(questData);
     }
-
-    /// <summary> 플레이어 레벨에 비례해서 퀘스트 목록들 갱신 </summary>
-    private void UpdateQuest(int nLevel) => _gameMgr.UpdateQuestList(nLevel);
-
-    public override void Buff(int _str)
-    {
-        base.Buff(_str);
-        _playerUIMgr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
-    }
-
-    /// <summary> 플레이어 대미지 발생 이벤트 </summary>
-    public override void OnDamage(int _str, bool _isKnockback = false, Transform posTr = null)
-    {
-        int nDamage = _str - m_nDefence;
-        if (nDamage < 0) nDamage = 0;
-
-        this.m_nCurHP -= nDamage;
-
-        ActiveDamageText(nDamage);
-
-        //if (m_fCurHP <= 0) this.objState = ObjectState.DEAD; //사망 없음
-
-        if (_isKnockback == true)
-        {
-            if(posTr != null)
-            {
-                Vector3 pos = posTr.position;
-
-                pos.y = transform.position.y;
-
-                transform.LookAt(pos);
-            }
-
-            _rigid.velocity = Vector3.zero;
-            _rigid.angularVelocity = Vector3.zero;
-
-            _rigid.AddForce(-_rigid.transform.forward * 2000.0f);
-            _rigid.AddForce(_rigid.transform.up * 2000.0f);
-
-            _anim.SetTrigger(hashTakeDamage);
-
-            StartCoroutine(CheckDownTime());
-        }
-
-        if (m_nCurHP <= 0) m_nCurHP = 0;
-        _playerUIMgr.SetHPbar(m_nCurHP, m_nMaxHP); //HP Bar UI 수정
-    }
-    /// <summary> 피격당한 이후, Down 상태 시간 체크 </summary>
-    IEnumerator CheckDownTime()
-    {
-        _isPlayerDown = true;
-        yield return new WaitForSeconds(1.5f);
-        _isPlayerDown = false;
-    }
-
-    /// <summary> 플레이어의 사망 처리 </summary>
-    protected override void Die()
-    {
-        StopAllCoroutines();
-        _anim.SetTrigger(hashDead);
-        m_bisDead = true;
-
-        OnPlayerDie(); //delegate event Play
-        GameManager.instance.PlayerDie();
-    }
-
     /// <summary> 체력 회복 작용 </summary>
     public void RecoveryHP(int value)
     {
         m_nCurHP += value;
 
         if (m_nCurHP > m_nMaxHP) m_nCurHP = m_nMaxHP;
-        _playerUIMgr.SetHPbar(m_nCurHP, m_nMaxHP);
+        _playerStatMgr.UpdateHPbar(m_nCurHP, m_nMaxHP);
     }
-
     /// <summary> 마나 회복 작용 </summary>
     public void RecoveryMP(int value)
     {
         m_nCurMP += value;
 
         if (m_nCurMP > m_nMaxHP) m_nCurMP = m_nMaxMP;
-        _playerUIMgr.SetMPbar(m_nCurMP, m_nMaxHP);
+        _playerStatMgr.UpdateMPbar(m_nCurMP, m_nMaxHP);
     }
-
     /// <summary> 경험치 획득 처리 및 레벨업 함수 호출 (사냥, 퀘스트 등등)</summary>
     public void SetEXP(int _exp)
     {
@@ -659,9 +723,8 @@ public class PlayerController : Character
             m_nCurExp -= m_nMaxExp;
             LevelUP();
         }
-        _playerUIMgr.SetEXPbar(m_nCurExp, m_nMaxExp);
+        _playerStatMgr.UpdateEXPbar(m_nCurExp, m_nMaxExp);
     }
-
     /// <summary> 몬스터의 아이템을 Inventory로 전달 </summary>
     public void AddInven(Dictionary<ItemData, int> _itemDic)
     {
@@ -670,121 +733,81 @@ public class PlayerController : Character
             _itemInvenMgr.AddItem(itemDic.Key, itemDic.Value);
         }
     }
-
     /// <summary> AddInven 오버로딩 </summary>
     public void AddInven(ItemData itemData, int amount)
     {
         _itemInvenMgr.AddItem(itemData, amount);
     }
-
-    /// <summary>
-    /// 플레이어 머니 추가
-    /// </summary>
+    /// <summary> 플레이어 머니 추가 </summary>
     public void AddMoney(int nMoney)
     {
         m_nRubyAmount += nMoney;
         _itemInvenMgr.UpdateRubyAmount(m_nRubyAmount);
     }
-
-
-    /// <summary> 플레이어의 정보 저장하기 </summary>
-    public void SavePlayer() => SaveSys.SavePlayer(this);
-
-    /// <summary> 플레이어의 정보 로드 </summary>
-    protected override void LoadData()
+    /// <summary> 무기 착용 </summary>
+    public void PutOnWeapon(EquipmentItemData weaponData)
     {
-        _playerData = SaveSys.LoadObject("PlayerData.Json");
-
-        _playerLevelData = SaveSys.LoadAllData().PlayerLevelDB;
-
-        //저장된 데이터가 있다면 캐릭터 정보를 불러온다.
-        if (_playerData != null)
+        if(_equipWeaponGo != null)
         {
-            
-            m_nLevel = _playerData.nLevel;
-            m_nMaxHP = _playerData.nMaxHP;
-            m_nCurHP = _playerData.nCurHP;
-
-            m_nMaxMP = _playerData.nMaxMP;
-            m_nCurMP = _playerData.nCurMP;
-
-            m_nCurSTR = _playerData.nCurSTR;
-            m_nCurExp = _playerData.nCurExp;
-            m_nMaxExp = _playerData.ntotalExp;
-
-            m_nRubyAmount = _playerData.nRubyAmount;
-
-            m_sCurVillageScene = _playerData.sVillageScene;
-
-            return;
+            TakeOffWeapon();
         }
-        else
-        {
-            // 저장된 데이터가 없다면, 1레벨 부터 시작
-            PlayerLevelUP(0);
-        }
+        _basicWeaponCtr.gameObject.SetActive(false);
 
-        #region preSetting
-        //m_nLevel = objData.GetLevel();
-        //m_nMaxHP = objData.GetMaxHP();
-        //m_nCurHP = objData.GetCurHP();
+        GameObject weaponPrefabGo = weaponData.GetWeaponPrefab();
+        Vector3 pos        = weaponData.GetPos();
+        Quaternion rot     = weaponData.GetRot();
 
-        //m_nMaxMP = objData.GetMaxMP();
-        //m_nCurMP = objData.GetCurMP();
+        _equipWeaponGo = Instantiate(weaponPrefabGo, _weaponTr);
+        
+        _equipWeaponGo.transform.localPosition = pos;
+        _equipWeaponGo.transform.localRotation = rot;
 
-        //m_nCurSTR = objData.GetCurSTR();
-        //m_nCurExp = objData.GetCurExp();
-
-        //m_nLevel = objData.GetLevel();
-        //m_nMaxHP = objData.GetMaxHP();
-        //m_nCurHP = objData.GetCurHP();
-
-        //m_nMaxMP = objData.GetMaxMP();
-        //m_nCurMP = objData.GetCurMP();
-        #endregion
-
+        _weaponCtr = _equipWeaponGo.GetComponent<Weapon>();
     }
-
-    /// <summary> Character LevelUp System </summary>
-    public override void LevelUP()
+    /// <summary> 무기 착용 해제 </summary>
+    public void TakeOffWeapon()
     {
-        PlayerLevelUP(m_nLevel);
-        PlayerUI_Init();
-
-        UpdateNPCQuest();
-        base.LevelUP();
+        _basicWeaponCtr.gameObject.SetActive(true);
+        _weaponCtr = _basicWeaponCtr;
+        DestroyImmediate(_equipWeaponGo);
     }
-
-    /// <summary> 플레이어의 레벨업 및 캐릭터 정보 초기화 함수 </summary>
-    /// <param name="value"> 현재 레벨을 넣으면 레벨업 후 정보를 불러 온다. </param>
-    private void PlayerLevelUP(int value)
+    /// <summary> NPC Quest를 업데이트하는 이벤트함수 실행 </summary>
+    public void UpdateNPCQuest()
     {
-        var playerData = _playerLevelData[value];
-
-        m_nLevel = playerData.nLevel;
-        m_nMaxHP = playerData.nMaxHP;
-        m_nCurHP = playerData.nMaxHP;
-
-        m_nMaxMP = playerData.nMaxMP;
-        m_nCurMP = playerData.nMaxMP;
-
-        m_nCurSTR = playerData.nSTR;
-        m_nDefence = playerData.nDefence;
-
-        m_nMaxExp = playerData.ntotalExp;
+        if (OnSettingNPCQuest != null) OnSettingNPCQuest();
     }
+    #endregion
 
 
-    private void ClearStaticField()
+    /********************************************
+    *                 Coroutine
+    ********************************************/
+    #region Coroutine
+    /// <summary>
+    /// 구르는 중인지에 대한 여부와 구르기 쿨타임 체크 함수
+    /// Layer를 Ignore로 구를동안 바꿔준다.
+    /// </summary>
+    private IEnumerator CheckRolling()
     {
-        instance = null;
-        OnPlayerDie = null;
-        OnSettingNPCQuest = null;
-    }
+        _isRolling = true;
+        _isRollingCoolTime = true;
 
-    private void OnDestroy()
-    {
-        ClearStaticField();
-        SavePlayer();
+        gameObject.layer = 2;
+        yield return new WaitForSeconds(1.0f);
+
+        gameObject.layer = 3;
+        _isRolling = false;
+
+        yield return new WaitForSeconds(4.0f);
+        _isRollingCoolTime = false;
     }
+    /// <summary> 피격당한 이후, Down 상태 시간 체크 </summary>
+    private IEnumerator CheckDownTime()
+    {
+        _isPlayerDown = true;
+        yield return new WaitForSeconds(1.5f);
+        _isPlayerDown = false;
+    }
+    #endregion
+
 }

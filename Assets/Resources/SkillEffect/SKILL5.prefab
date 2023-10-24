@@ -5348,7 +5348,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coll: {fileID: 4846369156266659288}
-  attackPerSecond: 0.1
+  attackSecond: 0.1
+  repeatCount: 14
 --- !u!65 &4846369156266659288
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -6,35 +6,41 @@ using UnityEngine.Playables;
 using UnityEngine.AI;
 using InHwan.CircularQueue;
 
-public abstract class DungeonSceneManager : GameSceneManager
+public class DungeonSceneManager : GameSceneManager
 {
-    [SerializeField] private float _respawnDistance;
-    [SerializeField] private Transform spwanTr;
-    [SerializeField] private PlayableDirector _bossStartDirector;
+    /************************************************
+     *                   Fields
+     ************************************************/
+    #region option Fields
+    [SerializeField] private float _respawnMaxDistance;           //스폰 지점으로 부터 최대 멀어질 거리
+    [SerializeField] private Transform spwanTr;                   //몬스터 스폰 지점
+    [SerializeField] private PlayableDirector _bossStartDirector; //보스의 타임라인
+    #endregion
 
-    private List<DungeonStage> stageDataList = new List<DungeonStage>();
+    #region private Fields
     private DungeonUI _dungeonUI;
-
     private PlayerController _playerCtr;
-
-    private GameObject monsterRootObj;
-    private CircularQueue<GameObject> monsterQue;
-    private int circleQueSize = 0;
-
-    //private int destMonsterAmount;
-
-    private bool m_bisDungeonActive;
-    private int m_nStageIndex = 0;
-
     private BossMonster _bossMonsterCtr;
 
-    //포탈 관련
+    private GameObject monsterRootObj;
     private GameObject _villiagePortal; //보스 사망시 나타날 포탈
-    Coroutine portalFollowCoroutine;
 
-    bool m_bisPlayerDie;
+    private List<DungeonStage> stageDataList = new List<DungeonStage>();
+    private Coroutine portalFollowCoroutine;
+
+    private CircularQueue<GameObject> monsterQue;
+
+    private int circleQueSize = 0;
+    private int m_nStageIndex = 0;
+    private bool m_bisDungeonActive;
+    private bool m_bisPlayerDie;
+    #endregion
 
 
+    /************************************************
+     *                Unity Event
+     ************************************************/
+    #region Unity Event
     void Start()
     {
         _playerCtr = PlayerController.instance;
@@ -47,7 +53,34 @@ public abstract class DungeonSceneManager : GameSceneManager
         _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
     }
 
+    /// <summary> 특정구역에 플레이어가 들어왔다면 던전 활성화 </summary>
+    private void OnTriggerEnter(Collider coll)
+    {
+        if (coll.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            if (!m_bisDungeonActive)
+            {
+                _dungeonUI.gameObject.SetActive(true);
+                _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
+                StartCoroutine(UpdateMonster());
+            }
 
+        }
+    }
+
+    private void OnDisable()
+    {
+        DungeonReset();
+        instance = null;
+    }
+
+    #endregion
+
+
+    /************************************************
+    *                  Methods
+    ************************************************/
+    #region override Methods
     protected override void Init()
     {
         base.Init();
@@ -60,8 +93,9 @@ public abstract class DungeonSceneManager : GameSceneManager
         _bossMonsterCtr = FindObjectOfType<BossMonster>();
         _dungeonUI.gameObject.SetActive(false);
     }
+    #endregion
 
-
+    #region private Methods
     /// <summary> 보스 클리어스 나타날 포탈 생성 </summary>
     private void CreatePortal()
     {
@@ -69,20 +103,57 @@ public abstract class DungeonSceneManager : GameSceneManager
         _villiagePortal.SetActive(false);
     }
 
-    //던전몬스터를 초기화 한다.
+    /// <summary> 풀링된 몬스터를 세팅한다. </summary>
+    private void SetStageMonster()
+    {
+        for (int i = 0; i < stageDataList[m_nStageIndex].nMonsterAmount; i++)
+        {
+            GameObject monsterGo = monsterQue.Front();
+            monsterQue.DeQueue();
+            //보스가 아니라면
+            if (!stageDataList[m_nStageIndex].bIsBoss)
+            {
+                //랜덤한 위치로 생성
+                Vector3 randPos = RandomTr.GetRandomPos(spwanTr, _respawnMaxDistance);
+                monsterGo.transform.SetPositionAndRotation(randPos, Quaternion.identity);
+                monsterGo.SetActive(true);
+            }
+            //보스라면
+            else
+            {
+                //귀환포탈이 보스 추적 시작
+                portalFollowCoroutine = StartCoroutine(PortalFollowsBoss(_bossMonsterCtr.gameObject));
+                _bossStartDirector.Play(); //보스 TimeLine 재생
+            }
+        }
+        _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
+    }
+
+    /// <summary> 던전 초기화 </summary>
+    private void DungeonReset()
+    {
+        foreach (var stageMonsterData in stageDataList)
+        {
+            stageMonsterData.nDeadMonsterCount = 0;
+        }
+    }
+    #endregion
+
+    #region public Methods
+    /// <summary> 던전씬의 이름과 맞는 데이터로 스테이지 초기화 </summary>
     public void DungeonMonsterInit()
     {
         var dungeonDB = GameManager.instance.GetAllData().DungeonStageDB;
 
         foreach (var stageData in dungeonDB)
         {
+            //현재 씬에 맞는 데이터만 추가
             if (stageData.sDungenName == _sSceneName)
             {
                 stageDataList.Add(stageData);
             }
         }
     }
-
     /// <summary> StageData에 따른 몬스터 Pool 생성 </summary>
     public void CreateMonsterPool()
     {
@@ -96,14 +167,14 @@ public abstract class DungeonSceneManager : GameSceneManager
 
         for (int i = 0; i < stageDataList.Count; i++)
         {
-            if (stageDataList[i].bIsBoss) continue;
+            if (stageDataList[i].bIsBoss) continue; //보스는 정적으로 생성해둔다.
 
             string path = Path.Combine("Prefab", "Monster", stageDataList[i].sMonsterName);
             Monster monster = Resources.Load<Monster>(path);
             monster.SetID(stageDataList[i].nMonsterID);
             monster.gameObject.SetActive(false);
 
-            //정해진 몬스터의 개수만큼 랜덤한 위치에 몬스터 생성 후 비활성화
+            //정해진 몬스터의 개수만큼 몬스터 생성 후 비활성화
             for (int j = 0; j < stageDataList[i].nMonsterAmount; j++)
             {
                 GameObject monsterGo = Instantiate(monster.gameObject, monsterRootObj.transform);
@@ -113,8 +184,22 @@ public abstract class DungeonSceneManager : GameSceneManager
 
     }
 
+    /// <summary> 현재 스테이지의 몬스터의 사망개수를 증가 시킨다. </summary>
+    public void MonsterDead()
+    {
+        stageDataList[m_nStageIndex].nDeadMonsterCount++;
+        _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
+    }
+    #endregion
+
+
+    /************************************************
+    *                  Coroutine
+    ************************************************/
+
+    #region Coroutine
     //몬스터 생성주기
-    IEnumerator UpdateMonster()
+    private IEnumerator UpdateMonster()
     {
         while (m_nStageIndex != stageDataList.Count)
         {
@@ -131,6 +216,7 @@ public abstract class DungeonSceneManager : GameSceneManager
 
             if (m_nStageIndex >= stageDataList.Count)
             {
+                DungeonReset();
                 m_bisDungeonActive = false;
 
                 if (portalFollowCoroutine != null)
@@ -153,34 +239,6 @@ public abstract class DungeonSceneManager : GameSceneManager
             //yield return new WaitForSeconds(respawnTime);
         }
     }
-
-
-    /// <summary> 풀링된 몬스터를 세팅한다. </summary>
-    private void SetStageMonster()
-    {
-        for (int i = 0; i < stageDataList[m_nStageIndex].nMonsterAmount; i++)
-        {
-            GameObject monsterGo = monsterQue.Front();
-            monsterQue.DeQueue();
-            //보스가 아니라면
-            if (!stageDataList[m_nStageIndex].bIsBoss)
-            {
-                //랜덤한 위치로 생성
-                Vector3 randPos = RandomTr.GetRandomPos(spwanTr, _respawnDistance);
-                monsterGo.transform.SetPositionAndRotation(randPos, Quaternion.identity);
-                monsterGo.SetActive(true);
-            }
-            //보스라면
-            else
-            {
-                //귀환포탈이 보스 추적 시작
-                portalFollowCoroutine = StartCoroutine(PortalFollowsBoss(_bossMonsterCtr.gameObject));
-                _bossStartDirector.Play(); //보스 TimeLine 재생
-            }
-        }
-        _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
-    }
-
     /// <summary>
     /// 포탈이 0.2초마다 보스를 따라다님
     /// 보스의 자식으로 두는게 더 좋을까?
@@ -195,31 +253,7 @@ public abstract class DungeonSceneManager : GameSceneManager
             _villiagePortal.transform.position = bossGo.transform.position;
         }
     }
+    #endregion
 
-    /// <summary> 현재 스테이지의 몬스터의 사망개수를 증가 시킨다. </summary>
-    public void MonsterDead()
-    {
-        stageDataList[m_nStageIndex].nDeadMonsterCount++;
-        _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
-    }
-
-    /// <summary> 특정구역에 플레이어가 들어왔다면 던전 활성화 </summary>
-    private void OnTriggerEnter(Collider coll)
-    {
-        if (coll.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            if (!m_bisDungeonActive)
-            {
-                _dungeonUI.gameObject.SetActive(true);
-                _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
-                StartCoroutine(UpdateMonster());
-            }
-
-        }
-    }
-
-    private void OnDestroy()
-    {
-        instance = null;
-    }
+  
 }

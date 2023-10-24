@@ -4,28 +4,37 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    /**************************************************
+     *                      Fields
+     **************************************************/
+
+    #region static Fields
     public static CameraController instance = null;
+    #endregion
 
-    [SerializeField] PlayerController playerCtr;
-    Transform playertr;
-
+    #region option Fields
     [SerializeField] private float distance;
     [SerializeField] private float height;
     [SerializeField] private float damping;
    
     [SerializeField] private Vector3 yOffset;
-
     [SerializeField] private float yRotSpeed;
 
+    [SerializeField] PlayerController playerCtr;
+    #endregion
+
+    #region private Fields
+    private Transform playertr;
     private Vector3 offset;
-
+    private Vector3 velocity;
     private float xAngle;
-    private float yAngle = 10.0f;
-
     private bool _isUseWindow;
+    #endregion
 
-    Vector3 velocity;
-
+    /**************************************************
+    *                  Unity Event
+    **************************************************/
+    #region Unity Event
     private void Awake()
     {
         if(instance != null)
@@ -43,15 +52,37 @@ public class CameraController : MonoBehaviour
         StartCoroutine(CheckCam());
     }
 
+    #endregion
 
-    private void FixedUpdate()
+    /**************************************************
+    *                     Methods
+    **************************************************/
+    #region private Methods
+    /// <summary> 카메라의 회전 </summary>
+    private void RotateCam()
+    {
+        if (_isUseWindow) return;
+
+        float yRot = Input.GetAxis("Mouse X");
+        float xRot = Input.GetAxis("Mouse Y");
+
+        xAngle += yRot * yRotSpeed * Time.fixedDeltaTime;
+    }
+    #endregion
+
+    #region public Methods
+    /// <summary> 플레이어 Inven의 상태 반영 </summary>
+    public void UseWindow(bool value) => _isUseWindow = value;
+    #endregion
+
+    /**************************************************
+    *                  Coroutine
+    **************************************************/
+    #region Coroutine
+    /// <summary> 플레이어의 위치,회전에 비례하여 카메라 위치 선정 </summary>
+    private IEnumerator CheckCam()
     {
         
-    }
-
-    /// <summary> 플레이어의 위치,회전에 비례하여 카메라 위치 선정 </summary>
-    IEnumerator CheckCam()
-    {
         while(true)
         {
             yield return new WaitForFixedUpdate();
@@ -71,25 +102,8 @@ public class CameraController : MonoBehaviour
             //yield return new WaitUntil(() => !_isUseInven); //인벤토리가 사용중이면 회전 대기
         }
     }
-
-    /// <summary> 카메라의 회전 </summary>
-    private void RotateCam()
-    {
-        if (_isUseWindow) return;
-
-        float yRot = Input.GetAxis("Mouse X");
-        float xRot = Input.GetAxis("Mouse Y");
+    #endregion
 
 
-        xAngle += yRot * yRotSpeed * Time.fixedDeltaTime;
-    }
-
-    /// <summary> 플레이어 Inven의 상태 반영 </summary>
-    public void UseWindow(bool value)
-    {
-        _isUseWindow = value;
-    }
-
-    
 }
 

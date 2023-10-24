@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum IWeaponType
+{
+    Sword
+}
 
 public class Weapon : MonoBehaviour
 {
@@ -38,5 +42,10 @@ public class Weapon : MonoBehaviour
         //3
         yield return new WaitForSeconds(0.3f);
         weaponTrail.enabled = false; //트레일렌더러 비활성화
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 }

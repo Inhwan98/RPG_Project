@@ -6,18 +6,19 @@ using TMPro;
 
 public class DialogUI : MonoBehaviour
 {
+    /*************************************************
+    *                    Fields
+    /*************************************************/
+
+    #region option Fields
     [Header("Dialog")]
-    [SerializeField]
-    private GameObject _dialogPanel;
-    [SerializeField]
-    private TMP_Text _textName; //현재 대사중인 캐릭터 이름 출력
-    [SerializeField]
-    private TMP_Text _textDialogue; //현재 대사 출력 Text UI
+    [SerializeField] private GameObject _dialogPanel;
+    [SerializeField] private TMP_Text _textName; //현재 대사중인 캐릭터 이름 출력
+    [SerializeField] private TMP_Text _textDialogue; //현재 대사 출력 Text UI
+    [SerializeField] private bool _isAutoStart = true; //자동 시작 여부
+    #endregion
 
-
-    [SerializeField]
-    private bool _isAutoStart = true; //자동 시작 여부
-
+    #region private Fields
     private bool _isFirst = true; //최초 1회만 호출하기 위한 변수
     private int _currentDialogIndex = -1; //현재 대사 순번
 
@@ -26,6 +27,12 @@ public class DialogUI : MonoBehaviour
 
     private DialogSystem _dialogSystem;
     private List<DialogData> _currentDialog;
+    #endregion
+
+    /*************************************************
+     *                 Unity Evenet
+     *************************************************/
+    #region Unity Evenet
 
     private void Awake()
     {
@@ -37,12 +44,20 @@ public class DialogUI : MonoBehaviour
         _dialogSystem = GameManager.instance.GetDialogSystem();
     }
 
-    public void SetDialogList(int questID, int branch)
+    #endregion
+
+
+    /*************************************************
+     *                   Methods
+     *************************************************/
+
+    #region public Methods
+    /// <summary> 원하는 다이로그 정보를 업데이트 한다. </summary>
+    public void UpdateDialogList(int questID, int branch)
     {
         _currentDialog = _dialogSystem.GetDialogDataList(questID, branch);
     }
-
-
+    /// <summary> 현재 다이로그의 모든 대사를 출력 한뒤 true 반환 </summary>
     public bool UpdateDialog()
     {
         // 대사 분기가 시작될 때 1회만 호출
@@ -88,7 +103,8 @@ public class DialogUI : MonoBehaviour
         }
         return false;
     }
-
+    #endregion
+    #region private Methods
     private void SetNextDialog()
     {
         //다음 대사를 진행하도록
@@ -101,7 +117,10 @@ public class DialogUI : MonoBehaviour
 
         StartCoroutine("OnTypingText");
     }
+    #endregion
 
+    #region Coroutine Methods
+    /// <summary> _typingSpeed 만큼 한 글자씩 불러오는 효과를 나타낸다. </summary>
     private IEnumerator OnTypingText()
     {
         int index = 0;
@@ -133,4 +152,5 @@ public class DialogUI : MonoBehaviour
 
         _isTypingEffect = false;
     }
+    #endregion
 }

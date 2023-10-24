@@ -4,25 +4,40 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public enum SceneType
-{
-    Unknown,
-    Village,
-    DragonDungeon, 
-    Loading,
-}
+
+/*
+    [상속 구조]
+
+    BaseSceneManager(abstract) : 모든 씬에 공통적으로 있어야 하는부분인 EventSystem이 존재하는지 여부를 확인 후 조치
+                               : 씬매니져는 정적으로 항상 씬에 존재해야 한다.
+       
+        * 게임씬
+        - GameSceneManager : Player, UIManager, GameManager, MainCamara가 항상 씬에 존재하게 만듦
+            - DungeonSceneManager : 던전 씬을 구성하고, 던전을 관리감독한다.
+            - VillageSceneManager : 마을 씬을 구성하고, 마을 NPC를 관리한다.
+*/
 
 public abstract class BaseSceneManager : MonoBehaviour
 {
+    /************************************************
+     *                   Fields
+     ************************************************/
     public static BaseSceneManager instance = null;
 
-    protected SceneType _sceneType = SceneType.Unknown; // 디폴트로 Unknow 이라고 초기화
     protected string _sSceneName;
+
+    /************************************************
+    *                 Unity Event
+    ************************************************/
 
     protected virtual void Awake()
     {
         Init();
     }
+
+   /************************************************
+    *                 Methods
+    ************************************************/
 
     protected virtual void Init()
     {
@@ -43,7 +58,6 @@ public abstract class BaseSceneManager : MonoBehaviour
         }
         Scene scene = SceneManager.GetActiveScene();
         _sSceneName = scene.name;
-        _sceneType = StringToEnum<SceneType>(scene.name);
     }
 
     T StringToEnum<T>(string e)

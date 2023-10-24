@@ -2,6 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/*
+        [상속 구조]
+
+        ItemData(abstract)
+            - CountableItemData(abstract)
+                - PortionItemData
+            - EquipmentItemData(abstract)
+                - WeaponItemData
+                - ArmorItemData
+
+    */
+
+
 [System.Serializable]
 public abstract class ItemData
 {
@@ -48,7 +62,7 @@ public abstract class ItemData
     }
 
     /// <summary> _sIconPath에 대한 Resources Load </summary>
-    public void SetIcon()
+    public virtual void Init()
     {
         _iconSprite = Resources.Load<Sprite>(_sIconPath);
     }

@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 4921185245808850}
   - component: {fileID: 198270101122898300}
   - component: {fileID: 199916427645520612}
-  m_Layer: 0
+  - component: {fileID: 1245427703631236809}
+  m_Layer: 8
   m_Name: ColorRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4850,7 +4851,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 95f036ca23642f248961874b61b995e1, type: 2}
-  - {fileID: 2100000, guid: 95f036ca23642f248961874b61b995e1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4896,6 +4896,19 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!65 &1245427703631236809
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222627033453290}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5, y: 5, z: 5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1648509489993130
 GameObject:
   m_ObjectHideFlags: 0
@@ -4905,7 +4918,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4466123749543506}
-  m_Layer: 0
+  - component: {fileID: 6707304848294370721}
+  m_Layer: 8
   m_Name: SKILL6_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4928,6 +4942,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6707304848294370721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648509489993130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e529f1f8bca84a488d7dbcccefd8477, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coll: {fileID: 1245427703631236809}
+  attackSecond: 2
+  repeatCount: 1
+  destSize: {x: 22, y: 22, z: 10}
+  destTime: 1
 --- !u!1 &1733113292564072
 GameObject:
   m_ObjectHideFlags: 0
@@ -4939,7 +4970,7 @@ GameObject:
   - component: {fileID: 4485560330677300}
   - component: {fileID: 198136895488288622}
   - component: {fileID: 199642613625540286}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BlackRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9777,7 +9808,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 9b826f55b392b9442acac11b5fd08d17, type: 2}
-  - {fileID: 2100000, guid: 9b826f55b392b9442acac11b5fd08d17, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9834,7 +9864,7 @@ GameObject:
   - component: {fileID: 4596759982183538}
   - component: {fileID: 108590807492653586}
   - component: {fileID: 114747534939261762}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}

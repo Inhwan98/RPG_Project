@@ -35,8 +35,8 @@ public class QuestData
     public int nConditionLevel;
     public int nID;
     public int nDestID;
-    public int eQuestType;
-    public int eObjectives;
+    public QuestType eQuestType;
+    public QuestObjectives eObjectives;
     public string sQuestName;
     public string sDiscription;
     public int nGoalCnt;
@@ -85,10 +85,10 @@ public class PlayerData
         nLevel = playerCtr.GetLevel();
 
         nMaxHP = playerCtr.GetMaxHP();
-        nCurHP = playerCtr.GetCurHP();
+        nCurHP = nMaxHP;
 
         nMaxMP = playerCtr.GetMaxHP();
-        nCurMP = playerCtr.GetCurMP();
+        nCurMP = nMaxMP;
 
         nCurSTR = playerCtr.GetCurStr();
 

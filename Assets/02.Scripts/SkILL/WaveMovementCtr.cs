@@ -28,8 +28,6 @@ public class WaveMovementCtr : MonoBehaviour
         coll.enabled = false;
     }
 
-    
-
     private void OnEnable()
     {
         startPos = waveTr.position;

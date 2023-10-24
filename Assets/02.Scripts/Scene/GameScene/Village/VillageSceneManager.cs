@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+
 [System.Serializable]
 public class StageNPCData
 {
@@ -26,9 +27,31 @@ public class StageNPCData
     public Quaternion GetRot() => _rot;
 }
 
+
+/// <summary> 마을 씬 구성 내용 (주로 NPC 생성 관련) </summary>
 public class VillageSceneManager : GameSceneManager
 {
+    /******************************************
+    *                  Fields
+    *******************************************/
     private List<StageNPCData> _stageNPCDataList = new List<StageNPCData>();
+
+
+    /******************************************
+     *               Unity Evenet
+     *******************************************/
+
+
+    private void Start()
+    {
+        ViliageStageLoad();
+        CreateNPC();
+    }
+
+
+    /******************************************
+     *                 Methods
+     *******************************************/
 
     protected override void Init()
     {
@@ -37,13 +60,7 @@ public class VillageSceneManager : GameSceneManager
         mainCamera.clearFlags = CameraClearFlags.Skybox;
     }
 
-    private void Start()
-    {
-        ViliageStageLoad();
-        CreateNPC();
-    }
-
-    //던전몬스터를 초기화 한다.
+    //마을의 NPC를 초기화 한다.
     public void ViliageStageLoad()
     {
         var stageNPCDB = SaveSys.LoadAllData().StageNPCDB;
@@ -59,9 +76,7 @@ public class VillageSceneManager : GameSceneManager
         }
     }
 
-    /// <summary>
-    /// SceneData에 해당하는 NPC들을 로드한다.
-    /// </summary>
+    /// <summary> SceneData에 해당하는 NPC들을 로드한다. </summary>
     private void CreateNPC()
     {
         for(int i = 0; i< _stageNPCDataList.Count; i++)
@@ -72,7 +87,9 @@ public class VillageSceneManager : GameSceneManager
             npc.SetID(curNPC._nNPCID);
             npc.gameObject.SetActive(true);
 
+            //DB에 정해둔 값으로 생성
             Instantiate(npc, curNPC.GetPos(), curNPC.GetRot());
         }
     }
+
 }

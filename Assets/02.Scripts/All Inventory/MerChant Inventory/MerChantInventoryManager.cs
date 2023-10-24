@@ -7,41 +7,58 @@ using UnityEngine;
 
 public class MerChantInventoryManager : BaseItemInvenManager
 {
-    private MerChantItemUI _merChantItemUI;
-
-    private ItemInventoryManager _itemInvenMgr;
-    private PlayerController _playerCtr;
-
-    private int _capacity;     //아이템 수용 한도
-
+    /*************************************************************
+    *                           Fields
+    *************************************************************/
+    #region option Field
     [SerializeField, Range(8, 64)]
     private int _maxCapacity = 8;     // 최대 수용 한도(아이템 배열 크기)
+    #endregion
 
+    #region private Fields
+    private MerChantItemUI _merChantItemUI;
+    private ItemInventoryManager _itemInvenMgr;
+    private PlayerController _playerCtr;
+    private int _capacity;     //아이템 수용 한도
     /// <summary> 아이템 목록 </summary>
     private Item[] _items;
+    #endregion
 
+    /*************************************************************
+    *                       Get, Set Methods
+    *************************************************************/
+
+    #region Get Methods
     /// <summary> 아이템 수용 한도 </summary>
     public int GetCapacity() => _capacity;
+    #endregion
 
+    #region Set Methods
     public override void SetPlayerCtr(PlayerController player) => _playerCtr = player;
     public void SetItemInvenMgr(ItemInventoryManager intemInvenMgr) => _itemInvenMgr = intemInvenMgr;
+    #endregion
 
+
+    /*************************************************************
+    *                        Unity Event
+    *************************************************************/
+    #region Unity Event
     private void Awake()
     {
-        _capacity = _maxCapacity;
-        //_itemInventoryUI.SetInventoryReference(this);
-        _merChantItemUI = FindObjectOfType<MerChantItemUI>();
-        _merChantItemUI.SetInventoryReference(this);
+        Init();
     }
 
     private void Start()
     {
-        Init_InvenItems();
-        _merChantItemUI.MerChantUI_Init();
         UpdateAccessibleStatesAll();
-
     }
+    #endregion
 
+    /*************************************************************
+     *                       override Methods
+     *************************************************************/
+
+    #region public Methods
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
     public override bool IsValidIndex(int index) => index >= 0 && index < _capacity;
     /// <summary> 해당 슬롯이 아이템을 갖고 있는지 여부 </summary>
@@ -313,6 +330,23 @@ public class MerChantInventoryManager : BaseItemInvenManager
     }
     /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
     public override void UpdateAccessibleStatesAll() => _merChantItemUI.SetAccessibleSlotRange(_capacity);
+    #endregion
+
+
+    /*************************************************************
+    *                          Methods
+    *************************************************************/
+
+    #region private Methods
+    private void Init()
+    {
+        _capacity = _maxCapacity;
+        _merChantItemUI = FindObjectOfType<MerChantItemUI>();
+        _merChantItemUI.SetInventoryReference(this);
+
+        _items = new Item[_capacity];
+    }
+
     /// <summary> 앞에서부터 비어있는 슬롯 인덱스 탐색 </summary>
     private int FindEmptySlotIndex(int startIndex = 0)
     {
@@ -324,7 +358,28 @@ public class MerChantInventoryManager : BaseItemInvenManager
 
         return -1;
     }
+    /// <summary> 앞에서부터 개수 여유가 있는 Countable 아이템의 슬롯 인덱스 탐색 </summary>
+    private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
+    {
+        for (int i = startIndex; i < _capacity; i++)
+        {
+            var current = _items[i];
+            if (current == null)
+                continue;
 
+            // 아이템 종류 일치, 개수 여유 확인
+            if (current.GetData().GetID() == target.GetID() && current is CountableItem ci)
+            {
+
+                if (!ci.GetIsMax())
+                    return i;
+            }
+        }
+
+        return -1;
+    }
+    #endregion
+    #region public Methods
     /// <summary> 해당 슬롯이 셀 수 있는 아이템인지 여부 </summary>
     public bool IsCountableItem(int index)
     {
@@ -359,26 +414,9 @@ public class MerChantInventoryManager : BaseItemInvenManager
             UpdateSlot(indexA, indexB);
         }
     }
-    /// <summary> 앞에서부터 개수 여유가 있는 Countable 아이템의 슬롯 인덱스 탐색 </summary>
-    private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
-    {
-        for (int i = startIndex; i < _capacity; i++)
-        {
-            var current = _items[i];
-            if (current == null)
-                continue;
-
-            // 아이템 종류 일치, 개수 여유 확인
-            if (current.GetData().GetID() == target.GetID() && current is CountableItem ci)
-            {
-
-                if (!ci.GetIsMax())
-                    return i;
-            }
-        }
-
-        return -1;
-    }
+    
+    /// <summary> 해당 NPC의 판매 아이템 정보를 UI에 전달 </summary>
+    public void MerChantInvenON() => _merChantItemUI.MerChantUI_Init();
 
     #region 구매 / 판매 관련
     /// <summary>
@@ -411,16 +449,17 @@ public class MerChantInventoryManager : BaseItemInvenManager
         int spendRubyAmount = itemData.GetPrice() * amount;
         _playerCtr.AddMoney(-spendRubyAmount);
     }
-    //판매되는 아이템 정보
+    //플레이어 아이템을 판매할 때
     public string GetSell_ItemName(int index) => _itemInvenMgr.GetItemName(index);
     public bool GetSell_IsCountableItem(int index) => _itemInvenMgr.IsCountableItem(index);
     public int GetSell_ItemAmount(int index) => _itemInvenMgr.GetCurrentAmount(index);
-    //
+    /// <summary> 플레이어의 아이템 판매 </summary>
     public void Sell_item(int index, int amount = 1)
     {
         // 1. 판매한 금액만큼 추가
         // 판매하는 인벤토리에서 아이템 데이터를 불러 온다.
         ItemData itemData = _itemInvenMgr.GetItemData(index);
+        if (itemData == null) return;
 
         int salesRubyAmount = itemData.GetReturnPrice() * amount;
         _playerCtr.AddMoney(salesRubyAmount);
@@ -430,21 +469,5 @@ public class MerChantInventoryManager : BaseItemInvenManager
     }
     #endregion
 
-    private void OnDestroy()
-    {
-        SaveInven();
-    }
-
-    public void SaveInven()
-    {
-        //SaveSys.SaveInvenItem(_items);
-    }
-
-    /// <summary> Load Data 없을시 초기화 </summary>
-    public void Init_InvenItems()
-    {
-        _items = new Item[_capacity];
-    }
-
-    public void MerChantInvenON() => _merChantItemUI.MerChantUI_Init();
+    #endregion
 }

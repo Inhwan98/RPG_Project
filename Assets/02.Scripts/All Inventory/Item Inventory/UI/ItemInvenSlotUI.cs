@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum QuickSlotState
+{
+    ON,
+    Off
+}
+
+
 public class ItemInvenSlotUI : SlotUIBase
 {
     [Tooltip("아이템 개수 텍스트")]
     [SerializeField] private Text _amountText;
 
+    private QuickSlotState _quickSlotState = QuickSlotState.Off;
 
     //Text 활성화 / 비활성화
     private void ShowText() => _textGo.SetActive(true);
@@ -32,6 +40,4 @@ public class ItemInvenSlotUI : SlotUIBase
 
         _amountText.text = amount.ToString();
     }
-
-
 }

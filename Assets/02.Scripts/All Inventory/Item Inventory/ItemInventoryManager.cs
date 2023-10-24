@@ -5,26 +5,22 @@ using UnityEngine;
 
 public class ItemInventoryManager : BaseItemInvenManager
 {
-    private ItemInventoryUI _itemInventoryUI;
 
-    private int _capacity;     //아이템 수용 한도
+    /***********************************************************************
+    *                             Fields
+    ***********************************************************************/
+    private ItemInventoryUI _itemInventoryUI;
+    private PlayerController _playerCtr;
+    private PlayerStatManager _playerStatMgr;
 
     [SerializeField, Range(8, 64)]
     private int _maxCapacity = 30;     // 최대 수용 한도(아이템 배열 크기)
+    private int _capacity;     //아이템 수용 한도
 
     /// <summary> 아이템 목록 </summary>
     private Item[] _items;
 
     private int _nRubyAmount; // 게임 머니
-
-    private PlayerController _playerCtr;
-    private PlayerUIManager _playerUIMgr;
-  
-
-    public override void SetPlayerCtr(PlayerController player) => _playerCtr = player;
-    public void SetPlayerUIMgr(PlayerUIManager playerUIMgr) => _playerUIMgr = playerUIMgr;
-    /// <summary> 해당 슬롯이 셀 수 있는 아이템인지 여부 </summary>
-    public bool IsCountableItem(int index) => HasItem(index) && _items[index] is CountableItem;
 
     /// <summary> 아이템 데이터 타입별 정렬 가중치 </summary>
     private readonly static Dictionary<Type, int> _sortWeightDict = new Dictionary<Type, int>
@@ -44,15 +40,25 @@ public class ItemInventoryManager : BaseItemInvenManager
     }
     private static readonly ItemComparer _itemComparer = new ItemComparer();
 
+    /***********************************************************************
+    *                           Get, Set Methods
+    ***********************************************************************/
+    #region Get Methods
     /// <summary> 아이템 수용 한도 </summary>
     public int GetCapacity() => _capacity;
+    #endregion
+    #region Set Methods
+    public override void SetPlayerCtr(PlayerController player) => _playerCtr = player;
+    public void SetPlayerStatMgr(PlayerStatManager playerStatMgr) => _playerStatMgr = playerStatMgr;
+    #endregion
+
+    /***********************************************************************
+    *                               Unity Events
+    ***********************************************************************/
+    #region Unity Event
 
     private void Awake()
     {
-        _itemInventoryUI = FindObjectOfType<ItemInventoryUI>();
-
-        _capacity = _maxCapacity;
-        _itemInventoryUI.SetInventoryReference(this);
         Init_InvenItems();
     }
 
@@ -65,7 +71,13 @@ public class ItemInventoryManager : BaseItemInvenManager
     {
         SaveInven();
     }
+    #endregion
 
+
+    /***********************************************************************
+    *                               Override Methods 
+    ***********************************************************************/
+    #region Public override Methods
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
     public override bool IsValidIndex(int index) => index >= 0 && index < _capacity;
     /// <summary> 해당 슬롯이 아이템을 갖고 있는지 여부 </summary>
@@ -346,15 +358,32 @@ public class ItemInventoryManager : BaseItemInvenManager
         {
             // 1. =>플레이어 플레이어 스탯 상승
             // 2. 플레이어 => 플레이어 UI 업데이트
-            int equipIndex = (int)eqItem.GetEequipmentData().GetEquipState();
-            _playerUIMgr.Swap(equipIndex, index);
+            EquipmentItemData equipData = eqItem.GetEequipmentData();
+            equipData.Init();
+            int equipIndex = (int)equipData.GetEquipState();
+            MoveFromInvenSlotToEquipSlot(index, equipIndex);
+
+            //무기라면 장착 가시화
+            if((EquipState)equipIndex == EquipState.WEAPON)
+            {
+                _playerCtr.PutOnWeapon(equipData);
+            }
+            
         }
+
+        UpdateStatusDisplay();
     }
     /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
     public override void UpdateAccessibleStatesAll()
     {
         _itemInventoryUI.SetAccessibleSlotRange(_capacity);
     }
+    #endregion
+
+    /***********************************************************************
+    *                                 Methods 
+    ***********************************************************************/
+    #region Public Methods
     /// <summary>
     /// 해당 슬롯의 현재 아이템 개수 리턴
     /// <para/> - 잘못된 인덱스 : -1 리턴
@@ -434,6 +463,16 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         UpdateAllSlot();
     }
+    /// <summary> UI에게 루비 업데이트 호출 </summary>
+    public void UpdateRubyAmount(int rubyAmount)
+    {
+        _nRubyAmount = rubyAmount;
+        _itemInventoryUI.UpdateRubyAmount(_nRubyAmount);
+    }
+    /// <summary> 해당 슬롯이 셀 수 있는 아이템인지 여부 </summary>
+    public bool IsCountableItem(int index) => HasItem(index) && _items[index] is CountableItem;
+    #endregion
+    #region Private Methods
     /// <summary> 앞에서부터 비어있는 슬롯 인덱스 탐색 </summary>
     private int FindEmptySlotIndex(int startIndex = 0)
     {
@@ -444,12 +483,6 @@ public class ItemInventoryManager : BaseItemInvenManager
         }
 
         return -1;
-    }
-    /// <summary> UI에게 루비 업데이트 호출 </summary>
-    public void UpdateRubyAmount(int rubyAmount)
-    {
-        _nRubyAmount = rubyAmount;
-        _itemInventoryUI.UpdateRubyAmount(_nRubyAmount);
     }
     /// <summary> 앞에서부터 개수 여유가 있는 Countable 아이템의 슬롯 인덱스 탐색 </summary>
     private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
@@ -471,12 +504,24 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return -1;
     }
-
-    public void SaveInven() => SaveSys.SaveInvenItem(_items, "Item.Json");
-
-    /// <summary> Load Data 없을시 초기화 </summary>
-    public void Init_InvenItems()
+    /// <summary> 아이템인벤 슬롯 -> 장비 슬롯 이동 </summary>
+    private void MoveFromInvenSlotToEquipSlot(int index, int equipIndex)
     {
+        _playerStatMgr.ReverseSwap(index, equipIndex);
+    }
+    /// <summary>  스테이터스 업데이트 </summary>
+    private void UpdateStatusDisplay()
+    {
+         _playerStatMgr.UpdateStatusDisplay();
+    }
+    private void SaveInven() => SaveSys.SaveInvenItem(_items, "Item.Json");
+    /// <summary> Load Data 없을시 초기화 </summary>
+    private void Init_InvenItems()
+    {
+        _itemInventoryUI = FindObjectOfType<ItemInventoryUI>();
+        _capacity = _maxCapacity;
+        _itemInventoryUI.SetInventoryReference(this);
+
         _items = SaveSys.LoadInvenitem("Item.Json");
 
         if (_items == null)
@@ -489,9 +534,12 @@ public class ItemInventoryManager : BaseItemInvenManager
             for(int i = 0; i < _items.Length; i++)
             {
                 if (_items[i] == null) continue;
-                _items[i].GetData().SetIcon();
+                _items[i].GetData().Init();
+
                 UpdateSlot(i);
             }
         }
     }
+    #endregion
+
 }

@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SKillSlotUI : SlotUIBase
+/// <summary>
+/// 스킬 슬롯은 제한 레벨에 따라 비활성화 됌
+/// </summary>
+public abstract class SKillSlotUI : SlotUIBase
 {
-    //private Skill_InvenUI _skInvenUI;
-
-    protected override void InitComponents()
-    {
-       // _skInvenUI = GetComponentInParent<Skill_InvenUI>();
-        base.InitComponents();
-    }
-
     /// <summary> 아이템 활성화 / 비활성화 여부 설정  </summary>
     public void SetItemAccessibleState(bool value)
     {

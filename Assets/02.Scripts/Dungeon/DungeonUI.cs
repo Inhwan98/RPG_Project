@@ -7,12 +7,21 @@ using System.Text;
 
 public class DungeonUI : MonoBehaviour
 {
+    /*************************************************
+    *                  Fields
+    *************************************************/
+
+    #region option Fields
     [SerializeField] private TMP_Text _dungeonName;
     [SerializeField] private TMP_Text _dungeonProgress;
     [SerializeField] private TMP_Text _disCriptions;
+    #endregion
 
+    /*************************************************
+    *                   Methods
+    *************************************************/
 
-
+    /// <summary> 던전의 정보를 업데이트 한다. (스테이지 구분) </summary>
     public void UpdateDungeonUI(DungeonStage stagedata, string dungeonName)
     {
         _dungeonName.text = dungeonName;
@@ -29,6 +38,5 @@ public class DungeonUI : MonoBehaviour
         {
             _disCriptions.text = $" -{stagedata.sMonsterName} 처치 ({stagedata.nDeadMonsterCount}/{stagedata.nMonsterAmount})";
         }
-
     }
 }

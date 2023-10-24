@@ -1,29 +1,98 @@
-﻿
-using System.Text;
+﻿using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
 
 public class MerChantItemUI : InvenUIBase
 {
-    /// <summary> 연결된 인벤토리 </summary>
-    private MerChantInventoryManager _merChantInvenMgr;
-
-    private PlayerController _playerCtr;
-
+    /****************************************
+     *              Fields
+     ****************************************/
+    #region option Fields
     [SerializeField] private GameObject _itemInvenGo;
-    private GraphicRaycaster _itemInvenGr;
-
     [SerializeField] private ItemInventoryPopupUI _popup;            // 팝업 UI 관리 객체
     [SerializeField] private Button _exitButton;
-    private Button[] _buyButtonArray;
-
+    #endregion
+    #region private Fields
+    /// <summary> 연결된 인벤토리 </summary>
+    private MerChantInventoryManager _merChantInvenMgr;
+    private PlayerController _playerCtr;
+    private GraphicRaycaster _itemInvenGr;
+    private Button[] _buyButtonArray; // 판매버튼
     StringBuilder sb = new StringBuilder();
+    #endregion
 
-    protected override void Awake()
+
+    /****************************************
+    *              Get Set Methods
+    ****************************************/
+
+    #region Set Methods
+    /// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
+    public void SetInventoryReference(MerChantInventoryManager merChantInven)
+    {
+        _merChantInvenMgr = merChantInven;
+    }
+    #endregion
+
+
+    /****************************************
+    *                 Methods
+    ****************************************/
+
+    #region private Fields
+
+    #region 구매 / 판매 관련
+    /// <summary> 아이템 구매 관련 함수 </summary>
+    private void BuyItem(int index)
+    {
+        int possibleBuyAmount; //구매 가능한 양
+        string itemName = _merChantInvenMgr.GetItemName(index);
+        bool isPossibleBuy = _merChantInvenMgr.IsPossibleToBuy(index, out possibleBuyAmount);
+        bool isCountableItem = _merChantInvenMgr.IsCountableItem(index); //셀 수 있는 아이템인가
+        var itemData = _merChantInvenMgr.GetItemData(index);
+
+        //구매 가능한게 아니라면 리턴
+        if (!isPossibleBuy) return;
+
+        if (isCountableItem)
+        {
+            _popup.OpenAmountInputPopup(amt => _merChantInvenMgr.BuyItem(itemData, amt),
+                                               possibleBuyAmount, itemName);
+        }
+        else
+            _merChantInvenMgr.BuyItem(itemData);
+    }
+    /// <summary> 아이템 판매 관련 함수 </summary>
+    private void Sell_Item(int index)
+    {
+        //판매되는 아이템 정보를 merChantInvenMgr => ItemInvenManger 에서 가져온다.
+        string itemName = _merChantInvenMgr.GetSell_ItemName(index);
+        bool isCountableItem = _merChantInvenMgr.GetSell_IsCountableItem(index);
+        int itemAmount = _merChantInvenMgr.GetSell_ItemAmount(index);
+        // 확인 팝업 띄우고 콜백 위임
+
+        if(isCountableItem)
+        {
+            sb.Append($"{itemName} {itemAmount}개");
+            _popup.OpenConfirmationPopup(() => _merChantInvenMgr.Sell_item(index, itemAmount), sb.ToString());
+            sb.Clear();
+        }
+        else
+        {
+            _popup.OpenConfirmationPopup(() => _merChantInvenMgr.Sell_item(index), itemName);
+        }
+
+    }
+    #endregion
+
+    #endregion
+    #region protected Fields
+    protected override void Init()
     {
         int slotSize = _slotUIList.Count;
 
+        //판매버튼
         _buyButtonArray = new Button[slotSize];
         for (int i = 0; i < slotSize; i++)
         {
@@ -38,38 +107,11 @@ public class MerChantItemUI : InvenUIBase
 
         _exitButton.onClick.AddListener(() => _merChantInvenMgr.SetWindowActive(false));
 
-        base.Awake();
-    }
-
-    public void MerChantUI_Init()
-    {
-        int slotSize = _slotUIList.Count;
-        for (int i = 0; i < slotSize; i++)
-        {
-
-            var skillSlot = _slotUIList[i] as MerChantSlotUI;
-            int index = skillSlot.GetIndex();
-            //슬롯에 해당하는 아이템 데이터를 바탕으로 판매상인의 UI 초기화
-            ItemData data = _merChantInvenMgr.GetItemData(index);
-            skillSlot.MerChantSlotUI_Init(data);
-        }
-    }
-
-    protected override void Init()
-    {
         _itemInvenGo.TryGetComponent(out _itemInvenGr);
         if (_itemInvenGr == null)
             _itemInvenGr = _itemInvenGo.AddComponent<GraphicRaycaster>();
         base.Init();
     }
-
-    /// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
-    public void SetInventoryReference(MerChantInventoryManager merChantInven)
-    {
-        _merChantInvenMgr = merChantInven;
-    }
-
-
     /// <summary> 툴팁 UI의 슬롯 데이터 갱신 </summary>
     protected override void UpdateTooltipUI(SlotUIBase slot)
     {
@@ -82,22 +124,8 @@ public class MerChantItemUI : InvenUIBase
         // 툴팁 위치 조정
         _itemTooltip.SetRectPosition(slot.GetSlotRect());
     }
-
-
-    ///// <summary> 인벤토리 참조 등록 (인벤토리에서 직접 호출) </summary>
-    //public void SetInventoryReference(ItemInventoryManager itemInventory)
-    //{
-    //    _merChantInven = itemInventory;
-    //}
-
-
-    /// <summary> 아이템 사용 </summary>
-    private void TryUseItem(int index)
-    {
-        _merChantInvenMgr.Use(index);
-    }
-
-    protected override void OnPointerDown()
+    /// <summary> 슬롯 우클릭시 판매, 구입 이벤트 </summary>
+    protected override void OnPointerDown() 
     {
         base.OnPointerDown();
         if (Input.GetMouseButtonDown(1))
@@ -117,7 +145,6 @@ public class MerChantItemUI : InvenUIBase
             }
         }
     }
-
     protected override void ShowOrHideItemToolTip()
     {
         // 마우스가 유효한 아이템 아이콘 위에 올라와 있다면 툴팁 보여주기
@@ -133,7 +160,6 @@ public class MerChantItemUI : InvenUIBase
         else
             _itemTooltip.Hide();
     }
-
     protected override void EndDrag()
     {
         SlotUIBase endDragSlot = RaycastAndGetFirstComponent<SlotUIBase>();
@@ -158,52 +184,7 @@ public class MerChantItemUI : InvenUIBase
             }
         }
     }
-
-    #region 구매 / 판매 관련
-    /// <summary> 아이템 구매 관련 함수 </summary>
-    private void BuyItem(int index)
-    {
-        int possibleBuyAmount; //구매 가능한 양
-        string itemName = _merChantInvenMgr.GetItemName(index);
-        bool isPossibleBuy = _merChantInvenMgr.IsPossibleToBuy(index, out possibleBuyAmount);
-        bool isCountableItem = _merChantInvenMgr.IsCountableItem(index); //셀 수 있는 아이템인가
-        var itemData = _merChantInvenMgr.GetItemData(index);
-
-        //구매 가능한게 아니라면 리턴
-        if (!isPossibleBuy) return;
-
-        if (isCountableItem)
-        {
-            _popup.OpenAmountInputPopup(amt => _merChantInvenMgr.BuyItem(itemData, amt),
-                                               possibleBuyAmount, itemName);
-        }
-        else
-            _merChantInvenMgr.BuyItem(itemData);
-    }
-
-    /// <summary> 아이템 판매 관련 함수 </summary>
-    private void Sell_Item(int index)
-    {
-        //판매되는 아이템 정보를 merChantInvenMgr => ItemInvenManger 에서 가져온다.
-        string itemName = _merChantInvenMgr.GetSell_ItemName(index);
-        bool isCountableItem = _merChantInvenMgr.GetSell_IsCountableItem(index);
-        int itemAmount = _merChantInvenMgr.GetSell_ItemAmount(index);
-        // 확인 팝업 띄우고 콜백 위임
-
-        if(isCountableItem)
-        {
-            sb.Append($"{itemName} {itemAmount}개");
-            _popup.OpenConfirmationPopup(() => _merChantInvenMgr.Sell_item(index, itemAmount), sb.ToString());
-            sb.Clear();
-        }
-        else
-        {
-            _popup.OpenConfirmationPopup(() => _merChantInvenMgr.Sell_item(index), itemName);
-        }
-
-    }
-    #endregion
-
+    /// <summary> 마우스 레이케스트 관리 및 레이목록에 들어온 첫번째 컴포넌트 반환 </summary>
     protected override T RaycastAndGetFirstComponent<T>()
     {   
         _rrList.Clear();
@@ -215,24 +196,11 @@ public class MerChantItemUI : InvenUIBase
             return null;
         return _rrList[0].gameObject.GetComponent<T>();
     }
-
     /// <summary> UI 및 인벤토리에서 아이템 제거 </summary>
     protected override void TryRemoveItem(int index)
     {
         _merChantInvenMgr.Remove(index);
     }
-
-    /// <summary> 해당 슬롯의 아이템 개수 텍스트 지정 </summary>
-    internal void HideItemAmountText(int index)
-    {
-        if (_slotUIList[index] is ItemInvenSlotUI slotUI)
-        {
-            slotUI.SetItemAmount(1);
-        }
-    }
-
-
-
     /// <summary> 두 슬롯의 아이템 교환 </summary>
     protected override void TrySwapItems(SlotUIBase from, SlotUIBase to)
     {
@@ -240,4 +208,29 @@ public class MerChantItemUI : InvenUIBase
         from.SwapOnMoveIcon(to);
         _merChantInvenMgr.Swap(from.GetIndex(), to.GetIndex());
     }
+    #endregion
+    #region public Fields
+    /// <summary> 상점 Slot 개수만큼 상점 초기화 </summary>
+    public void MerChantUI_Init()
+    {
+        int slotSize = _slotUIList.Count;
+        for (int i = 0; i < slotSize; i++)
+        {
+
+            var skillSlot = _slotUIList[i] as MerChantSlotUI;
+            int index = skillSlot.GetIndex();
+            //슬롯에 해당하는 아이템 데이터를 바탕으로 판매상인의 UI 초기화
+            ItemData data = _merChantInvenMgr.GetItemData(index);
+            skillSlot.MerChantSlotUI_Init(data);
+        }
+    }
+    /// <summary> 해당 슬롯의 아이템 개수 텍스트 지정 </summary>
+    public void HideItemAmountText(int index)
+    {
+        if (_slotUIList[index] is ItemInvenSlotUI slotUI)
+        {
+            slotUI.SetItemAmount(1);
+        }
+    }
+    #endregion
 }

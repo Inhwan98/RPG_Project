@@ -3,94 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
-public enum BossPhase
-{
-    ONE,
-    TWO,
-}
-
-[System.Serializable]
-public class BossSkillData
-{
-    [SerializeField]
-    [JsonProperty] private int m_nID;
-    [SerializeField]
-    [JsonProperty] private string m_sSkillName;
-    [SerializeField]
-    [JsonProperty] private string m_sAnimParameterName; // 동작할 애니메이션 이름
-    [SerializeField]
-    [JsonProperty] private int m_nSkillDamagePer; // 스킬 % 데미지
-    [SerializeField]
-    [JsonProperty] private float m_fCooldown;
-
-    private int m_nSkillDamage;
-    private int _anim_Hash;
-
-    public void Init(int power)
-    {
-        SetAnimHash();
-        SetSkillDamage(power);
-    }
-
-    /// <summary> 애니메이션의 Parameter를 int로 해싱 한다. </summary>
-    public void SetAnimHash()
-    {
-        _anim_Hash = Animator.StringToHash(m_sAnimParameterName);
-    }
-
-    /// <summary> 몬스터 ID 반환 </summary>
-    public int GetID() => m_nID;
-
-    /// <summary> 스킬 이름 반환 </summary>
-    public string GetSKillName() => m_sSkillName;
-
-    /// <summary> 애니메이션의 해쉬코드 </summary>
-    public int GetAnimHash() { return _anim_Hash; }
-
-    /// <summary> 스킬의 데미지 </summary>
-    public float GetSkillDamagePer() { return m_nSkillDamagePer; }
-    public void SetSkillDamagePer(int _skillDamagePer) { m_nSkillDamagePer = _skillDamagePer; }
-
-    public int GetSkillDamage() { return m_nSkillDamage; }
-    public void SetSkillDamage(float _power)
-    {
-        m_nSkillDamage = (int)(m_nSkillDamagePer / 100.0 * _power);
-    }
-
-    //애니메이션 이름
-    public string GetAnimName() { return m_sAnimParameterName; }
-
-    //스킬의 쿨타임
-    public float GetCoolDown() { return m_fCooldown; }
-}
-
-
 
 public class BossMonster : Monster
 {
-    [SerializeField]
+    /*********************************************
+     *                   Fields
+     ********************************************/
+    #region option Fields
+    [Header("SKILL Sensor")]
+    [SerializeField] protected float m_fRangeAttackRadius = 1.0f;
+    [SerializeField] protected float m_fRangeAttackRange = 0.5f;
+    #endregion
+
+    #region protected Fields
     protected BossPhase _eBossPhase = BossPhase.ONE;
 
     protected List<BossSkillData> _bossMeleeAttackList = new List<BossSkillData>();
     protected List<BossSkillData> _bossRangeAttackList = new List<BossSkillData>();
+    protected int _meleeAttackIndex;
+    protected int _rangeAttackIndex;
+    //범위 공격 Ray
+    protected RaycastHit[] _rangeAttackHits;
+    #endregion
 
-    BossMeleeAttack _bossMeleeAttack;
-
+    private BossMeleeAttack _bossMeleeAttack;
     //페이즈 변경할 체력 기점
     private int nPhaseChangeHP;
 
-    protected int _meleeAttackIndex;
-    protected int _rangeAttackIndex;
 
+    /********************************************
+    *                 Unity Event
+    ********************************************/
 
-    //범위 공격 Ray
-    protected RaycastHit[] _rangeAttackHits;
-
-
-    [Header("SKILL Sensor")]
-    [SerializeField] protected float m_fRangeAttackRadius = 1.0f;
-    [SerializeField] protected float m_fRangeAttackRange = 0.5f;
-
+    #region Unity Event
     protected override void Awake()
     {
         base.Awake();
@@ -98,7 +43,6 @@ public class BossMonster : Monster
         _bossMeleeAttack = GetComponent<BossMeleeAttack>();
 
     }
-
     protected override void Start()
     {
         base.Start();
@@ -128,18 +72,25 @@ public class BossMonster : Monster
         nPhaseChangeHP = (int)(m_nMaxHP * 0.5f);
     }
 
-    public void StartTimeLine()
+    /// <summary>  탐지, 센서 범위 가시화 </summary>
+    protected override void OnDrawGizmos()
     {
-        _nav.enabled = false;
-        this.enabled = false;
+        base.OnDrawGizmos();
+
+        //공격 센서 범위
+        Gizmos.color = Color.yellow;
+        Debug.DrawLine(transform.position, transform.position + transform.forward * m_fRangeAttackRange);
+        Gizmos.DrawWireSphere(transform.position + transform.forward * m_fRangeAttackRange, m_fRangeAttackRadius);
     }
 
-    public void EndTimeLine()
-    {
-        _nav.enabled = true;
-        this.enabled = true;
-    }
+    #endregion
 
+
+    /********************************************
+    *                 Methods
+    ********************************************/
+
+    #region override Methods
     protected override void Targetting()
     {
         _rangeAttackHits = Physics.SphereCastAll(transform.position,
@@ -147,18 +98,16 @@ public class BossMonster : Monster
                                     transform.forward,
                                     m_fRangeAttackRange,
                                     targetLayer);
-
         base.Targetting();
     }
-
     protected override void DetectedAttackRay()
     {
-        
+
         if (_attackHits.Length > 0 && !m_bisAttack)
         {
             objState = ObjectState.MELEEATK;
         }
-        else if(_rangeAttackHits.Length > 0 && !m_bisAttack && _eBossPhase != BossPhase.ONE && !_isAttackWaiting)
+        else if (_rangeAttackHits.Length > 0 && !m_bisAttack && _eBossPhase != BossPhase.ONE && !_isAttackWaiting)
         {
             objState = ObjectState.SKILLATK;
         }
@@ -188,7 +137,7 @@ public class BossMonster : Monster
 
         int attackDamage = curMeleeAttack.GetSkillDamage(); //대미지 설정 - 1
         SetSkillDamage(attackDamage);                       //대미지 설정 - 2
-        
+
         yield return new WaitUntil(() => _anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f);
         _meleeAttackIndex++;                                //다음 공격패턴 이동
 
@@ -196,7 +145,6 @@ public class BossMonster : Monster
             _meleeAttackIndex = 0;
         m_bisAttack = false;                                 //공격중인 상태 - false
     }
-
     protected override IEnumerator SkillAttack()
     {
         if (_eBossPhase == BossPhase.TWO)
@@ -220,24 +168,28 @@ public class BossMonster : Monster
 
         m_bisAttack = false;
     }
+    #endregion
 
-
-    /// <summary>  탐지, 센서 범위 가시화 </summary>
-    protected override void OnDrawGizmos()
-    {
-        base.OnDrawGizmos();
-
-        //공격 센서 범위
-        Gizmos.color = Color.yellow;
-        Debug.DrawLine(transform.position, transform.position + transform.forward * m_fRangeAttackRange);
-        Gizmos.DrawWireSphere(transform.position + transform.forward * m_fRangeAttackRange, m_fRangeAttackRadius);
-    }
-
+    #region private Methods
     /// <summary> 스킬데이터의 쿨타임 시간의 비례해서 스킬 사용 여부를 정함 </summary>
     private void StartCoolTime(BossSkillData bossSkillData)
     {
         _attackDelay = bossSkillData.GetCoolDown();
         StartCoroutine(StartAttackCoolTime(_attackDelay));
     }
+    #endregion
+
+    #region public Methods
+    public void StartTimeLine()
+    {
+        _nav.enabled = false;
+        this.enabled = false;
+    }
+    public void EndTimeLine()
+    {
+        _nav.enabled = true;
+        this.enabled = true;
+    }
+    #endregion
 }
 

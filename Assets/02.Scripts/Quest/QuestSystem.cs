@@ -17,21 +17,40 @@ public enum QuestObjectives
 
 public class QuestSystem
 {
+    /**********************************************
+     *                  Fields
+     **********************************************/
 
+    #region private Fields
     private QuestData[] _questDatas;
     private List<QuestData> _inProgressQuestList = new List<QuestData>();
     private List<QuestData> _possibleToProceedQuest = new List<QuestData>();
     private List<QuestData> _completeQuest = new List<QuestData>();
+    #endregion
 
+    /**********************************************
+    *                  Constructor
+    **********************************************/
     public QuestSystem(QuestData[] questDatas)
     {
         this._questDatas = questDatas;
     }
 
+    /**********************************************
+     *               Get, Set Methods
+     **********************************************/
+    #region Get Methods
     public List<QuestData> GetPossibleQuest() => _possibleToProceedQuest;
     public List<QuestData> GetInProgressQuestList() => _inProgressQuestList;
     public QuestData[] GetQuestDataArray() => _questDatas;
+    #endregion
 
+
+    /**********************************************
+     *                    Methods
+     **********************************************/
+
+    #region public Methods
     /// <summary>
     /// 플레이어의 레벨을 기준으로
     /// 가능한 퀘스트 목록을 업데이트한다.
@@ -72,7 +91,7 @@ public class QuestSystem
     /// 퀘스트 완료처리 후, 퀘스트의 다음 퀘스트를 반환한다.
     /// 반환이 null 값이라면 퀘스트의 끝이므로 보상을 주도록 한다.
     /// </summary>
-    public QuestData NextQuest(QuestData questData)
+    public QuestData TryGetNextQuest(QuestData questData)
     {
         QuestCompleteProcess(questData);
 
@@ -85,15 +104,15 @@ public class QuestSystem
                 return quest;
             }
         }
-
         return null;
     }
-
+    #endregion
+    #region private Methods
     /// <summary>
     /// 퀘스트 시스템에서 퀘스트 완료 처리
     /// 완료에 대한 UI도 업데이트 처리 한다.
     /// </summary>
-    public void QuestCompleteProcess(QuestData questData)
+    private void QuestCompleteProcess(QuestData questData)
     {
         questData.bIsProgress = false;
         questData.bIsComplete = true;
@@ -106,36 +125,13 @@ public class QuestSystem
             _completeQuest.Add(questData);
         }
     }
-
-
-
-
-
-    public void CompleteQuest(QuestData questData)
-    {
-        questData.bIsComplete = true;
-
-        _possibleToProceedQuest.Remove(questData);
-        //포함되어 있지 않다면
-        if (!_completeQuest.Contains(questData))
-        {
-            _completeQuest.Add(questData);
-        }
-    }
-
-
-
     /// <summary> 
     /// Player Level과 Quest 제한 레벨 비교
     /// 플레이어 레벨이 더 높거나 같아야 참이다.
     /// </summary>
-    public bool CompareToPlayerLevel(int playerLevel, int questLevel)
+    private bool CompareToPlayerLevel(int playerLevel, int questLevel)
     {
         return playerLevel >= questLevel;
     }
-
- 
-
-
-
+    #endregion
 }

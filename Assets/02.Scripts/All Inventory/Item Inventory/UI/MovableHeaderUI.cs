@@ -24,11 +24,9 @@ public class MovableHeaderUI : MonoBehaviour, IPointerDownHandler, IDragHandler
     // 드래그 시작 위치 지점
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
-
         _beginPoint = _targetTr.position;
         _moveBegin = eventData.position;
     }
-
     // 드래그 : 마우스 커서 위치로 이동
     void IDragHandler.OnDrag(PointerEventData eventData)
     {

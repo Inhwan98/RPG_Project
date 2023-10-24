@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 476554599}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 1.44, z: 0.714}
+  m_LocalPosition: {x: -0, y: 0.72, z: 0.714}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1485747995291141475}
@@ -2657,23 +2657,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 972bd1c7c52b38b4d99a9444e3594f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _damageTr: {fileID: 476554600}
   m_nID: 102
-  m_nLevel: 0
-  m_nCurHP: 0
-  m_nCurMP: 0
-  m_nCurSTR: 0
-  m_nSkillDamage: 0
   targetLayer:
     serializedVersion: 2
     m_Bits: 8
+  _attackDelay: 5
   m_fSensorRadius: 35
   m_fSensorRange: 0
   m_fTargetRadius: 3.06
   m_fTargetRange: 1.53
-  _damageTr: {fileID: 476554600}
   objState: 3
-  _attackDelay: 5
-  _eBossPhase: 1
   m_fRangeAttackRadius: 23.76
   m_fRangeAttackRange: 0
 --- !u!114 &7905707220358519950

@@ -18,7 +18,7 @@ public class PortionItem : CountableItem, IUsableItem
     protected override CountableItem Clone(int amount)
     {
         var portionData = this.GetCountableItemData() as PortionItemData;
-        portionData.SetIcon();
+        portionData.Init();
 
         return new PortionItem(portionData, amount);
     }
