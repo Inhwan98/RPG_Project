@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private ItemInventoryManager _itemInvenMgr;
     private MerChantInventoryManager _merChantInvenMgr;
     private PlayerStatManager _playerStatMgr;
+    private QuickInvenManager _quickInvenMager;
     #endregion
 
     private bool m_bisPlayerDie; //플레이어가 죽었는가
@@ -131,6 +132,7 @@ public class GameManager : MonoBehaviour
         _itemInvenMgr = GetComponent<ItemInventoryManager>();
         _merChantInvenMgr = GetComponent<MerChantInventoryManager>();
         _playerStatMgr = GetComponent<PlayerStatManager>();
+        _quickInvenMager = GetComponent<QuickInvenManager>();
 
         //플레이어 스킬 매니져
         _skillMgr.SetPlayerCtr(_playerCtr);
@@ -146,6 +148,10 @@ public class GameManager : MonoBehaviour
         //상인 아이템 매니져
         _merChantInvenMgr.SetPlayerCtr(_playerCtr);
         _merChantInvenMgr.SetItemInvenMgr(_itemInvenMgr);
+
+        //퀵슬롯 아이탬 매니져
+        _quickInvenMager.SetPlayerCtr(_playerCtr);
+        _quickInvenMager.SetItemInvenMgr(_itemInvenMgr);
     }
     /// <summary>  4. PlayerCotontroller 초기화 </summary>
     private void Init_PlayerController()

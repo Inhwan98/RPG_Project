@@ -1,88 +1,56 @@
-ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemInventoryManager : BaseItemInvenManager
+public class QuickInvenManager : BaseItemInvenManager
 {
-
-    /***********************************************************************
-    *                             Fields
-    ***********************************************************************/
-    private ItemInventoryUI _itemInventoryUI;
+    /*****************************************************
+     *                       Fields
+     *****************************************************/
+    #region private Fields
+    private QuickInvenUI _quickInvenUI;
+    private ItemInventoryManager _itemInvenMgr;
     private PlayerController _playerCtr;
-    private PlayerStatManager _playerStatMgr;
-
-    [SerializeField, Range(8, 64)]
-    private int _maxCapacity = 30;     // ìµœëŒ€ ìˆ˜ìš© í•œë„(ì•„ì´í…œ ë°°ì—´ í¬ê¸°)
-    private int _capacity;     //ì•„ì´í…œ ìˆ˜ìš© í•œë„
-
-    /// <summary> ì•„ì´í…œ ëª©ë¡ </summary>
     private Item[] _items;
 
-    private int _nRubyAmount; // ê²Œì„ ë¨¸ë‹ˆ
+    private int _maxCapacity = 2;     // ÃÖ´ë ¼ö¿ë ÇÑµµ(¾ÆÀÌÅÛ ¹è¿­ Å©±â)
+    private int _capacity;     //¾ÆÀÌÅÛ ¼ö¿ë ÇÑµµ
 
-    /// <summary> ì•„ì´í…œ ë°ì´í„° íƒ€ì…ë³„ ì •ë ¬ ê°€ì¤‘ì¹˜ </summary>
-    private readonly static Dictionary<Type, int> _sortWeightDict = new Dictionary<Type, int>
-        {
-            { typeof(PortionItemData), 10000 },
-            { typeof(WeaponItemData),  20000 },
-            { typeof(ArmorItemData),   30000 },
-        };
-
-    private class ItemComparer : IComparer<Item>
-    {
-        public int Compare(Item a, Item b)
-        {
-            return (a.GetData().GetID() + _sortWeightDict[a.GetData().GetType()])
-                 - (b.GetData().GetID() + _sortWeightDict[b.GetData().GetType()]);
-        }
-    }
-    private static readonly ItemComparer _itemComparer = new ItemComparer();
-
-    /***********************************************************************
-    *                           Get, Set Methods
-    ***********************************************************************/
-    #region Get Methods
-    /// <summary> ì•„ì´í…œ ìˆ˜ìš© í•œë„ </summary>
-    public int GetCapacity() => _capacity;
     #endregion
-    #region Set Methods
+
+    /*****************************************************
+     *                    Get, Set Methods
+     *****************************************************/
     public override void SetPlayerCtr(PlayerController player) => _playerCtr = player;
-    public void SetPlayerStatMgr(PlayerStatManager playerStatMgr) => _playerStatMgr = playerStatMgr;
-    #endregion
-
-    /***********************************************************************
-    *                               Unity Events
-    ***********************************************************************/
-    #region Unity Event
+    public void SetItemInvenMgr(ItemInventoryManager intemInvenMgr) => _itemInvenMgr = intemInvenMgr;
 
     private void Awake()
     {
         Init_InvenItems();
     }
 
-    private void Start()
+
+    void Start()
     {
         UpdateAccessibleStatesAll();
+
     }
 
-    private void OnDestroy()
+    // Update is called once per frame
+    void Update()
     {
-        SaveInven();
+        
     }
-    #endregion
-
 
     /***********************************************************************
     *                               Override Methods 
     ***********************************************************************/
     #region Public override Methods
-    /// <summary> ì¸ë±ìŠ¤ê°€ ìˆ˜ìš© ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ ê²€ì‚¬ </summary>
+    /// <summary> ÀÎµ¦½º°¡ ¼ö¿ë ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö °Ë»ç </summary>
     public override bool IsValidIndex(int index) => index >= 0 && index < _capacity;
-    /// <summary> í•´ë‹¹ ìŠ¬ë¡¯ì´ ì•„ì´í…œì„ ê°–ê³  ìˆëŠ”ì§€ ì—¬ë¶€ </summary>
+    /// <summary> ÇØ´ç ½½·ÔÀÌ ¾ÆÀÌÅÛÀ» °®°í ÀÖ´ÂÁö ¿©ºÎ </summary>
     public override bool HasItem(int index) => IsValidIndex(index) && _items[index] != null;
-    /// <summary> í•´ë‹¹ ìŠ¬ë¡¯ì˜ ì•„ì´í…œ ì •ë³´ ë¦¬í„´ </summary>
+    /// <summary> ÇØ´ç ½½·ÔÀÇ ¾ÆÀÌÅÛ Á¤º¸ ¸®ÅÏ </summary>
     public override ItemData GetItemData(int index)
     {
         if (!IsValidIndex(index)) return null;
@@ -90,7 +58,7 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return _items[index].GetData();
     }
-    /// <summary> í•´ë‹¹ ìŠ¬ë¡¯ì˜ ì•„ì´í…œ ì´ë¦„ ë¦¬í„´ </summary>
+    /// <summary> ÇØ´ç ½½·ÔÀÇ ¾ÆÀÌÅÛ ÀÌ¸§ ¸®ÅÏ </summary>
     public override string GetItemName(int index)
     {
         if (!IsValidIndex(index)) return "";
@@ -98,7 +66,7 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return _items[index].GetData().GetName();
     }
-    /// <summary> í•´ë‹¹ ì•„ì´í…œ ë°˜í™˜ </summary>
+    /// <summary> ÇØ´ç ¾ÆÀÌÅÛ ¹İÈ¯ </summary>
     public override Item GetItem(int index)
     {
         if (!IsValidIndex(index)) return null;
@@ -106,7 +74,7 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return _items[index];
     }
-    /// <summary> í•´ë‹¹í•˜ëŠ” ì¸ë±ìŠ¤ì˜ ìŠ¬ë¡¯ë“¤ì˜ ìƒíƒœ ë° UI ê°±ì‹  </summary>
+    /// <summary> ÇØ´çÇÏ´Â ÀÎµ¦½ºÀÇ ½½·ÔµéÀÇ »óÅÂ ¹× UI °»½Å </summary>
     public override void UpdateSlot(params int[] indices)
     {
         foreach (var i in indices)
@@ -114,56 +82,56 @@ public class ItemInventoryManager : BaseItemInvenManager
             UpdateSlot(i);
         }
     }
-    /// <summary> í•´ë‹¹í•˜ëŠ” ì¸ë±ìŠ¤ì˜ ìŠ¬ë¡¯ ìƒíƒœ ë° UI ê°±ì‹  </summary>
+    /// <summary> ÇØ´çÇÏ´Â ÀÎµ¦½ºÀÇ ½½·Ô »óÅÂ ¹× UI °»½Å </summary>
     public override void UpdateSlot(int index)
     {
         if (!IsValidIndex(index)) return;
 
         Item item = _items[index];
 
-        // 1. ì•„ì´í…œì´ ìŠ¬ë¡¯ì— ì¡´ì¬í•˜ëŠ” ê²½ìš°
+        // 1. ¾ÆÀÌÅÛÀÌ ½½·Ô¿¡ Á¸ÀçÇÏ´Â °æ¿ì
         if (item != null)
         {
-            
-            //ì•„ì´ì½˜ ë“±ë¡
-            _itemInventoryUI.SetItemIcon(index, item.GetData().GetIconSprite());
 
-            // 1-1. ì…€ ìˆ˜ ìˆëŠ” ì•„ì´í…œ
+            //¾ÆÀÌÄÜ µî·Ï
+            _quickInvenUI.SetItemIcon(index, item.GetData().GetIconSprite());
+
+            // 1-1. ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛ
             if (item is CountableItem ci)
             {
-                // 1-1-1. ìˆ˜ëŸ‰ì´ 0ì¸ ê²½ìš°, ì•„ì´í…œ ì œê±°
+                // 1-1-1. ¼ö·®ÀÌ 0ÀÎ °æ¿ì, ¾ÆÀÌÅÛ Á¦°Å
                 if (ci.IsEmpty())
                 {
                     _items[index] = null;
                     RemoveIcon();
                     return;
                 }
-                // 1-1-2. ìˆ˜ëŸ‰ í…ìŠ¤íŠ¸ í‘œì‹œ
+                // 1-1-2. ¼ö·® ÅØ½ºÆ® Ç¥½Ã
                 else
                 {
-                    _itemInventoryUI.SetItemAmountText(index, ci.GetAmount());
+                    _quickInvenUI.SetItemAmountText(index, ci.GetAmount());
                 }
             }
-            // 1-2. ì…€ ìˆ˜ ì—†ëŠ” ì•„ì´í…œì¸ ê²½ìš° ìˆ˜ëŸ‰ í…ìŠ¤íŠ¸ ì œê±°
+            // 1-2. ¼¿ ¼ö ¾ø´Â ¾ÆÀÌÅÛÀÎ °æ¿ì ¼ö·® ÅØ½ºÆ® Á¦°Å
             else
             {
-                _itemInventoryUI.HideItemAmountText(index);
+                _quickInvenUI.HideItemAmountText(index);
             }
         }
-        //2. ë¹ˆ ìŠ¬ë¡¯ì¸ ê²½ìš° : ì•„ì´ì½˜ ì œê±°
+        //2. ºó ½½·ÔÀÎ °æ¿ì : ¾ÆÀÌÄÜ Á¦°Å
         else
         {
             RemoveIcon();
         }
 
-        // ë¡œì»¬ : ì•„ì´ì½˜ ì œê±°í•˜ê¸°
+        // ·ÎÄÃ : ¾ÆÀÌÄÜ Á¦°ÅÇÏ±â
         void RemoveIcon()
         {
-            _itemInventoryUI.RemoveItem(index);
-            _itemInventoryUI.HideItemAmountText(index);
+            _quickInvenUI.RemoveItem(index);
+            _quickInvenUI.HideItemAmountText(index);
         }
     }
-    /// <summary> ëª¨ë“  ìŠ¬ë¡¯ë“¤ì˜ ìƒíƒœë¥¼ UIì— ê°±ì‹  </summary>
+    /// <summary> ¸ğµç ½½·ÔµéÀÇ »óÅÂ¸¦ UI¿¡ °»½Å </summary>
     public override void UpdateAllSlot()
     {
         for (int i = 0; i < _capacity; i++)
@@ -172,9 +140,9 @@ public class ItemInventoryManager : BaseItemInvenManager
         }
     }
     ///<summary>
-    /// ì¸ë²¤í† ë¦¬ì— ì•„ì´í…œ ì¶”ê°€<br></br>
-    /// ë„£ëŠ” ë° ì‹¤íŒ¨í•œ ì•„ì´í…œ ê°œìˆ˜ ë¦¬í„´<br></br>
-    /// ë¦¬í„´ì´ 0ì´ë©´ ë„£ëŠ”ë° ëª¨ë‘ ì„±ê³µí–ˆë‹¤ëŠ” ì˜ë¯¸
+    /// ÀÎº¥Åä¸®¿¡ ¾ÆÀÌÅÛ Ãß°¡<br></br>
+    /// ³Ö´Â µ¥ ½ÇÆĞÇÑ ¾ÆÀÌÅÛ °³¼ö ¸®ÅÏ<br></br>
+    /// ¸®ÅÏÀÌ 0ÀÌ¸é ³Ö´Âµ¥ ¸ğµÎ ¼º°øÇß´Ù´Â ÀÇ¹Ì
     /// </summary>
     public override int AddItem(ItemData itemData, int amount = 1)
     {
@@ -182,7 +150,7 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         int index;
 
-        //1. ìˆ˜ëŸ‰ì´ ìˆëŠ” ì•„ì´í…œ
+        //1. ¼ö·®ÀÌ ÀÖ´Â ¾ÆÀÌÅÛ
         if (itemData is CountableItemData ciData)
         {
             bool findNextCountable = true;
@@ -190,17 +158,17 @@ public class ItemInventoryManager : BaseItemInvenManager
 
             while (amount > 0)
             {
-                // 1-1. ì´ë¯¸ í•´ë‹¹ ì•„ì´í…œì´ ì¸ë²¤í† ë¦¬ ë‚´ì— ì¡´ì¬í•˜ê³ , ê°œìˆ˜ ì—¬ìœ  ìˆëŠ”ì§€ ê²€ì‚¬
+                // 1-1. ÀÌ¹Ì ÇØ´ç ¾ÆÀÌÅÛÀÌ ÀÎº¥Åä¸® ³»¿¡ Á¸ÀçÇÏ°í, °³¼ö ¿©À¯ ÀÖ´ÂÁö °Ë»ç
                 if (findNextCountable)
                 {
                     index = FindCountableItemSlotIndex(ciData, index + 1);
 
-                    // ê°œìˆ˜ ì—¬ìœ ìˆëŠ” ê¸°ì¡´ì¬ ìŠ¬ë¡¯ì´ ë”ì´ìƒ ì—†ë‹¤ê³  íŒë‹¨ë  ê²½ìš°, ë¹ˆ ìŠ¬ë¡¯ë¶€í„° íƒìƒ‰ ì‹œì‘
+                    // °³¼ö ¿©À¯ÀÖ´Â ±âÁ¸Àç ½½·ÔÀÌ ´õÀÌ»ó ¾ø´Ù°í ÆÇ´ÜµÉ °æ¿ì, ºó ½½·ÔºÎÅÍ Å½»ö ½ÃÀÛ
                     if (index == -1)
                     {
                         findNextCountable = false;
                     }
-                    // ê¸°ì¡´ì¬ ìŠ¬ë¡¯ì„ ì°¾ì€ ê²½ìš°, ì–‘ ì¦ê°€ì‹œí‚¤ê³  ì´ˆê³¼ëŸ‰ ì¡´ì¬ ì‹œ amountì— ì´ˆê¸°í™”
+                    // ±âÁ¸Àç ½½·ÔÀ» Ã£Àº °æ¿ì, ¾ç Áõ°¡½ÃÅ°°í ÃÊ°ú·® Á¸Àç ½Ã amount¿¡ ÃÊ±âÈ­
                     else
                     {
                         CountableItem ci = _items[index] as CountableItem;
@@ -209,43 +177,43 @@ public class ItemInventoryManager : BaseItemInvenManager
                         UpdateSlot(index);
                     }
                 }
-                // 1-2. ë¹ˆ ìŠ¬ë¡¯ íƒìƒ‰
+                // 1-2. ºó ½½·Ô Å½»ö
                 else
                 {
                     index = FindEmptySlotIndex(index + 1);
 
-                    // ë¹ˆ ìŠ¬ë¡¯ì¡°ì°¨ ì—†ëŠ” ê²½ìš° ì¢…ë£Œ
+                    // ºó ½½·ÔÁ¶Â÷ ¾ø´Â °æ¿ì Á¾·á
                     if (index == -1)
                     {
                         break;
                     }
-                    // ë¹ˆ ìŠ¬ë¡¯ ë°œê²¬ ì‹œ, ìŠ¬ë¡¯ì— ì•„ì´í…œ ì¶”ê°€ ë° ë‚¨ëŠ”ëŸ‰ ê³„ì‚°
+                    // ºó ½½·Ô ¹ß°ß ½Ã, ½½·Ô¿¡ ¾ÆÀÌÅÛ Ãß°¡ ¹× ³²´Â·® °è»ê
                     else
                     {
-                        //ìƒˆë¡œìš´ ì•„ì´í…œ ìƒì„±
+                        //»õ·Î¿î ¾ÆÀÌÅÛ »ı¼º
                         CountableItem ci = ciData.CreateItem() as CountableItem;
                         ci.SetAmount(amount);
 
-                        // ìŠ¬ë¡¯ì— ì¶”ê°€
+                        // ½½·Ô¿¡ Ãß°¡
                         _items[index] = ci;
 
-                        // ë‚¨ì€ ê°œìˆ˜ ê³„ì‚°
+                        // ³²Àº °³¼ö °è»ê
                         amount = (amount > ciData.GetMaxAmount()) ? (amount - ciData.GetMaxAmount()) : 0;
                         UpdateSlot(index);
                     }
                 }
             }
         }
-        // 2. ìˆ˜ëŸ‰ì´ ì—†ëŠ” ì•„ì´í…œ
+        // 2. ¼ö·®ÀÌ ¾ø´Â ¾ÆÀÌÅÛ
         else
         {
-            // 2-1. 1ê°œë§Œ ë„ëŠ” ê²½ìš°, ê°„ë‹¨íˆ ìˆ˜í–‰
+            // 2-1. 1°³¸¸ †š´Â °æ¿ì, °£´ÜÈ÷ ¼öÇà
             if (amount == 1)
             {
                 index = FindEmptySlotIndex();
                 if (index != -1)
                 {
-                    //ì•„ì´í…œì„ ìƒì„±í•˜ì—¬ ìŠ¬ë¡¯ì— ì¶”ê°€
+                    //¾ÆÀÌÅÛÀ» »ı¼ºÇÏ¿© ½½·Ô¿¡ Ãß°¡
                     _items[index] = itemData.CreateItem();
                     amount = 0;
 
@@ -253,20 +221,20 @@ public class ItemInventoryManager : BaseItemInvenManager
                 }
             }
 
-            // 2-2. 2ê°œ ì´ìƒì˜ ìˆ˜ëŸ‰ ì—†ëŠ” ì•„ì´í…œì„ ë™ì‹œì— ì¶”ê°€í•˜ëŠ” ê²½ìš°
+            // 2-2. 2°³ ÀÌ»óÀÇ ¼ö·® ¾ø´Â ¾ÆÀÌÅÛÀ» µ¿½Ã¿¡ Ãß°¡ÇÏ´Â °æ¿ì
             index = -1;
             for (; amount > 0; amount--)
             {
-                //ì•„ì´í…œ ë„£ì€ ì¸ë±ìŠ¤ì˜ ë‹¤ìŒ ì¸ë±ìŠ¤ë¶€í„° ìŠ¬ë¡¯ íƒìƒ‰
+                //¾ÆÀÌÅÛ ³ÖÀº ÀÎµ¦½ºÀÇ ´ÙÀ½ ÀÎµ¦½ººÎÅÍ ½½·Ô Å½»ö
                 index = FindEmptySlotIndex(index + 1);
 
-                // ë‹¤ ë„£ì§€ ëª»í•œ ê²½ìš° ë£¨í”„ ì¢…ë£Œ
+                // ´Ù ³ÖÁö ¸øÇÑ °æ¿ì ·çÇÁ Á¾·á
                 if (index == -1)
                 {
                     break;
                 }
 
-                //ì•„ì´í…œì„ ìƒì„±í•˜ì—¬ ìŠ¬ë¡¯ì— ì¶”ê°€
+                //¾ÆÀÌÅÛÀ» »ı¼ºÇÏ¿© ½½·Ô¿¡ Ãß°¡
                 _items[index] = itemData.CreateItem();
 
                 UpdateSlot(index);
@@ -275,13 +243,13 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return amount;
     }
-    /// <summary> Inventory í™œì„±í™” ìœ ë¬´ </summary>
+    /// <summary> Inventory È°¼ºÈ­ À¯¹« </summary>
     public override void SetWindowActive(bool value)
     {
-        _playerCtr.SetUseItemInven(value); //í”Œë ˆì´ì–´ì˜ ì›€ì§ì„ ì œì–´
-        _itemInventoryUI.gameObject.SetActive(value);
+        _playerCtr.SetUseItemInven(value); //ÇÃ·¹ÀÌ¾îÀÇ ¿òÁ÷ÀÓ Á¦¾î
+        _quickInvenUI.gameObject.SetActive(value);
     }
-    ///<summary> í•´ë‹¹ ìŠ¬ë¡¯ì˜ ì•„ì´í…œ ì œê±° </summary>
+    ///<summary> ÇØ´ç ½½·ÔÀÇ ¾ÆÀÌÅÛ Á¦°Å </summary>
     public override void Remove(int index)
     {
         if (!IsValidIndex(index)) return;
@@ -297,8 +265,8 @@ public class ItemInventoryManager : BaseItemInvenManager
         Item itemA = _items[indexA];
         Item itemB = _items[indexB];
 
-        // 1. ì…€ ìˆ˜ ìˆëŠ” ì•„ì´í…œì´ê³ , ë™ì¼í•œ ì•„ì´í…œì¼ ê²½ìš°
-        // indexA -> indexBë¡œ ê°œìˆ˜ í•©ì¹˜ê¸°
+        // 1. ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛÀÌ°í, µ¿ÀÏÇÑ ¾ÆÀÌÅÛÀÏ °æ¿ì
+        // indexA -> indexB·Î °³¼ö ÇÕÄ¡±â
         if (itemA != null && itemB != null &&
             itemA.GetData().GetID() == itemB.GetData().GetID() &&
             itemA is CountableItem ciA && itemB is CountableItem ciB)
@@ -317,25 +285,25 @@ public class ItemInventoryManager : BaseItemInvenManager
                 ciB.SetAmount(maxAmount);
             }
         }
-        // 2. ì¼ë°˜ì ì¸ ê²½ìš° : ìŠ¬ë¡¯ êµì²´
+        // 2. ÀÏ¹İÀûÀÎ °æ¿ì : ½½·Ô ±³Ã¼
         else
         {
             _items[indexA] = itemB;
             _items[indexB] = itemA;
         }
 
-        // ë‘ ìŠ¬ë¡¯ ì •ë³´ ê°±ì‹ 
+        // µÎ ½½·Ô Á¤º¸ °»½Å
         UpdateSlot(indexA, indexB);
     }
-    /// <summary> í•´ë‹¹ ìŠ¬ë¡¯ì˜ ì•„ì´í…œ ì‚¬ìš© </summary>
+    /// <summary> ÇØ´ç ½½·ÔÀÇ ¾ÆÀÌÅÛ »ç¿ë </summary>
     public override void Use(int index)
     {
         if (_items[index] == null) return;
 
-        // ì‚¬ìš© ê°€ëŠ¥í•œ ì•„ì´í…œì¸ ê²½ìš°
+        // »ç¿ë °¡´ÉÇÑ ¾ÆÀÌÅÛÀÎ °æ¿ì
         if (_items[index] is IUsableItem uItem)
         {
-            //ì•„ì´í…œ ì‚¬ìš©
+            //¾ÆÀÌÅÛ »ç¿ë
             bool succeeded = uItem.Use();
 
             if (_items[index] is PortionItem pitem)
@@ -356,27 +324,25 @@ public class ItemInventoryManager : BaseItemInvenManager
         }
         else if (_items[index] is EquipmentItem eqItem)
         {
-            // 1. =>í”Œë ˆì´ì–´ í”Œë ˆì´ì–´ ìŠ¤íƒ¯ ìƒìŠ¹
-            // 2. í”Œë ˆì´ì–´ => í”Œë ˆì´ì–´ UI ì—…ë°ì´íŠ¸
+            // 1. =>ÇÃ·¹ÀÌ¾î ÇÃ·¹ÀÌ¾î ½ºÅÈ »ó½Â
+            // 2. ÇÃ·¹ÀÌ¾î => ÇÃ·¹ÀÌ¾î UI ¾÷µ¥ÀÌÆ®
             EquipmentItemData equipData = eqItem.GetEequipmentData();
             equipData.Init();
             int equipIndex = (int)equipData.GetEquipState();
-            MoveFromInvenSlotToEquipSlot(index, equipIndex);
 
-            //ë¬´ê¸°ë¼ë©´ ì¥ì°© ê°€ì‹œí™”
-            if((EquipState)equipIndex == EquipState.WEAPON)
+            //¹«±â¶ó¸é ÀåÂø °¡½ÃÈ­
+            if ((EquipState)equipIndex == EquipState.WEAPON)
             {
                 _playerCtr.PutOnWeapon(equipData);
             }
-            
+
         }
 
-        UpdateStatusDisplay();
     }
-    /// <summary> ëª¨ë“  ìŠ¬ë¡¯ UIì— ì ‘ê·¼ ê°€ëŠ¥ ì—¬ë¶€ ì—…ë°ì´íŠ¸ </summary>
+    /// <summary> ¸ğµç ½½·Ô UI¿¡ Á¢±Ù °¡´É ¿©ºÎ ¾÷µ¥ÀÌÆ® </summary>
     public override void UpdateAccessibleStatesAll()
     {
-        _itemInventoryUI.SetAccessibleSlotRange(_capacity);
+        _quickInvenUI.SetAccessibleSlotRange(_capacity);
     }
     #endregion
 
@@ -385,10 +351,10 @@ public class ItemInventoryManager : BaseItemInvenManager
     ***********************************************************************/
     #region Public Methods
     /// <summary>
-    /// í•´ë‹¹ ìŠ¬ë¡¯ì˜ í˜„ì¬ ì•„ì´í…œ ê°œìˆ˜ ë¦¬í„´
-    /// <para/> - ì˜ëª»ëœ ì¸ë±ìŠ¤ : -1 ë¦¬í„´
-    /// <para/> - ë¹ˆ ìŠ¬ë¡¯ : 0 ë¦¬í„´
-    /// <para/> - ì…€ ìˆ˜ ì—†ëŠ” ì•„ì´í…œ : 1 ë¦¬í„´
+    /// ÇØ´ç ½½·ÔÀÇ ÇöÀç ¾ÆÀÌÅÛ °³¼ö ¸®ÅÏ
+    /// <para/> - Àß¸øµÈ ÀÎµ¦½º : -1 ¸®ÅÏ
+    /// <para/> - ºó ½½·Ô : 0 ¸®ÅÏ
+    /// <para/> - ¼¿ ¼ö ¾ø´Â ¾ÆÀÌÅÛ : 1 ¸®ÅÏ
     /// </summary>
     public int GetCurrentAmount(int index)
     {
@@ -402,21 +368,22 @@ public class ItemInventoryManager : BaseItemInvenManager
         return ci.GetAmount();
     }
     /// <summary>
-    /// ì•„ì´í…œ ì¸ë²¤í† ë¦¬ index ë²ˆì§¸ì— itemì„ ì„¸íŒ…
+    /// ¾ÆÀÌÅÛ ÀÎº¥Åä¸® index ¹øÂ°¿¡ itemÀ» ¼¼ÆÃ
     /// </summary>
-    /// <param name="item"> ë¬´ì—‡ì„ </param>
-    /// <param name="index"> ì–´ë””ì— </param>
+    /// <param name="item"> ¹«¾ùÀ» </param>
+    /// <param name="index"> ¾îµğ¿¡ </param>
     public bool TrySetItem(Item item, int index)
     {
         if (!IsValidIndex(index)) return false;
-  
+        if (item == null) return false;
+
         _items[index] = item;
         return true;
     }
-    /// <summary> ì…€ ìˆ˜ ìˆëŠ” ì•„ì´í…œì˜ ìˆ˜ëŸ‰ ë‚˜ëˆ„ê¸°(A -> B ìŠ¬ë¡¯ìœ¼ë¡œ) </summary>
+    /// <summary> ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛÀÇ ¼ö·® ³ª´©±â(A -> B ½½·ÔÀ¸·Î) </summary>
     public void SeparateAmount(int indexA, int indexB, int amount)
     {
-        // amount : ë‚˜ëˆŒ ëª©í‘œ ìˆ˜ëŸ‰
+        // amount : ³ª´­ ¸ñÇ¥ ¼ö·®
 
         if (!IsValidIndex(indexA)) return;
         if (!IsValidIndex(indexB)) return;
@@ -426,8 +393,8 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         CountableItem _ciA = _itemA as CountableItem;
 
-        // ì¡°ê±´ : A ìŠ¬ë¡¯ - ì…€ ìˆ˜ ìˆëŠ” ì•„ì´í…œ / B ìŠ¬ë¡¯ - Null
-        // ì¡°ê±´ì— ë§ëŠ” ê²½ìš°, ë³µì œí•˜ì—¬ ìŠ¬ë¡¯ Bì— ì¶”ê°€
+        // Á¶°Ç : A ½½·Ô - ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛ / B ½½·Ô - Null
+        // Á¶°Ç¿¡ ¸Â´Â °æ¿ì, º¹Á¦ÇÏ¿© ½½·Ô B¿¡ Ãß°¡
         if (_ciA != null && _itemB == null)
         {
             _items[indexB] = _ciA.SeperateAndClone(amount);
@@ -435,44 +402,94 @@ public class ItemInventoryManager : BaseItemInvenManager
             UpdateSlot(indexA, indexB);
         }
     }
-    /// <summary> ë¹ˆ ìŠ¬ë¡¯ ì—†ì´ ì±„ìš°ë©´ì„œ ì•„ì´í…œ ì¢…ë¥˜ë³„ë¡œ ì •ë ¬í•˜ê¸° </summary>
-    public void SortAll()
+    /// <summary> ÇØ´ç ½½·ÔÀÌ ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛÀÎÁö ¿©ºÎ </summary>
+    public bool IsCountableItem(int index) => HasItem(index) && _items[index] is CountableItem;
+
+    /// <summary> Quick => Item Inven  Move </summary>
+    public void MoveFromQuickToItemInven(int quickIndex, int iteminvenIndex)
     {
-        // 1. Trim
-        int i = -1;
-        while (_items[++i] != null) ;
-        int j = i;
+        if (!IsValidIndex(quickIndex)) return;
+        if (!_itemInvenMgr.IsValidIndex(iteminvenIndex)) return;
 
-        while (true)
+        Item quickItem = _items[quickIndex];
+        Item invenItem = _itemInvenMgr.GetItem(iteminvenIndex);
+
+        // 1. ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛÀÌ°í, µ¿ÀÏÇÑ ¾ÆÀÌÅÛÀÏ °æ¿ì
+        // indexA -> indexB·Î °³¼ö ÇÕÄ¡±â
+        if (quickItem != null && invenItem != null &&
+            quickItem.GetData().GetID() == invenItem.GetData().GetID() &&
+            quickItem is CountableItem ciA && invenItem is CountableItem ciB)
         {
-            while (++j < _capacity && _items[j] == null) ;
+            int maxAmount = ciB.GetMaxAmount();
+            int sum = ciA.GetAmount() + ciB.GetAmount();
 
-            if (j == _capacity)
-                break;
-
-            _items[i] = _items[j];
-            _items[j] = null;
-            i++;
+            if (sum <= maxAmount)
+            {
+                ciA.SetAmount(0);
+                ciB.SetAmount(sum);
+            }
+            else
+            {
+                ciA.SetAmount(sum - maxAmount);
+                ciB.SetAmount(maxAmount);
+            }
+        }
+        // 2. ÀÏ¹İÀûÀÎ °æ¿ì : ½½·Ô ±³Ã¼
+        else
+        {
+            _items[quickIndex] = invenItem;
+            _itemInvenMgr.TrySetItem(quickItem, iteminvenIndex);
         }
 
-        // 2. sort
-        Array.Sort(_items, 0, i, _itemComparer);
-
-        // 3.Update
-
-        UpdateAllSlot();
+        // µÎ ½½·Ô Á¤º¸ °»½Å
+        UpdateSlot(quickIndex);
+        _itemInvenMgr.UpdateSlot(iteminvenIndex);
     }
-    /// <summary> UIì—ê²Œ ë£¨ë¹„ ì—…ë°ì´íŠ¸ í˜¸ì¶œ </summary>
-    public void UpdateRubyAmount(int rubyAmount)
+
+    /// <summary> Item Inven  Move => Quick </summary>
+    public void MoveFromItemInvenToQuick(int iteminvenIndex, int quickIndex)
     {
-        _nRubyAmount = rubyAmount;
-        _itemInventoryUI.UpdateRubyAmount(_nRubyAmount);
+        if (!IsValidIndex(quickIndex)) return;
+        if (!_itemInvenMgr.IsValidIndex(iteminvenIndex)) return;
+
+        Item quickItem = _items[quickIndex];
+        Item invenItem = _itemInvenMgr.GetItem(iteminvenIndex);
+
+        // 1. ¼¿ ¼ö ÀÖ´Â ¾ÆÀÌÅÛÀÌ°í, µ¿ÀÏÇÑ ¾ÆÀÌÅÛÀÏ °æ¿ì
+        // indexA -> indexB·Î °³¼ö ÇÕÄ¡±â
+        if (quickItem != null && invenItem != null &&
+            quickItem.GetData().GetID() == invenItem.GetData().GetID() &&
+            quickItem is CountableItem ciA && invenItem is CountableItem ciB)
+        {
+            int maxAmount = ciB.GetMaxAmount();
+            int sum = ciA.GetAmount() + ciB.GetAmount();
+            if (sum <= maxAmount)
+            {
+                ciA.SetAmount(0);
+                ciB.SetAmount(sum);
+            }
+            else
+            {
+                ciA.SetAmount(sum - maxAmount);
+                ciB.SetAmount(maxAmount);
+            }
+        }
+        // 2. ÀÏ¹İÀûÀÎ °æ¿ì : ½½·Ô ±³Ã¼
+        else
+        {
+            _items[quickIndex] = invenItem;
+            _itemInvenMgr.TrySetItem(quickItem, iteminvenIndex);
+        }
+
+        // µÎ ½½·Ô Á¤º¸ °»½Å
+        UpdateSlot(quickIndex);
+        _itemInvenMgr.UpdateSlot(iteminvenIndex);
     }
-    /// <summary> í•´ë‹¹ ìŠ¬ë¡¯ì´ ì…€ ìˆ˜ ìˆëŠ” ì•„ì´í…œì¸ì§€ ì—¬ë¶€ </summary>
-    public bool IsCountableItem(int index) => HasItem(index) && _items[index] is CountableItem;
     #endregion
+
+
     #region Private Methods
-    /// <summary> ì•ì—ì„œë¶€í„° ë¹„ì–´ìˆëŠ” ìŠ¬ë¡¯ ì¸ë±ìŠ¤ íƒìƒ‰ </summary>
+    /// <summary> ¾Õ¿¡¼­ºÎÅÍ ºñ¾îÀÖ´Â ½½·Ô ÀÎµ¦½º Å½»ö </summary>
     private int FindEmptySlotIndex(int startIndex = 0)
     {
         for (int i = startIndex; i < _capacity; i++)
@@ -483,7 +500,7 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return -1;
     }
-    /// <summary> ì•ì—ì„œë¶€í„° ê°œìˆ˜ ì—¬ìœ ê°€ ìˆëŠ” Countable ì•„ì´í…œì˜ ìŠ¬ë¡¯ ì¸ë±ìŠ¤ íƒìƒ‰ </summary>
+    /// <summary> ¾Õ¿¡¼­ºÎÅÍ °³¼ö ¿©À¯°¡ ÀÖ´Â Countable ¾ÆÀÌÅÛÀÇ ½½·Ô ÀÎµ¦½º Å½»ö </summary>
     private int FindCountableItemSlotIndex(CountableItemData target, int startIndex = 0)
     {
         for (int i = startIndex; i < _capacity; i++)
@@ -492,10 +509,10 @@ public class ItemInventoryManager : BaseItemInvenManager
             if (current == null)
                 continue;
 
-            // ì•„ì´í…œ ì¢…ë¥˜ ì¼ì¹˜, ê°œìˆ˜ ì—¬ìœ  í™•ì¸
+            // ¾ÆÀÌÅÛ Á¾·ù ÀÏÄ¡, °³¼ö ¿©À¯ È®ÀÎ
             if (current.GetData().GetID() == target.GetID() && current is CountableItem ci)
             {
-                
+
                 if (!ci.GetIsMax())
                     return i;
             }
@@ -503,25 +520,15 @@ public class ItemInventoryManager : BaseItemInvenManager
 
         return -1;
     }
-    /// <summary> ì•„ì´í…œì¸ë²¤ ìŠ¬ë¡¯ -> ì¥ë¹„ ìŠ¬ë¡¯ ì´ë™ </summary>
-    private void MoveFromInvenSlotToEquipSlot(int index, int equipIndex)
-    {
-        _playerStatMgr.ReverseSwap(index, equipIndex);
-    }
-    /// <summary>  ìŠ¤í…Œì´í„°ìŠ¤ ì—…ë°ì´íŠ¸ </summary>
-    private void UpdateStatusDisplay()
-    {
-         _playerStatMgr.UpdateStatusDisplay();
-    }
-    private void SaveInven() => SaveSys.SaveInvenItem(_items, "Item.Json");
-    /// <summary> Load Data ì—†ì„ì‹œ ì´ˆê¸°í™” </summary>
+
+    /// <summary> Load Data ¾øÀ»½Ã ÃÊ±âÈ­ </summary>
     private void Init_InvenItems()
     {
-        _itemInventoryUI = FindObjectOfType<ItemInventoryUI>();
+        _quickInvenUI = FindObjectOfType<QuickInvenUI>();
         _capacity = _maxCapacity;
-        _itemInventoryUI.SetInventoryReference(this);
+        _quickInvenUI.SetInventoryReference(this);
 
-        _items = SaveSys.LoadInvenitem("Item.Json");
+        _items = SaveSys.LoadInvenitem("QuickItem.Json");
 
         if (_items == null)
         {
@@ -530,7 +537,7 @@ public class ItemInventoryManager : BaseItemInvenManager
         }
         else
         {
-            for(int i = 0; i < _items.Length; i++)
+            for (int i = 0; i < _items.Length; i++)
             {
                 if (_items[i] == null) continue;
                 _items[i].GetData().Init();
@@ -540,5 +547,6 @@ public class ItemInventoryManager : BaseItemInvenManager
         }
     }
     #endregion
+
 
 }

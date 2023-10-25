@@ -75,7 +75,7 @@ public class ItemInventoryUI : InvenUIBase
     {
         ItemInvenSlotUI endDragSlot = RaycastAndGetFirstComponent<ItemInvenSlotUI>();
 
-        if (endDragSlot != null && endDragSlot.GetIsAccessible())
+        if (endDragSlot != null && endDragSlot.GetIsAccessible() && !(_beginDragSlot is QuickSlotUI))
         {
             // 수량 나누기 조건
             // 1) 마우스 클릭 떼는 순간 좌측 Ctrl 또는 Shift 키 유지

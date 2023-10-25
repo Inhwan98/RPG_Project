@@ -61,6 +61,7 @@ public class PlayerController : Character
     private PlayerStatManager _playerStatMgr;
     private ItemInventoryManager _itemInvenMgr;
     private MerChantInventoryManager _merChantInvenMgr;
+    private QuickInvenManager _quickInvenMgr;
 
     private PlayerData _playerData;
     private PlayerStatusData _playerStatData;
@@ -105,6 +106,7 @@ public class PlayerController : Character
     public void SetGameManager(GameManager gameMgr) => _gameMgr = gameMgr;                              // 게임 매니져
     public void SetItemInvenManager(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr; // 아이템 인벤토리 매니져
     public void SetSkillMgr(Skill_InvenManager skillMgr) => _skillMgr = skillMgr;                             // 스킬 매니져
+    public void SetQuickInvenMgr(QuickInvenManager quickInvenMgr) => _quickInvenMgr = quickInvenMgr;
     public void SetPlayerUIMgr(PlayerStatManager playerUIMgr) => _playerStatMgr = playerUIMgr;              // 플레이어 UI 매니져
     public void SetMerChantMgr(MerChantInventoryManager merChantMgr) => _merChantInvenMgr = merChantMgr;
     public void SetCameraCtr(CameraController value) => _cameraCtr = value;                             // 카메라
@@ -264,6 +266,9 @@ public class PlayerController : Character
 
         StatusWindowActiveButton();
         PlayerAttack();
+
+        Commandkey.UseQuickSlot(ActionType.QuickSlotA, _quickInvenMgr, 0);
+
     }
 
     private void OnDestroy()
@@ -680,6 +685,8 @@ public class PlayerController : Character
         //}
         #endregion
     }
+
+
     /// <summary> 컨트롤러가 잠겨야 하는지 체크 한다. </summary>
     public void CheckFreezController()
     {

@@ -1,14 +1,14 @@
-ï»¿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ItemInvenSlotUI : SlotUIBase
+public class QuickSlotUI : SlotUIBase
 {
-    [Tooltip("ì•„ì´í…œ ê°œìˆ˜ í…ìŠ¤íŠ¸")]
+    [Tooltip("¾ÆÀÌÅÛ °³¼ö ÅØ½ºÆ®")]
     [SerializeField] private Text _amountText;
 
-    //Text í™œì„±í™” / ë¹„í™œì„±í™”
+    //Text È°¼ºÈ­ / ºñÈ°¼ºÈ­
     private void ShowText() => _textGo.SetActive(true);
     private void HideText() => _textGo.SetActive(false);
 
@@ -21,7 +21,7 @@ public class ItemInvenSlotUI : SlotUIBase
     }
 
 
-    /// <summary> ì•„ì´í…œ ê°œìˆ˜ í…ìŠ¤íŠ¸ ì„¤ì •(amountê°€ 1 ì´í•˜ì¼ ê²½ìš° í…ìŠ¤íŠ¸ ë¯¸í‘œì‹œ </summary>
+    /// <summary> ¾ÆÀÌÅÛ °³¼ö ÅØ½ºÆ® ¼³Á¤(amount°¡ 1 ÀÌÇÏÀÏ °æ¿ì ÅØ½ºÆ® ¹ÌÇ¥½Ã </summary>
     public void SetItemAmount(int amount)
     {
         if (GetHasItem() && amount > 1)
