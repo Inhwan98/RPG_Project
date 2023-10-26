@@ -48,7 +48,7 @@ public class DungeonSceneManager : GameSceneManager
         DungeonMonsterInit();
         CreateMonsterPool();
         CreatePortal();
-
+        DungeonReset();
         //던전 시작시 던전UI 내용 초기화
         _dungeonUI.UpdateDungeonUI(stageDataList[m_nStageIndex], _sSceneName);
     }
@@ -68,7 +68,7 @@ public class DungeonSceneManager : GameSceneManager
         }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         DungeonReset();
         instance = null;

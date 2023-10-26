@@ -248,7 +248,7 @@ public class PlayerController : Character
             {
                 merCtr.MerChantInvenOff();
                 _itemInvenMgr.SetWindowActive(false);
-                _merChantInvenMgr.SetWindowActive(false);
+
             }
 
             isComplete = false;  //완료 퀘스트 여부
@@ -265,9 +265,8 @@ public class PlayerController : Character
         if(m_fAttackInitTime > m_fAttackRunTime) m_fAttackRunTime += Time.deltaTime;
 
         StatusWindowActiveButton();
+        UseQuickSlotButton();
         PlayerAttack();
-
-        Commandkey.UseQuickSlot(ActionType.QuickSlotA, _quickInvenMgr, 0);
 
     }
 
@@ -529,7 +528,7 @@ public class PlayerController : Character
         float movementSpeed = moveSpeed;
         if (_runInput < 0.5f) movementSpeed *= 0.5f;
 
-        DoRolling(ref movementSpeed); // 이동속도 ref .. 구를시 더 빨라지게 하기 위해
+        DoRolling(ref movementSpeed);
 
 
         Vector3 movement = direction.normalized * movementSpeed * Time.fixedDeltaTime;
@@ -561,31 +560,38 @@ public class PlayerController : Character
     /// <summary> Player의 스킬 공격 </summary>
     private void Skill_Attack()
     {
+        Commandkey.UseSkillAttack(ActionType.SKILLA, () => StartCoroutine(SkillAttack(1)));
+        Commandkey.UseSkillAttack(ActionType.SKILLB, () => StartCoroutine(SkillAttack(2)));
+        Commandkey.UseSkillAttack(ActionType.SKILLC, () => StartCoroutine(SkillAttack(3)));
+        Commandkey.UseSkillAttack(ActionType.SKILLD, () => StartCoroutine(SkillAttack(4)));
+        Commandkey.UseSkillAttack(ActionType.SKILLE, () => StartCoroutine(SkillAttack(5)));
+        Commandkey.UseSkillAttack(ActionType.SKILLF, () => StartCoroutine(SkillAttack(6)));
+
         #region Input Alpha 1~6
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            StartCoroutine(SkillAttack(1));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            StartCoroutine(SkillAttack(2));
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            StartCoroutine(SkillAttack(3));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            StartCoroutine(SkillAttack(4));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            StartCoroutine(SkillAttack(5));
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            StartCoroutine(SkillAttack(6));
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    StartCoroutine(SkillAttack(1));
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    StartCoroutine(SkillAttack(2));
+        //}
+        //else if(Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    StartCoroutine(SkillAttack(3));
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    StartCoroutine(SkillAttack(4));
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha5))
+        //{
+        //    StartCoroutine(SkillAttack(5));
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha6))
+        //{
+        //    StartCoroutine(SkillAttack(6));
+        //}
         #endregion
     }
     #endregion
@@ -606,6 +612,13 @@ public class PlayerController : Character
     /// <summary> 플레이어 레벨에 비례해서 퀘스트 목록들 갱신 </summary>
     private void UpdateQuest(int nLevel) => _gameMgr.UpdateQuestList(nLevel);
     /// <summary> Inven 창이 켜져 있는지에 대한 bool 값 반환 </summary>
+    ///     /// <summary> 퀵슬롯 사용 함수 </summary>
+    private void UseQuickSlotButton()
+    {
+        Commandkey.UseQuickSlot(ActionType.QuickSlotA, () => _quickInvenMgr.Use(0));
+        Commandkey.UseQuickSlot(ActionType.QuickSlotB, () => _quickInvenMgr.Use(1));
+    }
+    /// <summary> 창이 켜져있는가(인벤토리 등) </summary>
     private bool IsActiveWindowOnState()
     {
         return _isUseInven || _isUseSkillWindow || _isUseStatusWindow;
@@ -685,8 +698,6 @@ public class PlayerController : Character
         //}
         #endregion
     }
-
-
     /// <summary> 컨트롤러가 잠겨야 하는지 체크 한다. </summary>
     public void CheckFreezController()
     {
@@ -800,7 +811,7 @@ public class PlayerController : Character
         _isRollingCoolTime = true;
 
         gameObject.layer = 2;
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(2.0f);
 
         gameObject.layer = 3;
         _isRolling = false;

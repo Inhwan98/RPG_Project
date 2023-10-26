@@ -20,6 +20,8 @@ public class ResourcesData
     private GameObject _villiagePortal;
     private GameObject _npcConversationKeyGo;
 
+    private GameObject _miniMapObjIcon;
+
     public ResourcesData(AllData allData)
     {
         Init(allData);
@@ -41,6 +43,8 @@ public class ResourcesData
         _villiagePortal = Resources.Load<GameObject>("Prefab/SceneMove/Portal");
 
         _npcConversationKeyGo = Resources.Load<GameObject>("Prefab/UI/ConversationKey");
+
+        _miniMapObjIcon = Resources.Load<GameObject>("Circle");
     }
 
 
@@ -108,4 +112,6 @@ public class ResourcesData
     public GameObject GetVilliagePortal() => _villiagePortal;
 
     public GameObject GetConversationKey() => _npcConversationKeyGo;
+
+    public GameObject GetMinimapObjIcon() => _miniMapObjIcon;
 }

@@ -28,6 +28,12 @@ public class MerChantNPC : NPC
      ****************************************/
 
     #region override Methods
+    protected override void Init_MinimapIcon()
+    {
+        SpriteRenderer npcIcon = _miniMapIconGo.GetComponent<SpriteRenderer>();
+        npcIcon.color = Color.yellow;
+    }
+
     protected override void NPCNameTextInit()
     {
         base.NPCNameTextInit();

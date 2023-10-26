@@ -60,6 +60,14 @@ public abstract class Character : ObjectBase
     /*********************************************
     *                  Methods
     *********************************************/
+    #region override Methods
+    protected override void Init_MiniMapIcon()
+    {
+        base.Init_MiniMapIcon();
+        SpriteRenderer charIcon = minimapIcon.GetComponent<SpriteRenderer>();
+        charIcon.color = Color.green;
+    }
+    #endregion
 
     #region abstract Methods
     /// <summary> 스킬 공격 관련 메서드 </summary>
@@ -87,6 +95,12 @@ public abstract class Character : ObjectBase
 
         _skillMgr.SetSkillPower(GetTotalSTR());
         _skillMgr.SetSkillDataDamage(); //스킬의 공격력도 업데이트 해준다.
+    }
+
+    /// <summary> 플레이어가 레벨이 같거나 높다면 참 </summary>
+    public bool IsCompareWithPlayer(int level)
+    {
+        return m_nLevel >= level;
     }
     #endregion
 }

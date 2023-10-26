@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3421082692140343427}
   - component: {fileID: 1784697268}
   - component: {fileID: 1784697266}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 2.FireInfrno
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ Projector:
   m_Material: {fileID: 2100000, guid: 9de5031b550180a41987d3c7c1d1d3af, type: 2}
   m_IgnoreLayers:
     serializedVersion: 2
-    m_Bits: 7166
+    m_Bits: 15358
 --- !u!114 &5997285921320008142
 MonoBehaviour:
   m_ObjectHideFlags: 0

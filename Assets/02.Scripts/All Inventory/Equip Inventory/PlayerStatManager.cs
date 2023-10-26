@@ -18,24 +18,41 @@ using TMPro;
 
 public class PlayerStatManager : BaseItemInvenManager
 {
+    /***********************************************
+     *                   Fields
+     ***********************************************/
+    #region static Fields
     public static PlayerStatManager instance = null;
-    
-    private PlayerEquipUI _playerEquipUI;
-    private PlayerInfoUI _playerInfoUI;
+    #endregion
 
-    //GameManager Awake()에서 할당
-    private ItemInventoryManager _itemInvenMgr; 
-    private PlayerController _playerCtr;
-
-    Item[] _equipItemArray;
-
+    #region private Fields
     [SerializeField, Range(8, 64)]
     private int _maxCapacity = 8; 
 
+    private PlayerEquipUI _playerEquipUI;
+    private PlayerInfoUI _playerInfoUI;
+    private Item[] _equipItemArray;
 
+    //GameManager Awake()에서 할당
+    private ItemInventoryManager _itemInvenMgr;
+    private QuickInvenManager _quickInvenMgr;
+    private PlayerController _playerCtr;
+    #endregion
+
+
+    /***********************************************
+     *           Get, Set, Update Methods
+     ***********************************************/
+    #region Set Methods
     /// <summary> PlayerController Awake() 에서 참조 됌</summary>
     public override void SetPlayerCtr(PlayerController playerCtr) => _playerCtr = playerCtr;
     public void SetItemInvenMgr(ItemInventoryManager itemInvenMgr) => _itemInvenMgr = itemInvenMgr;
+    public void SetQuickInvenMgr(QuickInvenManager quickInvenMgr) => _quickInvenMgr = quickInvenMgr;
+    public void SetPlayerStatusData(PlayerStatusData playerStatusData)
+    {
+        _playerInfoUI.SetPlayerStatusData(playerStatusData);
+    }
+    #endregion
 
     #region Player Status / Info
     public void UpdateHPbar(float playerHP, float playerMaxHP) => _playerInfoUI.UpdateHPbar(playerHP, playerMaxHP);
@@ -43,11 +60,11 @@ public class PlayerStatManager : BaseItemInvenManager
     public void UpdateEXPbar(float playerEXP, float playerMaxEXP) => _playerInfoUI.UpdateEXPbar(playerEXP, playerMaxEXP);
     public void UpdateLevelText(int nLevel) => _playerInfoUI.UpdateLevelText(nLevel);
     #endregion
-    #region ConverSation 관련
-    public void ConversationKeyActiveOn(Vector3 pos) => _playerInfoUI.ConversationKeyActiveOn(pos);
-    public void ConversationKeyActiveOff() => _playerInfoUI.ConversationKeyActiveOff();
-    #endregion
 
+    /***********************************************
+     *                 Unity Evnet
+     ***********************************************/
+    #region Unity Event
     private void Awake()
     {
         if (instance != null)
@@ -65,6 +82,17 @@ public class PlayerStatManager : BaseItemInvenManager
         LoadEquipItem();
     }
 
+    private void OnDestroy()
+    {
+        instance = null;
+        SaveEquipItem();
+    }
+    #endregion
+
+    /***********************************************
+     *              Override Methods
+     ***********************************************/
+    #region Override Methods
     /// <summary> 인덱스가 수용 범위 내에 있는지 검사 </summary>
     public override bool IsValidIndex(int index) => index >= 0 && index < _equipItemArray.Length;
     /// <summary> 해당 슬롯이 아이템을 갖고 있는지 여부 </summary>
@@ -167,7 +195,7 @@ public class PlayerStatManager : BaseItemInvenManager
 
      
         //아이템이 존재 한다면 스왑 && 아이템이 장비아이템이 맞다면 스왑
-        if (_itemInvenMgr.HasItem(itemIndex) && !(invenItem is EquipmentItem))
+        if (_itemInvenMgr.HasItem(itemIndex) && (invenItem is EquipmentItem))
         {
             _itemInvenMgr.TrySetItem(equipItem, itemIndex);
             _equipItemArray[equipIndex] = invenItem;
@@ -176,15 +204,28 @@ public class PlayerStatManager : BaseItemInvenManager
         else
         {
             _itemInvenMgr.TrySetItem(equipItem, itemIndex);
-
-
              Remove(equipIndex);
         }
         //양쪽 모두 UpdateSlot 진행
         UpdateSlot(equipIndex);
         _itemInvenMgr.UpdateSlot(itemIndex);
     }
+    public override void Use(int index)
+    {
+        throw new System.NotImplementedException();
+    }
+    public override void UpdateAccessibleStatesAll()
+    {
 
+    }
+
+    #endregion
+
+
+    /***********************************************
+     *                 Methods
+     ***********************************************/
+    #region public Methods
     ///<summary>
     /// 아이템인벤토리 => 장비슬롯 swap 이벤트
     /// </summary>
@@ -222,25 +263,50 @@ public class PlayerStatManager : BaseItemInvenManager
         UpdateSlot(equipIndex);
         _itemInvenMgr.UpdateSlot(itemIndex);
     }
-
-    public override void Use(int index)
+    /// <summary> QuickSlot <=> equipSlot </summary>
+    public void QuickSlotSwap(int itemIndex, int equipIndex)
     {
-        throw new System.NotImplementedException();
-    }
-    public override void UpdateAccessibleStatesAll()
-    {
+        Item equipItem = _equipItemArray[equipIndex];
+        Item invenItem = _quickInvenMgr.GetItem(itemIndex);
 
+        if (invenItem is EquipmentItem eqItem)
+        {
+            bool isSameEquipSate = equipIndex == (int)eqItem.GetEequipmentData().GetEquipState();
+            //장비슬롯과 전달하는 아이템의 종류가 다르면 스왑(장착) x (ex - 무기 and 방어구)
+            if (!isSameEquipSate) return;
+        }
+        else
+        {
+            //장비슬롯으로 옮기려 하는 아이템이 장비가 아니면 return
+            return;
+        }
+
+
+        //아이템이 존재 한다면 스왑
+        if (HasItem(equipIndex))
+        {
+            _quickInvenMgr.TrySetItem(equipItem, itemIndex);
+            _equipItemArray[equipIndex] = invenItem;
+        }
+        //아이템이 존재 하지 않는다면 이동
+        else
+        {
+            _equipItemArray[equipIndex] = invenItem;
+            _quickInvenMgr.Remove(itemIndex);
+        }
+        //양쪽 모두 UpdateSlot 진행
+        UpdateSlot(equipIndex);
+        _quickInvenMgr.UpdateSlot(itemIndex);
     }
 
+    /// <summary> Item Inven Item 추가 </summary>
     public void AddItemInven(int index)
     {
         ItemData itemdata = GetItemData(index);
         _itemInvenMgr.AddItem(itemdata);
     }
 
-    /// <summary>
-    /// 장착한 장비에 따라 캐릭터 스탯 추가
-    /// </summary>
+    /// <summary> 장착한 장비에 따라 캐릭터 스탯 추가 </summary>
     public void UpdateState()
     {
         int nTotalAddDefecne = 0;
@@ -269,13 +335,19 @@ public class PlayerStatManager : BaseItemInvenManager
         _playerCtr.SetAddSTR(nTotalAddPower);
     }
 
+    #region ConverSation 관련
+    public void ConversationKeyActiveOn(Vector3 pos) => _playerInfoUI.ConversationKeyActiveOn(pos);
+    public void ConversationKeyActiveOff() => _playerInfoUI.ConversationKeyActiveOff();
+    #endregion
+
     //스테이터스 디스플레이 업데이트
     public void UpdateStatusDisplay()
     {
         UpdateState();
         _playerInfoUI.UpdateStatusDisplay();
     }
-
+    
+    /// <summary> 장비 데이터 로드 </summary>
     public void LoadEquipItem()
     {
         _equipItemArray = SaveSys.LoadInvenitem("EquipItem.Json");
@@ -302,6 +374,7 @@ public class PlayerStatManager : BaseItemInvenManager
         }
     }
 
+    /// <summary> Player 무기 장착 </summary>
     public void PlayerPutOnWeapon(EquipmentItemData equipData)
     {
         _playerCtr.PutOnWeapon(equipData);
@@ -324,14 +397,8 @@ public class PlayerStatManager : BaseItemInvenManager
         SaveSys.SaveInvenItem(_equipItemArray, "EquipItem.Json");
     }
 
-    public void SetPlayerStatusData(PlayerStatusData playerStatusData)
-    {
-        _playerInfoUI.SetPlayerStatusData(playerStatusData);
-    }
 
-    private void OnDestroy()
-    {
-        instance = null;
-        SaveEquipItem();
-    }
+    #endregion
+
+
 }

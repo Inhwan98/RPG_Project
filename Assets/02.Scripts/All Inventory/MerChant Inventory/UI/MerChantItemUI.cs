@@ -55,10 +55,11 @@ public class MerChantItemUI : InvenUIBase
         //구매 가능한게 아니라면 리턴
         if (!isPossibleBuy) return;
 
+        //수량이 있는 아이템이라면
         if (isCountableItem)
         {
             _popup.OpenAmountInputPopup(amt => _merChantInvenMgr.BuyItem(itemData, amt),
-                                               possibleBuyAmount, itemName);
+                                               possibleBuyAmount+1, itemName);
         }
         else
             _merChantInvenMgr.BuyItem(itemData);

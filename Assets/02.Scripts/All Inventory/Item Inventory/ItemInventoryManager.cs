@@ -343,6 +343,7 @@ public class ItemInventoryManager : BaseItemInvenManager
                 PortionItemData potionData = pitem.GetData() as PortionItemData;
                 IPortionState portionState = potionData.GetPortionState();
 
+                if (!_playerCtr.IsCompareWithPlayer(potionData.GetUsedLevel())) return;
                 int value = potionData.GetValue();
 
                 if (portionState == IPortionState.HP) _playerCtr.RecoveryHP(value);
@@ -359,6 +360,8 @@ public class ItemInventoryManager : BaseItemInvenManager
             // 1. =>플레이어 플레이어 스탯 상승
             // 2. 플레이어 => 플레이어 UI 업데이트
             EquipmentItemData equipData = eqItem.GetEequipmentData();
+            //플레이어 레벨이 더 낮다면 return
+            if (!_playerCtr.IsCompareWithPlayer(equipData.GetUsedLevel())) return;
             equipData.Init();
             int equipIndex = (int)equipData.GetEquipState();
             MoveFromInvenSlotToEquipSlot(index, equipIndex);

@@ -57,6 +57,22 @@ public class ItemInventoryUI : InvenUIBase
      ******************************************************/
     #region override Methods
 
+    protected override void ShowOrHideItemToolTip()
+    {
+        // 마우스가 유효한 아이템 아이콘 위에 올라와 있다면 툴팁 보여주기
+        bool isValid =
+            _pointerOverSlot != null && _pointerOverSlot.GetHasItem()
+            && (_pointerOverSlot != _beginDragSlot) && _pointerOverSlot is ItemInvenSlotUI; //장비슬롯이 아니면 보여주지 않기
+
+        if (isValid)
+        {
+            UpdateTooltipUI(_pointerOverSlot);
+            _itemTooltip.Show();
+        }
+        else
+            _itemTooltip.Hide();
+    }
+
     /// <summary> 마우스 클릭 이벤트 </summary>
     protected override void OnPointerDown()
     {
