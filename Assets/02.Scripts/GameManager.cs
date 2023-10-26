@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private ItemInventoryManager _itemInvenMgr;
     private MerChantInventoryManager _merChantInvenMgr;
     private PlayerStatManager _playerStatMgr;
-    private QuickInvenManager _quickInvenMager;
+    private QuickInvenManager _quickInvenMgr;
     #endregion
 
     private bool m_bisPlayerDie; //플레이어가 죽었는가
@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
         _itemInvenMgr = GetComponent<ItemInventoryManager>();
         _merChantInvenMgr = GetComponent<MerChantInventoryManager>();
         _playerStatMgr = GetComponent<PlayerStatManager>();
-        _quickInvenMager = GetComponent<QuickInvenManager>();
+        _quickInvenMgr = GetComponent<QuickInvenManager>();
 
         //플레이어 스킬 매니져
         _skillMgr.SetPlayerCtr(_playerCtr);
@@ -144,14 +144,16 @@ public class GameManager : MonoBehaviour
         //플레이어 스탯 매니져
         _playerStatMgr.SetItemInvenMgr(_itemInvenMgr);
         _playerStatMgr.SetPlayerCtr(_playerCtr);
+        _playerStatMgr.SetQuickInvenMgr(_quickInvenMgr);
 
         //상인 아이템 매니져
         _merChantInvenMgr.SetPlayerCtr(_playerCtr);
         _merChantInvenMgr.SetItemInvenMgr(_itemInvenMgr);
 
         //퀵슬롯 아이탬 매니져
-        _quickInvenMager.SetPlayerCtr(_playerCtr);
-        _quickInvenMager.SetItemInvenMgr(_itemInvenMgr);
+        _quickInvenMgr.SetPlayerCtr(_playerCtr);
+        _quickInvenMgr.SetItemInvenMgr(_itemInvenMgr);
+        _quickInvenMgr.SetPlayerStatMgr(_playerStatMgr);
     }
     /// <summary>  4. PlayerCotontroller 초기화 </summary>
     private void Init_PlayerController()
@@ -162,6 +164,7 @@ public class GameManager : MonoBehaviour
         _playerCtr.SetSkillMgr(_skillMgr);
         _playerCtr.SetMerChantMgr(_merChantInvenMgr);
         _playerCtr.SetPlayerUIMgr(_playerStatMgr);
+        _playerCtr.SetQuickInvenMgr(_quickInvenMgr);
 
         //플레이어에 포함되어 있는 이펙트 스크립트 참조 후, 데이터 할당
         var playerAnimEffectCtr = _playerCtr.gameObject.GetComponent<AnimationEventEffects>();

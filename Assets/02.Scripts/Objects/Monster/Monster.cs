@@ -160,6 +160,12 @@ public class Monster : ObjectBase
     ********************************************/
 
     #region override Methods
+    protected override void Init_MiniMapIcon()
+    {
+        base.Init_MiniMapIcon();
+        SpriteRenderer monIcon = minimapIcon.GetComponent<SpriteRenderer>();
+        monIcon.color = Color.red;
+    }
     protected override void InitObj()
     {
         base.InitObj();
@@ -385,7 +391,7 @@ public class Monster : ObjectBase
     {
         m_nPortionDrop_MinAmount = 1;
         m_nPortionDrop_MaxAmount = 9;
-        m_nItemDrop_percentage = 80;
+        m_nItemDrop_percentage = 20;
     }
     /// <summary> NavMesh 추격 활성화 </summary>
     protected void ChaseStart()

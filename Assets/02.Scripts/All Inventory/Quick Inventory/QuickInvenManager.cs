@@ -11,6 +11,7 @@ public class QuickInvenManager : BaseItemInvenManager
     private QuickInvenUI _quickInvenUI;
     private ItemInventoryManager _itemInvenMgr;
     private PlayerController _playerCtr;
+    private PlayerStatManager _playerStatMgr;
     private Item[] _items;
 
     private int _maxCapacity = 2;     // 최대 수용 한도(아이템 배열 크기)
@@ -23,24 +24,28 @@ public class QuickInvenManager : BaseItemInvenManager
      *****************************************************/
     public override void SetPlayerCtr(PlayerController player) => _playerCtr = player;
     public void SetItemInvenMgr(ItemInventoryManager intemInvenMgr) => _itemInvenMgr = intemInvenMgr;
+    public void SetPlayerStatMgr(PlayerStatManager playerStatMgr) => _playerStatMgr = playerStatMgr;
 
+
+    /*****************************************************
+     *                    Unity Event
+     *****************************************************/
+
+    #region Unity Event
     private void Awake()
     {
         Init_InvenItems();
     }
-
-
-    void Start()
+    private void Start()
     {
         UpdateAccessibleStatesAll();
 
     }
-
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        SaveInven();
     }
+    #endregion
 
     /***********************************************************************
     *                               Override Methods 
@@ -327,8 +332,11 @@ public class QuickInvenManager : BaseItemInvenManager
             // 1. =>플레이어 플레이어 스탯 상승
             // 2. 플레이어 => 플레이어 UI 업데이트
             EquipmentItemData equipData = eqItem.GetEequipmentData();
+            //플레이어 레벨이 더 낮다면 return
+            if (!_playerCtr.IsCompareWithPlayer(equipData.GetUsedLevel())) return;
             equipData.Init();
             int equipIndex = (int)equipData.GetEquipState();
+            MoveFromQuickSlotToEquipSlot(index, equipIndex);
 
             //무기라면 장착 가시화
             if ((EquipState)equipIndex == EquipState.WEAPON)
@@ -338,7 +346,9 @@ public class QuickInvenManager : BaseItemInvenManager
 
         }
 
+        UpdateStatusDisplay();
     }
+
     /// <summary> 모든 슬롯 UI에 접근 가능 여부 업데이트 </summary>
     public override void UpdateAccessibleStatesAll()
     {
@@ -487,7 +497,6 @@ public class QuickInvenManager : BaseItemInvenManager
     }
     #endregion
 
-
     #region Private Methods
     /// <summary> 앞에서부터 비어있는 슬롯 인덱스 탐색 </summary>
     private int FindEmptySlotIndex(int startIndex = 0)
@@ -521,6 +530,17 @@ public class QuickInvenManager : BaseItemInvenManager
         return -1;
     }
 
+    private void MoveFromQuickSlotToEquipSlot(int index, int equipindex)
+    {
+        _playerStatMgr.QuickSlotSwap(index, equipindex);
+    }
+
+    /// <summary>  스테이터스 업데이트 </summary>
+    private void UpdateStatusDisplay()
+    {
+        _playerStatMgr.UpdateStatusDisplay();
+    }
+
     /// <summary> Load Data 없을시 초기화 </summary>
     private void Init_InvenItems()
     {
@@ -528,7 +548,7 @@ public class QuickInvenManager : BaseItemInvenManager
         _capacity = _maxCapacity;
         _quickInvenUI.SetInventoryReference(this);
 
-        _items = SaveSys.LoadInvenitem("QuickItem.Json");
+        _items = SaveSys.LoadInvenitem("QuickSlotItem.Json");
 
         if (_items == null)
         {
@@ -546,6 +566,8 @@ public class QuickInvenManager : BaseItemInvenManager
             }
         }
     }
+
+    private void SaveInven() => SaveSys.SaveInvenItem(_items, "QuickSlotItem.Json");
     #endregion
 
 

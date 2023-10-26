@@ -58,10 +58,11 @@ public class NPC : MonoBehaviour
     #endregion
 
     #region protected Fields
-
     protected ResourcesData _resourcesData;
     protected TextMesh _npcNameTextMesh;
     protected NPCData _npcData;
+
+    protected GameObject _miniMapIconGo;
 
     #endregion
 
@@ -94,7 +95,9 @@ public class NPC : MonoBehaviour
     }
     protected virtual void Start()
     {
+        Init();
         MarkInit();
+        Init_MinimapIcon();
         CheckQuest();
         PlayerController.OnSettingNPCQuest += this.CheckQuest;
     }
@@ -129,16 +132,34 @@ public class NPC : MonoBehaviour
         _sNPCName = _npcData._sNPCName;
         _sNPCJob = _npcData._sNPCJob;
     }
+
+
+    protected virtual void Init_MinimapIcon()
+    {
+        SpriteRenderer npcIcon = _miniMapIconGo.GetComponent<SpriteRenderer>();
+        npcIcon.color = Color.white;
+    }
     #endregion
 
     #region protected Methods
+    protected void Init()
+    {
+        _questSystem = GameManager.instance.GetQuestSystem();
+        _resourcesData = GameManager.instance.GetResourcesData();
+
+        _miniMapIconGo = _resourcesData.GetMinimapObjIcon();
+        _miniMapIconGo = Instantiate(_miniMapIconGo, transform);
+        if(_nID == 1)
+        {
+            _miniMapIconGo.transform.localScale = Vector3.one * 8.0f;
+        }
+    }
     /// <summary> 
     /// 퀘스트에 대한 감정마크를 미리 생성하여 활성화, 비활성화 방법으로 사용
     /// </summary>
     protected void MarkInit()
     {
-        _questSystem = GameManager.instance.GetQuestSystem();
-        _resourcesData = GameManager.instance.GetResourcesData();
+       
 
         _questionMarkGo = _resourcesData.GetQuestionMarkGo();
         _exclamationMarkGO = _resourcesData.GetExclamationMarkGO();

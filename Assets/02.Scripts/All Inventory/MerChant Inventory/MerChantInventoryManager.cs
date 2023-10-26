@@ -437,7 +437,7 @@ public class MerChantInventoryManager : BaseItemInvenManager
         }
         else
         {
-            possibleBuyAmount = playerRubyAmount / itemPrice;
+            possibleBuyAmount = (int)(playerRubyAmount / itemPrice);
             return true;
         }
     }

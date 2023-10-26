@@ -15,6 +15,7 @@ using TMPro;
             - ItemInventoryManager       : 아이템 인벤토리를 관리하는 매니져 스크립트
             - MerChantInventoryManager   : 상인 아이템 인벤토리를 관리하는 매니져 스크립트
             - PlayerStatManager          : 플레이어의 장비를 관리하는 매니져 스크립트
+            - QuickInvenManager          : 퀵슬롯 인벤토리 관리하는 매니져 스크립트
 
         * 스킬 관련 인벤토리
         - SkillManager :전체 스킬 인벤토리를 관리한다.

@@ -13,6 +13,7 @@ using UnityEngine.UI;
        - ItemInvenSlotUI - 아이템 인벤토리에 포함되는 슬롯
        - MerChantSlotUI  - 아이템 상인 인벤토리에 포함되는 슬롯
        - PlayerEquipUI   - 플레이어가 장착하는 장비 슬롯
+       - QuickSlotUI     - 퀵 슬롯 UI
 
        - SKillSlotUI (abstract)
             -InvenSkillUI  - 스킬트리 인벤에 포함될 슬롯 (모든스킬슬롯)

@@ -30,6 +30,8 @@ public abstract class ObjectBase : MonoBehaviour
     #endregion
 
     #region protected Fields
+    protected GameObject minimapIcon;
+
     [SerializeField] protected int   m_nID;
     protected int   m_nLevel;
     protected int   m_nCurHP;
@@ -65,7 +67,7 @@ public abstract class ObjectBase : MonoBehaviour
     #endregion
 
     #endregion
-
+    
     /******************************************************
      *                  Get, Set Methods
      ******************************************************/
@@ -113,6 +115,7 @@ public abstract class ObjectBase : MonoBehaviour
     protected virtual void Start()
     {
         _resourcesData = GameManager.instance.GetResourcesData();
+        Init_MiniMapIcon();
     }
 
     #endregion
@@ -121,11 +124,16 @@ public abstract class ObjectBase : MonoBehaviour
      *                    Methods
      ******************************************************/
 
-    #region protected virtual Methods
+    #region virtual Methods
     //Init Object Setting
     protected virtual void InitObj()
     {
         _anim = GetComponent<Animator>();
+    }
+    protected virtual void Init_MiniMapIcon()
+    {
+        minimapIcon = _resourcesData.GetMinimapObjIcon();
+        minimapIcon = Instantiate(minimapIcon, transform);
     }
     public virtual void Buff(int _str) { }
     #endregion

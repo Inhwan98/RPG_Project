@@ -18,6 +18,7 @@ using UnityEngine.EventSystems;
            - MerChantItemUI  : 상인이 판매하는 아이템 인벤토리 UI 관리
            - Skill_InvenUI   : 스킬 인벤토리의 UI 관리
            - PlayerEquipUI   : 플레이어 장착장비 인벤토리 UI 관리
+           - QuickInvenUI    : 퀵슬롯 인벤토리 UI 관리
 */
 
 

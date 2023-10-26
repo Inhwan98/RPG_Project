@@ -11,7 +11,12 @@ public static class SaveSys
         PlayerData playerData = new PlayerData(playerCtr);
         string jsonData = JsonConvert.SerializeObject(playerData, Formatting.Indented);
 
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, "PlayerData.json");
+#endif
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, "PlayerData.json");
+#endif
 
         File.WriteAllText(path, jsonData);
     }
@@ -25,7 +30,12 @@ public static class SaveSys
             TypeNameHandling = TypeNameHandling.All
         });
 
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, name);
+#endif
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, name);
+#endif
 
         File.WriteAllText(path, jsonData);
     }
@@ -33,7 +43,13 @@ public static class SaveSys
 
     public static Item[] LoadInvenitem(string name)
     {
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, name);
+#endif
+
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, name);
+#endif
         string jsonData;
         Item[] items;
 
@@ -54,7 +70,12 @@ public static class SaveSys
     /// <summary> Json => Object Data 반환 </summary>
     public static PlayerData LoadObject(string fileName)
     {
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, fileName);
+#endif
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, fileName);
+#endif
         string jsonData;
         PlayerData playerData;
 
@@ -74,7 +95,12 @@ public static class SaveSys
 
     public static T LoadItem<T>(string fileName) where T : ItemData
     {
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, fileName);
+#endif
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, fileName);
+#endif
         string jsonData;
         T data;
 
@@ -96,15 +122,26 @@ public static class SaveSys
     public static void SaveAllData(AllData datas)
     {
         string jsonData = JsonConvert.SerializeObject(datas, Formatting.Indented);
-
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, "GameRPGDB.json");
+#endif
+
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, "GameRPGDB.json");
+#endif
 
         File.WriteAllText(path, jsonData);
     }
 
     public static AllData LoadAllData()
     {
+#if !UNITY_EDITOR
         string path = Path.Combine(Application.persistentDataPath, "GameRPGDB.Json");
+#endif
+
+#if UNITY_EDITOR
+        string path = Path.Combine(Application.dataPath, "GameRPGDB.Json");
+#endif
         string jsonData;
         AllData datas;
 
