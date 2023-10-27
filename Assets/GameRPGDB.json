@@ -140,8 +140,8 @@
       "nConditionLevel": 1,
       "nID": 1,
       "nDestID": 102,
-      "eQuestType": 1,
-      "eObjectives": 2,
+      "eQuestType": "메인",
+      "eObjectives": "HUNT",
       "sQuestName": "촌장의 걱정",
       "sDiscription": "-인페르노 드래곤을 퇴치하자",
       "nGoalCnt": 1,
@@ -150,7 +150,7 @@
       "nRewardGold": 0,
       "nRewardItem": null,
       "nItemAmount": null,
-      "bIsComplete": false,
+      "bIsCompleted": false,
       "bIsProgress": false
     },
     {
@@ -159,8 +159,8 @@
       "nConditionLevel": 1,
       "nID": 1,
       "nDestID": 1,
-      "eQuestType": 1,
-      "eObjectives": 1,
+      "eQuestType": "메인",
+      "eObjectives": "CONVERSATION",
       "sQuestName": "촌장의 걱정",
       "sDiscription": "-촌장에게 돌아가자",
       "nGoalCnt": 0,
@@ -175,7 +175,7 @@
         5,
         5
       ],
-      "bIsComplete": false,
+      "bIsCompleted": false,
       "bIsProgress": false
     },
     {
@@ -184,8 +184,8 @@
       "nConditionLevel": 1,
       "nID": 2,
       "nDestID": 0,
-      "eQuestType": 2,
-      "eObjectives": 1,
+      "eQuestType": "일반",
+      "eObjectives": "CONVERSATION",
       "sQuestName": "초심자 세트 증정",
       "sDiscription": "-던전 문지기한테 장비를 전달받자",
       "nGoalCnt": 0,
@@ -194,7 +194,7 @@
       "nRewardGold": 0,
       "nRewardItem": null,
       "nItemAmount": null,
-      "bIsComplete": false,
+      "bIsCompleted": false,
       "bIsProgress": false
     },
     {
@@ -203,8 +203,8 @@
       "nConditionLevel": 1,
       "nID": 2,
       "nDestID": 4,
-      "eQuestType": 2,
-      "eObjectives": 1,
+      "eQuestType": "일반",
+      "eObjectives": "CONVERSATION",
       "sQuestName": "초심자 세트 증정",
       "sDiscription": "-던전 문지기한테 장비를 전달받자",
       "nGoalCnt": 0,
@@ -235,7 +235,7 @@
         1,
         1
       ],
-      "bIsComplete": false,
+      "bIsCompleted": false,
       "bIsProgress": false
     },
     {
@@ -244,8 +244,8 @@
       "nConditionLevel": 5,
       "nID": 2,
       "nDestID": 0,
-      "eQuestType": 1,
-      "eObjectives": 1,
+      "eQuestType": "메인",
+      "eObjectives": "CONVERSATION",
       "sQuestName": "드래곤 인페르노",
       "sDiscription": "-드래곤 인페르노 무기 증정",
       "nGoalCnt": 0,
@@ -260,7 +260,7 @@
         1,
         0
       ],
-      "bIsComplete": false,
+      "bIsCompleted": false,
       "bIsProgress": false
     }
   ],
@@ -272,6 +272,7 @@
       "nMaxHP": 100,
       "nCurHP": 100,
       "nMaxMP": 100,
+      "nCurMP": 100,
       "nCurSTR": 10,
       "nDefence": 5,
       "nDropExp": 10,
@@ -295,6 +296,7 @@
       "nMaxHP": 200,
       "nCurHP": 200,
       "nMaxMP": 200,
+      "nCurMP": 200,
       "nCurSTR": 25,
       "nDefence": 30,
       "nDropExp": 50,
@@ -315,6 +317,7 @@
       "nMaxHP": 2000,
       "nCurHP": 2000,
       "nMaxMP": 2000,
+      "nCurMP": 2000,
       "nCurSTR": 35,
       "nDefence": 50,
       "nDropExp": 100,
@@ -420,9 +423,9 @@
         -16.47
       ],
       "_fRotArray": [
-        0.0,
+        0,
         14.37,
-        0.0
+        0
       ]
     },
     {
@@ -430,14 +433,14 @@
       "_nNPCID": 2,
       "_sNPCName": "울프스미스",
       "_fPosArray": [
-        -33.0,
-        1.0,
-        -27.0
+        -33,
+        1,
+        -27
       ],
       "_fRotArray": [
-        0.0,
-        82.0,
-        0.0
+        0,
+        82,
+        0
       ]
     },
     {
@@ -445,14 +448,14 @@
       "_nNPCID": 3,
       "_sNPCName": "꽃님이",
       "_fPosArray": [
-        -20.0,
+        -20,
         0.75,
-        7.0
+        7
       ],
       "_fRotArray": [
-        0.0,
-        165.0,
-        0.0
+        0,
+        165,
+        0
       ]
     },
     {
@@ -460,14 +463,14 @@
       "_nNPCID": 4,
       "_sNPCName": "문지기",
       "_fPosArray": [
-        40.0,
-        0.0,
-        0.0
+        40,
+        0,
+        0
       ],
       "_fRotArray": [
-        0.0,
-        -120.0,
-        0.0
+        0,
+        -120,
+        0
       ]
     }
   ],
@@ -755,7 +758,7 @@
       "m_sToolTip": "5연속 공격",
       "m_sSpritePath": "Skill_Icon/소드슬래쉬",
       "m_nSkillDamagePer": 50,
-      "m_fCooldown": 12.0,
+      "m_fCooldown": 12,
       "m_nManaAmount": 10,
       "m_bAcquired": true
     },
@@ -768,7 +771,7 @@
       "m_sToolTip": "던파 서유리",
       "m_sSpritePath": "Skill_Icon/열파참",
       "m_nSkillDamagePer": 200,
-      "m_fCooldown": 7.0,
+      "m_fCooldown": 7,
       "m_nManaAmount": 15,
       "m_bAcquired": false
     },
@@ -781,7 +784,7 @@
       "m_sToolTip": "전기 충격파",
       "m_sSpritePath": "Skill_Icon/쇼크웨이브",
       "m_nSkillDamagePer": 100,
-      "m_fCooldown": 7.0,
+      "m_fCooldown": 7,
       "m_nManaAmount": 20,
       "m_bAcquired": false
     },
@@ -794,7 +797,7 @@
       "m_sToolTip": "기를 모아 강력한 원거리 공격을 한다.",
       "m_sSpritePath": "Skill_Icon/차지웨이브",
       "m_nSkillDamagePer": 200,
-      "m_fCooldown": 15.0,
+      "m_fCooldown": 15,
       "m_nManaAmount": 30,
       "m_bAcquired": false
     },
@@ -807,7 +810,7 @@
       "m_sToolTip": "빠른 속도로 상대에게 연속적으로 참격을 가한다.",
       "m_sSpritePath": "Skill_Icon/폭풍참격",
       "m_nSkillDamagePer": 110,
-      "m_fCooldown": 10.0,
+      "m_fCooldown": 10,
       "m_nManaAmount": 40,
       "m_bAcquired": false
     },
@@ -820,24 +823,14 @@
       "m_sToolTip": "주변의 넓은 범위에 폭발적인 힘을 가해 적들에게 엄청난 피해를 입힙니다.",
       "m_sSpritePath": "Skill_Icon/천지개벽",
       "m_nSkillDamagePer": 420,
-      "m_fCooldown": 10.0,
+      "m_fCooldown": 10,
       "m_nManaAmount": 50,
       "m_bAcquired": false
     }
   ],
-  "PlayerSkillDB": [
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
-  ],
+  "PlayerSkillDB": [],
   "SkillEffectDB": [
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL1_1",
       "fPosArray": [
         -0.03,
@@ -849,13 +842,10 @@
         133.307,
         6.695
       ],
-      "fDisableAfter": 1.0,
+      "fDisableAfter": 1,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL1_2",
       "fPosArray": [
         0.14,
@@ -867,13 +857,10 @@
         178.263,
         -28.834
       ],
-      "fDisableAfter": 1.0,
+      "fDisableAfter": 1,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL1_3",
       "fPosArray": [
         -0.194,
@@ -885,13 +872,10 @@
         -132.32,
         -33.74
       ],
-      "fDisableAfter": 1.0,
+      "fDisableAfter": 1,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL1_4",
       "fPosArray": [
         -0.15,
@@ -903,13 +887,10 @@
         169.072,
         -7.836
       ],
-      "fDisableAfter": 1.0,
+      "fDisableAfter": 1,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL1_5",
       "fPosArray": [
         -0.03,
@@ -921,157 +902,130 @@
         197.794,
         269.072
       ],
-      "fDisableAfter": 1.0,
+      "fDisableAfter": 1,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL1_6",
       "fPosArray": [
-        0.0,
+        0,
         0.736,
-        1.0
+        1
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
       "fDisableAfter": 1.3,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL2",
       "fPosArray": [
-        0.0,
+        0,
         0.736,
-        1.0
+        1
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 3.0,
+      "fDisableAfter": 3,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL3",
       "fPosArray": [
-        0.0,
-        1.0,
-        0.0
+        0,
+        1,
+        0
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 3.0,
+      "fDisableAfter": 3,
       "bUseLocalPosition": false
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL4_1",
       "fPosArray": [
-        0.0,
-        1.0,
-        0.0
+        0,
+        1,
+        0
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 1.0,
+      "fDisableAfter": 1,
       "bUseLocalPosition": false
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL4_2",
       "fPosArray": [
-        0.0,
-        1.0,
-        0.0
+        0,
+        1,
+        0
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
       "fDisableAfter": 1.2,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL5",
       "fPosArray": [
-        0.0,
-        1.0,
-        0.0
+        0,
+        1,
+        0
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 2.0,
+      "fDisableAfter": 2,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL6_1",
       "fPosArray": [
         0.71,
-        1.0,
-        0.0
+        1,
+        0
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 2.0,
+      "fDisableAfter": 2,
       "bUseLocalPosition": false
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL6_2",
       "fPosArray": [
-        0.0,
+        0,
         0.5,
         0.63
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 2.0,
+      "fDisableAfter": 2,
       "bUseLocalPosition": false
     },
     {
-      "nID": 0,
-      "bIsMultiple": false,
-      "nMultipleAmount": 0,
       "sName": "SKILL6_3",
       "fPosArray": [
         0.67,
@@ -1083,45 +1037,43 @@
         -12.621,
         133.36
       ],
-      "fDisableAfter": 3.0,
+      "fDisableAfter": 3,
       "bUseLocalPosition": true
     }
   ],
   "BossSkillEffectDB": [
     {
-      "nID": 0,
+      "sName": "FireBall",
       "bIsMultiple": false,
       "nMultipleAmount": 0,
-      "sName": "FireBall",
       "fPosArray": [
-        0.0,
+        0,
         2.124,
         1.3
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 5.0,
+      "fDisableAfter": 5,
       "bUseLocalPosition": true
     },
     {
-      "nID": 0,
+      "sName": "FireInfrno",
       "bIsMultiple": true,
       "nMultipleAmount": 5,
-      "sName": "FireInfrno",
       "fPosArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
       "fRotArray": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
       ],
-      "fDisableAfter": 6.0,
+      "fDisableAfter": 6,
       "bUseLocalPosition": true
     }
   ],
@@ -1131,14 +1083,14 @@
       "m_sSkillName": "기본공격",
       "m_sAnimParameterName": "DoBasicAttack",
       "m_nSkillDamagePer": 100,
-      "m_fCooldown": 4.0
+      "m_fCooldown": 4
     },
     {
       "m_nID": 102,
       "m_sSkillName": "꼬리공격",
       "m_sAnimParameterName": "DoTailAttack",
       "m_nSkillDamagePer": 120,
-      "m_fCooldown": 5.0
+      "m_fCooldown": 5
     }
   ],
   "BossRangeAttackDB": [
@@ -1147,233 +1099,193 @@
       "m_sSkillName": "불내뿜기",
       "m_sAnimParameterName": "DoFireAttack",
       "m_nSkillDamagePer": 150,
-      "m_fCooldown": 7.0
+      "m_fCooldown": 7
     },
     {
       "m_nID": 102,
       "m_sSkillName": "범위공격",
       "m_sAnimParameterName": "DoSpell",
       "m_nSkillDamagePer": 150,
-      "m_fCooldown": 15.0
+      "m_fCooldown": 15
     }
   ],
   "ArmorItemDB": [
     {
-      "_nDefence": 9,
-      "_maxDurability": 100,
-      "_eEquipState": 1,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2000,
-      "_sName": "강철 상의",
+      "_nUsedLevel": 1,
       "_nPrice": 25,
-      "_nUsedLevel": 1,
+      "_sName": "강철 상의",
       "_sTooltip": "단단해보이는 상의다.",
-      "_sIconPath": "ItemIcon/Armor/Chest/강철상의"
+      "_sIconPath": "ItemIcon/Armor/Chest/강철상의",
+      "_nMaxDurability": 100,
+      "_eEquipState": "CHEST",
+      "_nDefence": 9
     },
     {
-      "_nDefence": 8,
-      "_maxDurability": 100,
-      "_eEquipState": 6,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2001,
+      "_nUsedLevel": 1,
+      "_nPrice": 20,
       "_sName": "강철 하의",
-      "_nPrice": 20,
-      "_nUsedLevel": 1,
       "_sTooltip": "단단해보이는 하의다.",
-      "_sIconPath": "ItemIcon/Armor/Pants/강철하의"
+      "_sIconPath": "ItemIcon/Armor/Pants/강철하의",
+      "_nMaxDurability": 100,
+      "_eEquipState": "PANTS",
+      "_nDefence": 8
     },
     {
-      "_nDefence": 5,
-      "_maxDurability": 100,
-      "_eEquipState": 0,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2002,
+      "_nUsedLevel": 1,
+      "_nPrice": 10,
       "_sName": "강철 헬멧",
-      "_nPrice": 10,
-      "_nUsedLevel": 1,
       "_sTooltip": "단단해보이는 헬멧이다.",
-      "_sIconPath": "ItemIcon/Armor/Helmet/강철헬멧"
+      "_sIconPath": "ItemIcon/Armor/Helmet/강철헬멧",
+      "_nMaxDurability": 100,
+      "_eEquipState": "HEAD",
+      "_nDefence": 5
     },
     {
-      "_nDefence": 3,
-      "_maxDurability": 100,
-      "_eEquipState": 7,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2003,
+      "_nUsedLevel": 1,
+      "_nPrice": 10,
       "_sName": "강철 부츠",
-      "_nPrice": 10,
-      "_nUsedLevel": 1,
       "_sTooltip": "단단해보이는 신발이다.",
-      "_sIconPath": "ItemIcon/Armor/Boots/강철부츠"
+      "_sIconPath": "ItemIcon/Armor/Boots/강철부츠",
+      "_nMaxDurability": 100,
+      "_eEquipState": "BOOTS",
+      "_nDefence": 3
     },
     {
-      "_nDefence": 3,
-      "_maxDurability": 100,
-      "_eEquipState": 4,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2004,
+      "_nUsedLevel": 1,
+      "_nPrice": 10,
       "_sName": "강철 망토",
-      "_nPrice": 10,
-      "_nUsedLevel": 1,
       "_sTooltip": "단단해보이는 망토",
-      "_sIconPath": "ItemIcon/Armor/Cloak/강철망토"
+      "_sIconPath": "ItemIcon/Armor/Cloak/강철망토",
+      "_nMaxDurability": 100,
+      "_eEquipState": "CLOAK",
+      "_nDefence": 3
     },
     {
-      "_nDefence": 3,
-      "_maxDurability": 100,
-      "_eEquipState": 2,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2005,
+      "_nUsedLevel": 1,
+      "_nPrice": 10,
       "_sName": "강철 장갑",
-      "_nPrice": 10,
-      "_nUsedLevel": 1,
       "_sTooltip": "단단해보이는 장갑",
-      "_sIconPath": "ItemIcon/Armor/Gloves/강철글러브"
+      "_sIconPath": "ItemIcon/Armor/Gloves/강철글러브",
+      "_nMaxDurability": 100,
+      "_eEquipState": "GLOVES",
+      "_nDefence": 3
     },
     {
-      "_nDefence": 5,
-      "_maxDurability": 100,
-      "_eEquipState": 5,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2006,
-      "_sName": "강철 숄더",
-      "_nPrice": 10,
       "_nUsedLevel": 1,
+      "_nPrice": 10,
+      "_sName": "강철 숄더",
       "_sTooltip": "단단해보이는 견갑장비이다.",
-      "_sIconPath": "ItemIcon/Armor/Shoulder/강철숄더"
+      "_sIconPath": "ItemIcon/Armor/Shoulder/강철숄더",
+      "_nMaxDurability": 100,
+      "_eEquipState": "SHOULDER",
+      "_nDefence": 5
     },
     {
-      "_nDefence": 12,
-      "_maxDurability": 100,
-      "_eEquipState": 1,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2007,
-      "_sName": "레더 상의",
+      "_nUsedLevel": 5,
       "_nPrice": 45,
-      "_nUsedLevel": 5,
+      "_sName": "레더 상의",
       "_sTooltip": "가죽으로 만든 견고한 상의는 철보다 튼튼하다.",
-      "_sIconPath": "ItemIcon/Armor/Chest/레더상의"
+      "_sIconPath": "ItemIcon/Armor/Chest/레더상의",
+      "_nMaxDurability": 81,
+      "_eEquipState": "CHEST",
+      "_nDefence": 12
     },
     {
-      "_nDefence": 10,
-      "_maxDurability": 100,
-      "_eEquipState": 6,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2008,
-      "_sName": "레더 하의",
+      "_nUsedLevel": 5,
       "_nPrice": 37,
-      "_nUsedLevel": 5,
+      "_sName": "레더 하의",
       "_sTooltip": "가죽으로 만든 견고한 하의는 철보다 튼튼하다.",
-      "_sIconPath": "ItemIcon/Armor/Pants/레더하의"
+      "_sIconPath": "ItemIcon/Armor/Pants/레더하의",
+      "_nMaxDurability": 81,
+      "_eEquipState": "PANTS",
+      "_nDefence": 10
     },
     {
-      "_nDefence": 7,
-      "_maxDurability": 100,
-      "_eEquipState": 0,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2009,
+      "_nUsedLevel": 5,
+      "_nPrice": 20,
       "_sName": "레더 헬멧",
-      "_nPrice": 20,
-      "_nUsedLevel": 5,
       "_sTooltip": "가죽으로 만든 견고한 헬멧은 철보다 튼튼하다.",
-      "_sIconPath": "ItemIcon/Armor/Helmet/레더헬멧"
+      "_sIconPath": "ItemIcon/Armor/Helmet/레더헬멧",
+      "_nMaxDurability": 81,
+      "_eEquipState": "HEAD",
+      "_nDefence": 7
     },
     {
-      "_nDefence": 5,
-      "_maxDurability": 100,
-      "_eEquipState": 7,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2010,
-      "_sName": "레더 부츠",
-      "_nPrice": 20,
       "_nUsedLevel": 5,
+      "_nPrice": 20,
+      "_sName": "레더 부츠",
       "_sTooltip": "가죽으로 만든 견고한 부츠는 철보다 튼튼하다.",
-      "_sIconPath": "ItemIcon/Armor/Boots/레더부츠"
+      "_sIconPath": "ItemIcon/Armor/Boots/레더부츠",
+      "_nMaxDurability": 81,
+      "_eEquipState": "BOOTS",
+      "_nDefence": 5
     },
     {
-      "_nDefence": 15,
-      "_maxDurability": 100,
-      "_eEquipState": 1,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2011,
-      "_sName": "클로즈 상의",
+      "_nUsedLevel": 9,
       "_nPrice": 65,
-      "_nUsedLevel": 9,
+      "_sName": "클로즈 상의",
       "_sTooltip": "고대 마법사들이 입던 상의다.",
-      "_sIconPath": "ItemIcon/Armor/Chest/클로즈상의"
+      "_sIconPath": "ItemIcon/Armor/Chest/클로즈상의",
+      "_nMaxDurability": 99,
+      "_eEquipState": "CHEST",
+      "_nDefence": 15
     },
     {
-      "_nDefence": 12,
-      "_maxDurability": 100,
-      "_eEquipState": 6,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2012,
-      "_sName": "클로즈 하의",
+      "_nUsedLevel": 9,
       "_nPrice": 50,
-      "_nUsedLevel": 9,
+      "_sName": "클로즈 하의",
       "_sTooltip": "고대 마법사들이 입던 하의다.",
-      "_sIconPath": "ItemIcon/Armor/Pants/클로즈하의"
+      "_sIconPath": "ItemIcon/Armor/Pants/클로즈하의",
+      "_nMaxDurability": 99,
+      "_eEquipState": "PANTS",
+      "_nDefence": 12
     },
     {
-      "_nDefence": 9,
-      "_maxDurability": 100,
-      "_eEquipState": 0,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2013,
-      "_sName": "클로즈 헬멧",
-      "_nPrice": 30,
       "_nUsedLevel": 9,
+      "_nPrice": 30,
+      "_sName": "클로즈 헬멧",
       "_sTooltip": "고대 마법사들이 입던 헬멧이다.",
-      "_sIconPath": "ItemIcon/Armor/Helmet/클로즈헬멧"
+      "_sIconPath": "ItemIcon/Armor/Helmet/클로즈헬멧",
+      "_nMaxDurability": 99,
+      "_eEquipState": "HEAD",
+      "_nDefence": 9
     },
     {
-      "_nDefence": 7,
-      "_maxDurability": 100,
-      "_eEquipState": 7,
-      "_fPosArray": null,
-      "_fRotArray": null,
-      "_equipGoPath": null,
       "_nId": 2014,
-      "_sName": "클로즈 부츠",
-      "_nPrice": 30,
       "_nUsedLevel": 9,
+      "_nPrice": 30,
+      "_sName": "클로즈 부츠",
       "_sTooltip": "고대 마법사들이 입던 부츠다.",
-      "_sIconPath": "ItemIcon/Armor/Boots/클로즈부츠"
+      "_sIconPath": "ItemIcon/Armor/Boots/클로즈부츠",
+      "_nMaxDurability": 99,
+      "_eEquipState": "BOOTS",
+      "_nDefence": 7
     }
   ],
   "WeaponItemDB": [
     {
-      "_nDamage": 5,
-      "_maxDurability": 100,
-      "_eEquipState": 3,
+      "_nId": 3000,
+      "_nUsedLevel": 1,
+      "_nPrice": 100,
+      "_sName": "롱소드",
+      "_sTooltip": "가장 기본적인 검이다.",
+      "_sIconPath": "ItemIcon/Weapon/Sword/롱소드",
+      "_nMaxDurability": 99,
+      "_eEquipState": "WEAPON",
       "_fPosArray": [
         0.1,
         -0.04,
@@ -1385,102 +1297,97 @@
         86.6
       ],
       "_equipGoPath": "Prefab/Item/Weapon/Sword/LongSword",
-      "_nId": 3000,
-      "_sName": "롱소드",
-      "_nPrice": 100,
-      "_nUsedLevel": 1,
-      "_sTooltip": "가장 기본적인 검이다.",
-      "_sIconPath": "ItemIcon/Weapon/Sword/롱소드"
+      "_nDamage": 5
     },
     {
-      "_nDamage": 50,
-      "_maxDurability": 100,
-      "_eEquipState": 3,
+      "_nId": 3001,
+      "_nUsedLevel": 6,
+      "_nPrice": 1000,
+      "_sName": "드래곤소드",
+      "_sTooltip": "드래곤들의 정수들을 모은 검이다.<br>인페르노 드래곤 토벌을 염원한 검",
+      "_sIconPath": "ItemIcon/Weapon/Sword/인페르노소드",
+      "_nMaxDurability": 99,
+      "_eEquipState": "WEAPON",
       "_fPosArray": [
         0.07,
         -0.04,
-        0.0
+        0
       ],
       "_fRotArray": [
         -0.2,
         -8.4,
-        -27.0
+        -27
       ],
       "_equipGoPath": "Prefab/Item/Weapon/Sword/InfernoSword",
-      "_nId": 3001,
-      "_sName": "드래곤소드",
-      "_nPrice": 1000,
-      "_nUsedLevel": 6,
-      "_sTooltip": "드래곤들의 정수들을 모은 검이다.<br>인페르노 드래곤 토벌을 염원한 검",
-      "_sIconPath": "ItemIcon/Weapon/Sword/인페르노소드"
+      "_nDamage": 50
     }
   ],
   "PortionItemDB": [
     {
-      "_nValue": 10,
-      "_ePortionState": 0,
-      "_nMaxAmount": 99,
       "_nId": 1000,
+      "_nUsedLevel": 1,
+      "_nPrice": 10,
       "_sName": "최하급 HP 포션",
-      "_nPrice": 10,
-      "_nUsedLevel": 1,
       "_sTooltip": "맛있는 포션",
-      "_sIconPath": "ItemIcon/Portion/hp"
-    },
-    {
+      "_sIconPath": "ItemIcon/Portion/hp",
+      "_nMaxAmount": 99,
       "_nValue": 10,
-      "_ePortionState": 1,
-      "_nMaxAmount": 99,
+      "_ePortionState": 0
+    },
+    {
       "_nId": 1001,
-      "_sName": "최하급 MP 포션",
-      "_nPrice": 10,
       "_nUsedLevel": 1,
+      "_nPrice": 10,
+      "_sName": "최하급 MP 포션",
       "_sTooltip": "맛있는 MP 포션",
-      "_sIconPath": "ItemIcon/Portion/mp"
+      "_sIconPath": "ItemIcon/Portion/mp",
+      "_nMaxAmount": 99,
+      "_nValue": 10,
+      "_ePortionState": 1
     },
     {
-      "_nValue": 50,
-      "_ePortionState": 0,
-      "_nMaxAmount": 99,
       "_nId": 1002,
+      "_nUsedLevel": 5,
+      "_nPrice": 40,
       "_sName": "하급 HP 포션",
-      "_nPrice": 40,
-      "_nUsedLevel": 5,
       "_sTooltip": "최하급 보다 좀 더 나은 HP포션 이다.",
-      "_sIconPath": "ItemIcon/Portion/hp"
-    },
-    {
+      "_sIconPath": "ItemIcon/Portion/hp",
+      "_nMaxAmount": 99,
       "_nValue": 50,
-      "_ePortionState": 1,
-      "_nMaxAmount": 99,
+      "_ePortionState": 0
+    },
+    {
       "_nId": 1003,
-      "_sName": "하급 MP 포션",
-      "_nPrice": 40,
       "_nUsedLevel": 5,
+      "_nPrice": 40,
+      "_sName": "하급 MP 포션",
       "_sTooltip": "최하급 보다 좀 더 나은 MP포션 이다.",
-      "_sIconPath": "ItemIcon/Portion/mp"
+      "_sIconPath": "ItemIcon/Portion/mp",
+      "_nMaxAmount": 99,
+      "_nValue": 50,
+      "_ePortionState": 1
     },
     {
-      "_nValue": 100,
-      "_ePortionState": 0,
-      "_nMaxAmount": 99,
       "_nId": 1004,
-      "_sName": "HP 포션",
-      "_nPrice": 90,
       "_nUsedLevel": 9,
+      "_nPrice": 90,
+      "_sName": "HP 포션",
       "_sTooltip": "쓸만해 보이는 HP 포션",
-      "_sIconPath": "ItemIcon/Portion/hp"
+      "_sIconPath": "ItemIcon/Portion/hp",
+      "_nMaxAmount": 99,
+      "_nValue": 100,
+      "_ePortionState": 0
     },
     {
-      "_nValue": 100,
-      "_ePortionState": 1,
-      "_nMaxAmount": 99,
       "_nId": 1005,
-      "_sName": "MP 포션",
-      "_nPrice": 90,
       "_nUsedLevel": 9,
+      "_nPrice": 90,
+      "_sName": "MP 포션",
       "_sTooltip": "쓸만해 보이는 MP 포션",
-      "_sIconPath": "ItemIcon/Portion/mp"
+      "_sIconPath": "ItemIcon/Portion/mp",
+      "_nMaxAmount": 99,
+      "_nValue": 100,
+      "_ePortionState": 1
     }
   ]
 }
