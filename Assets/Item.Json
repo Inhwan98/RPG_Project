@@ -1,0 +1,91 @@
+{
+  "$type": "Item[], Assembly-CSharp",
+  "$values": [
+    {
+      "$type": "PortionItem, Assembly-CSharp",
+      "m_nAmount": 5,
+      "m_countableData": {
+        "$type": "PortionItemData, Assembly-CSharp",
+        "_nValue": 10,
+        "_ePortionState": 0,
+        "_nMaxAmount": 99,
+        "_nId": 1000,
+        "_sName": "최하급 HP 포션",
+        "_nPrice": 10,
+        "_nUsedLevel": 1,
+        "_sTooltip": "맛있는 포션",
+        "_sIconPath": "ItemIcon/Portion/hp"
+      },
+      "m_bIsMax": false,
+      "m_data": {
+        "$type": "PortionItemData, Assembly-CSharp",
+        "_nValue": 10,
+        "_ePortionState": 0,
+        "_nMaxAmount": 99,
+        "_nId": 1000,
+        "_sName": "최하급 HP 포션",
+        "_nPrice": 10,
+        "_nUsedLevel": 1,
+        "_sTooltip": "맛있는 포션",
+        "_sIconPath": "ItemIcon/Portion/hp"
+      }
+    },
+    {
+      "$type": "PortionItem, Assembly-CSharp",
+      "m_nAmount": 4,
+      "m_countableData": {
+        "$type": "PortionItemData, Assembly-CSharp",
+        "_nValue": 10,
+        "_ePortionState": 1,
+        "_nMaxAmount": 99,
+        "_nId": 1001,
+        "_sName": "최하급 MP 포션",
+        "_nPrice": 10,
+        "_nUsedLevel": 1,
+        "_sTooltip": "맛있는 MP 포션",
+        "_sIconPath": "ItemIcon/Portion/mp"
+      },
+      "m_bIsMax": false,
+      "m_data": {
+        "$type": "PortionItemData, Assembly-CSharp",
+        "_nValue": 10,
+        "_ePortionState": 1,
+        "_nMaxAmount": 99,
+        "_nId": 1001,
+        "_sName": "최하급 MP 포션",
+        "_nPrice": 10,
+        "_nUsedLevel": 1,
+        "_sTooltip": "맛있는 MP 포션",
+        "_sIconPath": "ItemIcon/Portion/mp"
+      }
+    },
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ]
+}
